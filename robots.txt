@@ -1,0 +1,17 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://smansfeldg.github.io/sitemap.xml
+
+# Disallow certain file types
+Disallow: *.js$
+Disallow: *.css$
+Disallow: /assets/
+
+# Allow important assets for social media
+Allow: /assets/images/og-image.jpg
+Allow: /assets/images/favicon.ico
+
+# Crawl delay (optional)
+Crawl-delay: 1
