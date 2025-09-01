@@ -1,7 +1,5 @@
 # Portfolio Web de Santiago Ariel Mansfeld
 
-![Portfolio Preview](./assets/images/portfolio-preview.png)
-
 ## 🚀 Descripción
 
 Portfolio web estático moderno y completamente responsivo para Santiago Ariel Mansfeld - DevOps Engineer y Full Stack Developer. Diseñado con las mejores prácticas de UX/UI, optimización móvil avanzada, modo oscuro y animaciones fluidas.
@@ -796,3 +794,4 @@ Si este portfolio te resultó útil o interesante:
 ```
 
 **[⬆️ Volver al inicio](#portfolio-web-de-santiago-ariel-mansfeld)**
+
