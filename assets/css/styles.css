@@ -325,6 +325,24 @@ body.loading {
 
 /* Mobile Optimizations */
 @media (max-width: 768px) {
+    /* Prevent horizontal overflow */
+    html, body {
+        overflow-x: hidden;
+        max-width: 100vw;
+    }
+    
+    /* Back to Top Button - Mobile optimizations */
+    #backToTop {
+        bottom: 1rem !important;
+        right: 1rem !important;
+        width: 2.75rem !important;
+        height: 2.75rem !important;
+        z-index: 50;
+        /* Ensure it stays within viewport */
+        max-width: calc(100vw - 2rem);
+        box-sizing: border-box;
+    }
+    
     /* Improve touch targets */
     .btn, button, a {
         min-height: 44px;
@@ -512,6 +530,31 @@ body.loading {
 .below-fold {
     content-visibility: auto;
     contain-intrinsic-size: 0 200px;
+}
+
+/* Back to Top Button Optimizations */
+#backToTop {
+    /* Prevent overflow by ensuring proper positioning */
+    max-width: calc(100vw - 2rem);
+    max-height: calc(100vh - 2rem);
+    box-sizing: border-box;
+    
+    /* Improve touch interaction on mobile */
+    touch-action: manipulation;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+    
+    /* Ensure proper stacking */
+    z-index: 40;
+}
+
+/* Safe area insets for notched devices */
+@supports (padding: max(0px)) {
+    #backToTop {
+        right: max(1rem, env(safe-area-inset-right));
+        bottom: max(1rem, env(safe-area-inset-bottom));
+    }
 }
 
 /* Enhanced Cursor Effects */
