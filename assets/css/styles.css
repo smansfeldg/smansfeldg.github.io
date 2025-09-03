@@ -549,6 +549,16 @@ body.loading {
     z-index: 40;
 }
 
+/* Profile Image Switcher */
+#profileImage {
+    transition: opacity 0.7s ease-in-out, transform 0.7s ease-in-out;
+    cursor: pointer;
+}
+
+#profileImage:hover {
+    transform: scale(1.1);
+}
+
 /* Safe area insets for notched devices */
 @supports (padding: max(0px)) {
     #backToTop {
