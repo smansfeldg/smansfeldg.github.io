@@ -434,6 +434,46 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Profile Image Switcher
+    function initProfileImageSwitcher() {
+        const profileImage = document.getElementById('profileImage');
+        if (!profileImage) return;
+        
+        let currentImageIndex = 1; // Start with profile-1.png (index 1)
+        const totalImages = 5; // profile-1.png to profile-5.png
+        let isTransitioning = false;
+        
+        profileImage.addEventListener('click', function() {
+            if (isTransitioning) return; // Prevent multiple clicks during transition
+            
+            isTransitioning = true;
+            
+            // Fade out current image with smooth transition
+            profileImage.style.opacity = '0';
+            
+            setTimeout(() => {
+                // Cycle through images: profile-1.png -> profile-2.png -> ... -> profile-5.png -> profile-1.png (repeat)
+                currentImageIndex = currentImageIndex === totalImages ? 1 : currentImageIndex + 1;
+                
+                // Set new image source
+                profileImage.src = `./assets/images/profile-${currentImageIndex}.png`;
+                
+                // Fade in new image
+                profileImage.style.opacity = '1';
+                
+                // Reset transition flag after transition completes
+                setTimeout(() => {
+                    isTransitioning = false;
+                }, 350); // Half of the transition duration
+                
+            }, 350); // Half of the transition duration for smooth crossfade effect
+        });
+        
+        // Add visual feedback on hover
+        profileImage.style.cursor = 'pointer';
+        profileImage.title = 'Haz clic para cambiar la foto de perfil';
+    }
+
     // Initialize all animations and effects
     setTimeout(() => {
         animateSkillBars();
@@ -441,6 +481,7 @@ document.addEventListener('DOMContentLoaded', function() {
         lazyLoadImages();
         initCursorFollower();
         initTypingEffect();
+        initProfileImageSwitcher(); // Initialize profile image switcher
         adjustBackToTopPosition(); // Initial position adjustment
     }, 1000);
 
@@ -505,7 +546,8 @@ document.addEventListener('DOMContentLoaded', function() {
         'mobileMenuToggle',
         'mobileMenu',
         'contactForm',
-        'backToTop'
+        'backToTop',
+        'profileImage' // Add profile image to required elements
     ];
 
     requiredElements.forEach(id => {
