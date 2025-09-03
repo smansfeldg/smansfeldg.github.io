@@ -1304,20 +1304,34 @@
 
             <!-- Project Tabs -->
             <div class="flex justify-center mb-12" data-aos="fade-up">
-                <div
-                    class="bg-bg-light dark:bg-bg-dark rounded-xl p-1 border border-border-light dark:border-border-dark">
-                    <button class="project-tab active px-6 py-3 rounded-lg font-semibold transition-all duration-300"
-                        data-tab="professional">
-                        Profesionales
-                    </button>
-                    <button class="project-tab px-6 py-3 rounded-lg font-semibold transition-all duration-300"
-                        data-tab="personal">
-                        Personales
-                    </button>
-                    <button class="project-tab px-6 py-3 rounded-lg font-semibold transition-all duration-300"
-                        data-tab="research">
-                        Investigación
-                    </button>
+                <div class="w-full max-w-lg">
+                    
+                    <!-- Tab Buttons Container -->
+                    <div class="bg-bg-light dark:bg-bg-dark rounded-xl p-1.5 border border-border-light dark:border-border-dark shadow-lg">
+                        <div class="grid grid-cols-3 gap-1">
+                            <button class="project-tab active px-3 py-3 sm:px-4 sm:py-3 rounded-lg font-semibold transition-all duration-300 text-sm sm:text-base hover:scale-105 active:scale-95"
+                                data-tab="professional">
+                                <div class="flex flex-col items-center gap-1">
+                                    <i class="fas fa-briefcase text-lg"></i>
+                                    <span>Profesionales</span>
+                                </div>
+                            </button>
+                            <button class="project-tab px-3 py-3 sm:px-4 sm:py-3 rounded-lg font-semibold transition-all duration-300 text-sm sm:text-base hover:scale-105 active:scale-95"
+                                data-tab="personal">
+                                <div class="flex flex-col items-center gap-1">
+                                    <i class="fas fa-user text-lg"></i>
+                                    <span>Personales</span>
+                                </div>
+                            </button>
+                            <button class="project-tab px-3 py-3 sm:px-4 sm:py-3 rounded-lg font-semibold transition-all duration-300 text-sm sm:text-base hover:scale-105 active:scale-95"
+                                data-tab="research">
+                                <div class="flex flex-col items-center gap-1">
+                                    <i class="fas fa-flask text-lg"></i>
+                                    <span>Investigación</span>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
