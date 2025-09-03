@@ -223,6 +223,32 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
+    // Ensure button stays within viewport on mobile
+    function adjustBackToTopPosition() {
+        if (window.innerWidth <= 768) {
+            const viewportWidth = window.innerWidth;
+            const buttonWidth = 44; // 2.75rem = 44px
+            const minRight = 16; // 1rem = 16px
+            
+            // Ensure button doesn't cause horizontal overflow
+            if (viewportWidth < (buttonWidth + minRight * 2)) {
+                backToTopButton.style.right = `${minRight}px`;
+                backToTopButton.style.width = `${Math.min(buttonWidth, viewportWidth - minRight * 2)}px`;
+                backToTopButton.style.height = `${Math.min(buttonWidth, viewportWidth - minRight * 2)}px`;
+            } else {
+                // Reset to default mobile styles
+                backToTopButton.style.right = '';
+                backToTopButton.style.width = '';
+                backToTopButton.style.height = '';
+            }
+        } else {
+            // Reset to default desktop styles
+            backToTopButton.style.right = '';
+            backToTopButton.style.width = '';
+            backToTopButton.style.height = '';
+        }
+    }
+    
     backToTopButton.addEventListener('click', function() {
         window.scrollTo({
             top: 0,
@@ -238,6 +264,7 @@ document.addEventListener('DOMContentLoaded', function() {
             requestAnimationFrame(() => {
                 updateActiveNavigation();
                 toggleBackToTopButton();
+                adjustBackToTopPosition(); // Add position adjustment
                 ticking = false;
             });
             ticking = true;
@@ -414,12 +441,14 @@ document.addEventListener('DOMContentLoaded', function() {
         lazyLoadImages();
         initCursorFollower();
         initTypingEffect();
+        adjustBackToTopPosition(); // Initial position adjustment
     }, 1000);
 
     // Resize Event Handler
     window.addEventListener('resize', () => {
         // Re-calculate positions and sizes on resize
         AOS.refresh();
+        adjustBackToTopPosition(); // Adjust back to top button position
     });
 
     // Performance Optimization: Intersection Observer for animations
