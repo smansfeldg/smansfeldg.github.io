@@ -12,6 +12,47 @@ document.addEventListener('DOMContentLoaded', function() {
         offset: 100
     });
 
+    // -----------------------------
+    // Analytics (GA4) Instrumentation
+    // -----------------------------
+    // Safe GA4 event dispatcher
+    // Determine if analytics should be disabled (local dev) unless forced
+    const ANALYTICS_FORCED = /[?&]analytics=1\b/.test(window.location.search);
+    const IS_LOCAL = ['file:', 'http://localhost', 'http://127.0.0.1'].some(p => window.location.href.startsWith(p));
+    const ANALYTICS_ENABLED = ANALYTICS_FORCED || !IS_LOCAL;
+
+    function trackEvent(eventName, params = {}) {
+        try {
+            if (!ANALYTICS_ENABLED) return; // Skip in local/dev unless forced
+            if (typeof window.gtag === 'function') {
+                window.gtag('event', eventName, params);
+            } else {
+                // Retry shortly in case gtag hasn't loaded yet
+                setTimeout(() => {
+                    if (ANALYTICS_ENABLED && typeof window.gtag === 'function') {
+                        window.gtag('event', eventName, params);
+                    }
+                }, 1500);
+            }
+        } catch (e) {
+            console.warn('Analytics trackEvent error:', e);
+        }
+    }
+    
+    // Helper: find nearest section id for context
+    function getContextSectionId(element) {
+        const section = element.closest('section[id]');
+        return section ? section.id : 'unknown';
+    }
+    
+    // Helper: normalize URL data
+    function getLinkMeta(anchor) {
+        const href = anchor.getAttribute('href') || '';
+        let url;
+        try { url = new URL(href, window.location.href); } catch { url = null; }
+        return { href, url, sectionId: getContextSectionId(anchor) };
+    }
+
     // Dark Mode Functionality
     const darkModeToggle = document.getElementById('darkModeToggle');
     const darkModeToggleMobile = document.getElementById('darkModeToggleMobile');
@@ -27,6 +68,14 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Dark mode toggle function
+    function sendUserThemeProperty() {
+        try {
+            if (!ANALYTICS_ENABLED || typeof window.gtag !== 'function') return;
+            const isDark = document.documentElement.classList.contains('dark');
+            window.gtag('set', 'user_properties', { theme: isDark ? 'dark' : 'light' });
+        } catch(e) { console.warn('user_properties theme error', e); }
+    }
+
     function toggleDarkMode() {
         htmlElement.classList.toggle('dark');
         const isDark = htmlElement.classList.contains('dark');
@@ -37,6 +86,11 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(() => {
             document.body.style.transition = '';
         }, 300);
+
+        // Update GA4 user property for theme
+        sendUserThemeProperty();
+        // Optional event when theme toggled
+        trackEvent('theme_toggle', { theme: isDark ? 'dark' : 'light' });
     }
 
     // Event listeners for dark mode toggles
@@ -75,6 +129,11 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             const targetId = this.getAttribute('href');
             const targetSection = document.querySelector(targetId);
+            // Analytics: navigation click
+            trackEvent('nav_click', {
+                target: targetId.replace('#',''),
+                location: this.closest('#mobileMenu') ? 'mobile' : 'desktop'
+            });
             
             if (targetSection) {
                 const headerOffset = 80; // Account for fixed header
@@ -121,6 +180,11 @@ document.addEventListener('DOMContentLoaded', function() {
     projectTabs.forEach(tab => {
         tab.addEventListener('click', function() {
             const targetTab = this.getAttribute('data-tab');
+            // Analytics: project tab selected
+            trackEvent('project_tab_select', {
+                tab: targetTab,
+                section: getContextSectionId(this)
+            });
             
             // Update active tab
             projectTabs.forEach(t => {
@@ -160,6 +224,14 @@ document.addEventListener('DOMContentLoaded', function() {
         const email = formData.get('email');
         const subject = formData.get('subject');
         const message = formData.get('message');
+        
+        // Analytics: contact form submit (no PII)
+        try {
+            trackEvent('contact_submit', {
+                has_subject: !!subject,
+                message_len: (message || '').length
+            });
+        } catch(_) {}
         
         // Create mailto link
         const mailtoLink = `mailto:santimansfeld@proton.me?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(`Nombre: ${name}\nEmail: ${email}\n\nMensaje:\n${message}`)}`;
@@ -250,6 +322,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     backToTopButton.addEventListener('click', function() {
+        // Analytics: back to top click
+        trackEvent('back_to_top_click', { section: getContextSectionId(this) });
         window.scrollTo({
             top: 0,
             behavior: 'smooth'
@@ -258,6 +332,38 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Scroll Event Listeners
     let ticking = false;
+    // Scroll analytics state
+    const depthMilestones = new Set(); // 25,50,75,100
+    let reachedBottom = false;
+    let bottomTimestamp = 0;
+    let returnedAfterBottom = false;
+
+    function checkScrollDepthAndReturn() {
+        const doc = document.documentElement;
+        const scrollTop = window.pageYOffset || doc.scrollTop || 0;
+        const viewport = window.innerHeight || 0;
+        const fullHeight = Math.max(doc.scrollHeight, doc.offsetHeight, doc.clientHeight) || 1;
+        const maxScrollable = Math.max(1, fullHeight - viewport);
+        const percent = Math.min(100, Math.round((scrollTop / maxScrollable) * 100));
+
+        [25, 50, 75, 100].forEach(mark => {
+            if (percent >= mark && !depthMilestones.has(mark)) {
+                depthMilestones.add(mark);
+                trackEvent('scroll_depth', { percent: mark });
+                if (mark === 100 && !reachedBottom) {
+                    reachedBottom = true;
+                    bottomTimestamp = performance.now();
+                }
+            }
+        });
+
+        // Detect return to top after reaching bottom
+        if (reachedBottom && !returnedAfterBottom && scrollTop < 150) {
+            returnedAfterBottom = true;
+            const seconds = Math.max(0, (performance.now() - bottomTimestamp) / 1000);
+            trackEvent('return_to_top_after_bottom', { seconds_since_bottom: Number(seconds.toFixed(2)) });
+        }
+    }
     
     function handleScroll() {
         if (!ticking) {
@@ -265,6 +371,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 updateActiveNavigation();
                 toggleBackToTopButton();
                 adjustBackToTopPosition(); // Add position adjustment
+                checkScrollDepthAndReturn();
                 ticking = false;
             });
             ticking = true;
@@ -511,6 +618,96 @@ document.addEventListener('DOMContentLoaded', function() {
         animationObserver.observe(el);
     });
 
+    // -----------------------------
+    // Section View & Dwell Tracking
+    // -----------------------------
+    (function initSectionAnalytics(){
+        const sectionViewSeen = new Set();
+        const sectionTimings = new Map(); // id -> { enter: number }
+        const targets = document.querySelectorAll('section[id]');
+
+        const io = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const id = entry.target.id;
+                if (entry.isIntersecting) {
+                    // First-time view at >=50%
+                    if (!sectionViewSeen.has(id)) {
+                        sectionViewSeen.add(id);
+                        trackEvent('section_view', { section_id: id });
+                    }
+                    // Start dwell timer
+                    if (!sectionTimings.has(id)) {
+                        sectionTimings.set(id, { enter: performance.now() });
+                    }
+                } else {
+                    // Leaving: compute dwell time if had entered
+                    const t = sectionTimings.get(id);
+                    if (t && typeof t.enter === 'number') {
+                        const seconds = (performance.now() - t.enter) / 1000;
+                        // Only send if stayed at least 2s to reduce noise
+                        if (seconds >= 2) {
+                            trackEvent('section_dwell', { section_id: id, seconds: Number(seconds.toFixed(2)) });
+                        }
+                        sectionTimings.delete(id);
+                    }
+                }
+            });
+        }, { threshold: 0.5 });
+
+        targets.forEach(sec => io.observe(sec));
+    })();
+
+    // -----------------------------
+    // Link Click Tracking
+    // -----------------------------
+    (function initLinkAnalytics(){
+        const anchors = Array.from(document.querySelectorAll('a[href]'));
+        anchors.forEach(a => {
+            a.addEventListener('click', function(){
+                const { href, url, sectionId } = getLinkMeta(this);
+
+                // Skip pure in-page nav (#...) as it's tracked separately
+                if (href.startsWith('#')) return;
+
+                // CV download
+                const isDownload = this.hasAttribute('download') || /\.pdf(\?|$)/i.test(href);
+                if (isDownload) {
+                    const fileName = (href.split('/').pop() || '').split('?')[0];
+                    trackEvent('cv_download', { file_name: fileName || 'unknown', section: sectionId });
+                    return;
+                }
+
+                // Social links
+                const h = href.toLowerCase();
+                if (h.includes('github.com')) {
+                    trackEvent('social_click', { network: 'github', href, section: sectionId });
+                    return;
+                }
+                if (h.includes('linkedin.com')) {
+                    trackEvent('social_click', { network: 'linkedin', href, section: sectionId });
+                    return;
+                }
+                if (h.startsWith('mailto:')) {
+                    trackEvent('social_click', { network: 'email', href, section: sectionId });
+                    return;
+                }
+                if (h.startsWith('tel:')) {
+                    trackEvent('social_click', { network: 'phone', href, section: sectionId });
+                    return;
+                }
+
+                // External link
+                if (url && url.origin !== window.location.origin) {
+                    trackEvent('external_link_click', {
+                        domain: url.hostname,
+                        href,
+                        section: sectionId
+                    });
+                }
+            });
+        });
+    })();
+
     // Console Easter Egg
     console.log(`
     ╔═══════════════════════════════════════════════════════════════╗
@@ -533,10 +730,11 @@ document.addEventListener('DOMContentLoaded', function() {
         const loadTime = performance.now();
         console.log(`⚡ Página cargada en ${Math.round(loadTime)}ms`);
         
-        // Optional: Send analytics if needed
-        // gtag('event', 'page_load_time', {
-        //     value: Math.round(loadTime)
-        // });
+        // Send page load time as custom event
+        trackEvent('page_load_time', { value_ms: Math.round(loadTime) });
+
+        // Send initial user property for theme
+        sendUserThemeProperty();
     });
 
     // Error Handling for Missing Elements
