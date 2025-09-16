@@ -251,6 +251,23 @@
                 font-size: 3.5rem;
             }
         }
+
+        /* Dark mode toggle fix - ensure only one icon is visible at a time */
+        .dark-mode-btn .sun-icon {
+            display: block;
+        }
+
+        .dark-mode-btn .moon-icon {
+            display: none;
+        }
+
+        .dark .dark-mode-btn .sun-icon {
+            display: none;
+        }
+
+        .dark .dark-mode-btn .moon-icon {
+            display: block;
+        }
     </style>
 </head>
 
@@ -284,9 +301,9 @@
 
                     <!-- Dark Mode Toggle -->
                     <button id="darkModeToggle"
-                        class="p-2 rounded-lg bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-300">
-                        <i class="fas fa-sun text-yellow-500 dark:hidden"></i>
-                        <i class="fas fa-moon text-blue-400 hidden dark:block"></i>
+                        class="dark-mode-btn p-2 rounded-lg bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-300">
+                        <i class="fas fa-sun text-yellow-500 sun-icon"></i>
+                        <i class="fas fa-moon text-blue-400 moon-icon"></i>
                     </button>
                 </div>
 
@@ -294,9 +311,9 @@
                 <div class="md:hidden flex items-center gap-1.5 mobile-nav-container mobile-nav-buttons">
                     <!-- Dark Mode Toggle Mobile -->
                     <button id="darkModeToggleMobile"
-                        class="p-1.5 rounded-lg bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark touch-target w-10 h-10 flex items-center justify-center">
-                        <i class="fas fa-sun text-yellow-500 dark:hidden text-sm"></i>
-                        <i class="fas fa-moon text-blue-400 hidden dark:block text-sm"></i>
+                        class="dark-mode-btn p-1.5 rounded-lg bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark touch-target w-10 h-10 flex items-center justify-center">
+                        <i class="fas fa-sun text-yellow-500 text-sm sun-icon"></i>
+                        <i class="fas fa-moon text-blue-400 text-sm moon-icon"></i>
                     </button>
 
                     <button id="mobileMenuToggle"
