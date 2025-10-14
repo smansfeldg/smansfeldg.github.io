@@ -271,8 +271,7 @@
     </style>
 </head>
 
-<body
-    class="bg-bg-light dark:bg-bg-dark text-text-primary-light dark:text-text-primary-dark transition-colors duration-300">
+<body class="bg-bg-light dark:bg-bg-dark text-text-primary-light dark:text-text-primary-dark transition-colors duration-300">
 
     <!-- Navigation -->
     <nav class="fixed top-0 left-0 right-0 z-50 navbar-blur border-b border-border-light dark:border-border-dark">
@@ -286,18 +285,25 @@
                 <!-- Desktop Menu -->
                 <div class="hidden md:flex items-center space-x-8">
                     <a href="#home"
-                        class="nav-link text-text-secondary-light dark:text-text-secondary-dark hover:text-primary dark:hover:text-primary-dark transition-colors duration-300">Inicio</a>
+                        class="nav-link text-text-secondary-light dark:text-text-secondary-dark hover:text-primary dark:hover:text-primary-dark transition-colors duration-300" data-i18n="nav.home">Inicio</a>
                     <a href="#about"
-                        class="nav-link text-text-secondary-light dark:text-text-secondary-dark hover:text-primary dark:hover:text-primary-dark transition-colors duration-300">Sobre
+                        class="nav-link text-text-secondary-light dark:text-text-secondary-dark hover:text-primary dark:hover:text-primary-dark transition-colors duration-300" data-i18n="nav.about">Sobre
                         mí</a>
                     <a href="#experience"
-                        class="nav-link text-text-secondary-light dark:text-text-secondary-dark hover:text-primary dark:hover:text-primary-dark transition-colors duration-300">Experiencia</a>
+                        class="nav-link text-text-secondary-light dark:text-text-secondary-dark hover:text-primary dark:hover:text-primary-dark transition-colors duration-300" data-i18n="nav.experience">Experiencia</a>
                     <a href="#skills"
-                        class="nav-link text-text-secondary-light dark:text-text-secondary-dark hover:text-primary dark:hover:text-primary-dark transition-colors duration-300">Habilidades</a>
+                        class="nav-link text-text-secondary-light dark:text-text-secondary-dark hover:text-primary dark:hover:text-primary-dark transition-colors duration-300" data-i18n="nav.skills">Habilidades</a>
                     <a href="#projects"
-                        class="nav-link text-text-secondary-light dark:text-text-secondary-dark hover:text-primary dark:hover:text-primary-dark transition-colors duration-300">Proyectos</a>
+                        class="nav-link text-text-secondary-light dark:text-textsecondary-dark hover:text-primary dark:hover:text-primary-dark transition-colors duration-300" data-i18n="nav.projects">Proyectos</a>
                     <a href="#contact"
-                        class="nav-link text-text-secondary-light dark:text-text-secondary-dark hover:text-primary dark:hover:text-primary-dark transition-colors duration-300">Contacto</a>
+                        class="nav-link text-text-secondary-light dark:text-textsecondary-dark hover:text-primary dark:hover:text-primary-dark transition-colors duration-300" data-i18n="nav.contact">Contacto</a>
+
+                    <!-- Language Toggle -->
+                    <button id="lang-toggle"
+                        class="p-2 rounded-lg bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-300">
+                        <i class="fas fa-globe text-primary dark:text-primary-dark"></i>
+                        <span class="ml-1 text-sm font-semibold text-primary dark:text-primary-dark" data-i18n="nav.lang_toggle">EN</span>
+                    </button>
 
                     <!-- Dark Mode Toggle -->
                     <button id="darkModeToggle"
@@ -309,6 +315,12 @@
 
                 <!-- Mobile Menu Button -->
                 <div class="md:hidden flex items-center gap-1.5 mobile-nav-container mobile-nav-buttons">
+                    <!-- Language Toggle Mobile -->
+                    <button id="lang-toggle-mobile"
+                        class="p-1.5 rounded-lg bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark touch-target w-10 h-10 flex items-center justify-center">
+                        <span class="text-xs font-semibold text-primary dark:text-primary-dark" data-i18n="nav.lang_toggle">EN</span>
+                    </button>
+
                     <!-- Dark Mode Toggle Mobile -->
                     <button id="darkModeToggleMobile"
                         class="dark-mode-btn p-1.5 rounded-lg bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark touch-target w-10 h-10 flex items-center justify-center">
@@ -329,18 +341,18 @@
             class="md:hidden hidden bg-card-light dark:bg-card-dark border-t border-border-light dark:border-border-dark">
             <div class="px-4 py-2 space-y-2">
                 <a href="#home"
-                    class="block py-2 text-text-secondary-light dark:text-text-secondary-dark hover:text-primary dark:hover:text-primary-dark transition-colors duration-300">Inicio</a>
+                    class="block py-2 text-text-secondary-light dark:text-text-secondary-dark hover:text-primary dark:hover:text-primary-dark transition-colors duration-300" data-i18n="nav.home">Inicio</a>
                 <a href="#about"
-                    class="block py-2 text-text-secondary-light dark:text-text-secondary-dark hover:text-primary dark:hover:text-primary-dark transition-colors duration-300">Sobre
+                    class="block py-2 text-text-secondary-light dark:text-textsecondary-dark hover:text-primary dark:hover:text-primary-dark transition-colors duration-300" data-i18n="nav.about">Sobre
                     mí</a>
                 <a href="#experience"
-                    class="block py-2 text-text-secondary-light dark:text-text-secondary-dark hover:text-primary dark:hover:text-primary-dark transition-colors duration-300">Experiencia</a>
+                    class="block py-2 text-text-secondary-light dark:text-textsecondary-dark hover:text-primary dark:hover:text-primary-dark transition-colors duration-300" data-i18n="nav.experience">Experiencia</a>
                 <a href="#skills"
-                    class="block py-2 text-text-secondary-light dark:text-text-secondary-dark hover:text-primary dark:hover:text-primary-dark transition-colors duration-300">Habilidades</a>
+                    class="block py-2 text-text-secondary-light dark:text-textsecondary-dark hover:text-primary dark:hover:text-primary-dark transition-colors duration-300" data-i18n="nav.skills">Habilidades</a>
                 <a href="#projects"
-                    class="block py-2 text-text-secondary-light dark:text-text-secondary-dark hover:text-primary dark:hover:text-primary-dark transition-colors duration-300">Proyectos</a>
+                    class="block py-2 text-text-secondary-light dark:text-textsecondary-dark hover:text-primary dark:hover:text-primary-dark transition-colors duration-300" data-i18n="nav.projects">Proyectos</a>
                 <a href="#contact"
-                    class="block py-2 text-text-secondary-light dark:text-text-secondary-dark hover:text-primary dark:hover:text-primary-dark transition-colors duration-300">Contacto</a>
+                    class="block py-2 text-text-secondary-light dark:text-textsecondary-dark hover:text-primary dark:hover:text-primary-dark transition-colors duration-300" data-i18n="nav.contact">Contacto</a>
             </div>
         </div>
     </nav>
@@ -389,7 +401,7 @@
                                 class="absolute -bottom-2 -right-2 sm:-bottom-4 sm:-right-4 bg-secondary dark:bg-secondary-dark text-white px-3 py-1 sm:px-4 sm:py-2 rounded-full shadow-lg">
                                 <span class="flex items-center gap-1 sm:gap-2">
                                     <div class="w-2 h-2 sm:w-3 sm:h-3 bg-green-400 rounded-full animate-pulse"></div>
-                                    <span class="text-xs sm:text-sm font-semibold">Disponible</span>
+                                    <span class="text-xs sm:text-sm font-semibold" data-i18n="hero.status">Disponible</span>
                                 </span>
                             </div>
 
@@ -415,13 +427,13 @@
     <div class="inline-flex items-center gap-2 bg-card-light dark:bg-card-dark px-4 py-2 rounded-full border border-border-light dark:border-border-dark mb-6"
         data-aos="fade-up" data-aos-delay="200">
         <span class="w-2 h-2 bg-secondary dark:bg-secondary-dark rounded-full animate-pulse"></span>
-        <span class="text-sm text-text-secondary-light dark:text-text-secondary-dark">¡Hola! Soy</span>
+        <span class="text-sm text-text-secondary-light dark:text-text-secondary-dark" data-i18n="hero.greeting">¡Hola! Soy</span>
     </div>
 
     <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-4 sm:mb-6 mobile-text-balance" data-aos="fade-up"
         data-aos-delay="400">
-        <span class="block gradient-text">Santiago Ariel</span>
-        <span class="block text-text-primary-light dark:text-text-primary-dark">Mansfeld</span>
+        <span class="block gradient-text" data-i18n="hero.name">Santiago Ariel</span>
+        <span class="block text-text-primary-light dark:text-text-primary-dark" data-i18n="hero.lastname">Mansfeld</span>
     </h1>
 
     <div class="mb-4 sm:mb-6" data-aos="fade-up" data-aos-delay="600">
@@ -429,14 +441,14 @@
             class="inline-flex items-center gap-2 sm:gap-3 bg-primary/10 dark:bg-primary-dark/10 px-4 py-2 sm:px-6 sm:py-3 rounded-full">
             <div class="w-2 h-2 sm:w-3 sm:h-3 bg-primary dark:bg-primary-dark rounded-full animate-pulse"></div>
             <span id="typing-text"
-                class="text-base sm:text-lg md:text-xl font-semibold text-primary dark:text-primary-dark">DevOps
+                class="text-base sm:text-lg md:text-xl font-semibold text-primary dark:text-primary-dark" data-i18n="hero.typing_role">DevOps
                 Engineer</span>
             <span class="animate-pulse">|</span>
         </div>
     </div>
 
     <p class="text-base sm:text-lg md:text-xl text-text-secondary-light dark:text-text-secondary-dark leading-relaxed mb-6 sm:mb-8 max-w-2xl mx-auto lg:mx-0"
-        data-aos="fade-up" data-aos-delay="800">
+        data-aos="fade-up" data-aos-delay="800" data-i18n="hero.description">
         Transformo ideas en <span class="text-primary dark:text-primary-dark font-semibold">soluciones
             tecnológicas escalables</span>
         especializado en CI/CD, automatización y desarrollo full stack.
@@ -445,16 +457,16 @@
     <div class="grid grid-cols-3 gap-3 sm:gap-4 mb-6 sm:mb-8" data-aos="fade-up" data-aos-delay="1000">
         <div class="text-center">
             <div class="text-xl sm:text-2xl md:text-3xl font-bold text-primary dark:text-primary-dark">3+</div>
-            <div class="text-xs sm:text-sm text-text-secondary-light dark:text-text-secondary-dark">Años Exp.</div>
+            <div class="text-xs sm:text-sm text-text-secondary-light dark:text-text-secondary-dark" data-i18n="hero.years_exp">Años Exp.</div>
         </div>
         <div class="text-center">
             <div class="text-xl sm:text-2xl md:text-3xl font-bold text-secondary dark:text-secondary-dark">15+
             </div>
-            <div class="text-xs sm:text-sm text-text-secondary-light dark:text-text-secondary-dark">Proyectos</div>
+            <div class="text-xs sm:text-sm text-text-secondary-light dark:text-text-secondary-dark" data-i18n="hero.projects_count">Proyectos</div>
         </div>
         <div class="text-center">
             <div class="text-xl sm:text-2xl md:text-3xl font-bold text-primary dark:text-primary-dark">25</div>
-            <div class="text-xs sm:text-sm text-text-secondary-light dark:text-text-secondary-dark">Años</div>
+            <div class="text-xs sm:text-sm text-text-secondary-light dark:text-textsecondary-dark" data-i18n="hero.age">Años</div>
         </div>
     </div>
 
@@ -464,7 +476,7 @@
             class="group relative overflow-hidden bg-primary dark:bg-primary-dark text-white px-6 py-3 sm:px-8 sm:py-4 rounded-xl font-semibold hover:bg-blue-600 dark:hover:bg-blue-400 transform hover:scale-105 hover:-translate-y-1 transition-all duration-300 shadow-lg hover:shadow-2xl">
             <span class="relative z-10 flex items-center justify-center gap-2">
                 <i class="fas fa-folder-open text-sm sm:text-base"></i>
-                <span class="text-sm sm:text-base">Ver mis proyectos</span>
+                <span class="text-sm sm:text-base" data-i18n="hero.view_projects">Ver mis proyectos</span>
             </span>
             <div
                 class="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -474,7 +486,7 @@
             class="group bg-transparent border-2 border-primary dark:border-primary-dark text-primary dark:text-primary-dark px-6 py-3 sm:px-8 sm:py-4 rounded-xl font-semibold hover:bg-primary dark:hover:bg-primary-dark hover:text-white transition-all duration-300">
             <span class="flex items-center justify-center gap-2">
                 <i class="fas fa-download text-sm sm:text-base"></i>
-                <span class="text-sm sm:text-base">Descargar CV</span>
+                <span class="text-sm sm:text-base" data-i18n="hero.download_cv">Descargar CV</span>
             </span>
         </a>
     </div>
@@ -505,8 +517,8 @@
     <section id="about" class="py-20">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16" data-aos="fade-up">
-                <h2 class="text-3xl sm:text-4xl font-bold gradient-text mb-4">Sobre mí</h2>
-                <p class="text-lg text-text-secondary-light dark:text-text-secondary-dark max-w-2xl mx-auto">
+                <h2 class="text-3xl sm:text-4xl font-bold gradient-text mb-4" data-i18n="about.title">Sobre mí</h2>
+                <p class="text-lg text-text-secondary-light dark:text-text-secondary-dark max-w-2xl mx-auto" data-i18n="about.subtitle">
                     Conoce más sobre mi trayectoria profesional y pasión por la tecnología
                 </p>
             </div>
@@ -516,20 +528,20 @@
                 <div class="space-y-6" data-aos="fade-right">
                     <div
                         class="bg-card-light dark:bg-card-dark rounded-2xl p-8 border border-border-light dark:border-border-dark hover-lift">
-                        <h3 class="text-2xl font-semibold mb-4 gradient-text">Mi Historia</h3>
-                        <p class="text-text-secondary-light dark:text-text-secondary-dark leading-relaxed mb-4">
+                        <h3 class="text-2xl font-semibold mb-4 gradient-text" data-i18n="about.my_story">Mi Historia</h3>
+                        <p class="text-text-secondary-light dark:text-text-secondary-dark leading-relaxed mb-4" data-i18n="about.story_p1">
                             Soy Santiago Ariel Mansfeld, estudiante de <strong>Ingeniería en Informática</strong> en la
                             Universidad Nacional de La Matanza
                             con más de 3 años de experiencia profesional en desarrollo de software, administración de
                             infraestructuras TI y prácticas DevOps.
                         </p>
-                        <p class="text-text-secondary-light dark:text-text-secondary-dark leading-relaxed mb-4">
+                        <p class="text-text-secondary-light dark:text-text-secondary-dark leading-relaxed mb-4" data-i18n="about.story_p2">
                             Mi enfoque se centra en la <strong>integración continua</strong>, resolución de problemas
                             complejos y mejora de infraestructuras
                             tecnológicas. He trabajado desde desarrollo aeroespacial hasta e-commerce, siempre buscando
                             soluciones innovadoras.
                         </p>
-                        <p class="text-text-secondary-light dark:text-text-secondary-dark leading-relaxed">
+                        <p class="text-text-secondary-light dark:text-text-secondary-dark leading-relaxed" data-i18n="about.story_p3">
                             Actualmente trabajo como <strong>DevOps Analyst</strong> en Accusys Technology, donde
                             gestiono procesos de CI/CD,
                             optimizo infraestructura y desarrollo herramientas de automatización con React y NodeJS.
@@ -543,9 +555,9 @@
                             <div class="flex items-center mb-3">
                                 <i
                                     class="fas fa-birthday-cake text-secondary dark:text-secondary-dark text-xl mr-3"></i>
-                                <h4 class="font-semibold">Edad</h4>
+                                <h4 class="font-semibold" data-i18n="about.age_label">Edad</h4>
                             </div>
-                            <p class="text-text-secondary-light dark:text-text-secondary-dark">25 años (6/3/2000)</p>
+                            <p class="text-text-secondary-light dark:text-text-secondary-dark" data-i18n="about.age_value">25 años (6/3/2000)</p>
                         </div>
 
                         <div class="bg-card-light dark:bg-card-dark rounded-xl p-6 border border-border-light dark:border-border-dark hover-lift"
@@ -553,9 +565,9 @@
                             <div class="flex items-center mb-3">
                                 <i
                                     class="fas fa-map-marker-alt text-secondary dark:text-secondary-dark text-xl mr-3"></i>
-                                <h4 class="font-semibold">Ubicación</h4>
+                                <h4 class="font-semibold" data-i18n="about.location_label">Ubicación</h4>
                             </div>
-                            <p class="text-text-secondary-light dark:text-text-secondary-dark">Buenos Aires, Argentina
+                            <p class="text-text-secondary-light dark:text-text-secondary-dark" data-i18n="about.location_value">Buenos Aires, Argentina
                             </p>
                         </div>
 
@@ -564,19 +576,20 @@
                             <div class="flex items-center mb-3">
                                 <i
                                     class="fas fa-graduation-cap text-secondary dark:text-secondary-dark text-xl mr-3"></i>
-                                <h4 class="font-semibold">Educación</h4>
+                                <h4 class="font-semibold" data-i18n="about.education_label">Educación</h4>
                             </div>
-                            <p class="text-text-secondary-light dark:text-text-secondary-dark">Ing. en Informática
+                            <p class="text-text-secondary-light dark:text-textsecondary-dark" data-i18n="about.education_value">Ing. en Informática
                                 (UNLaM)</p>
                         </div>
 
                         <div class="bg-card-light dark:bg-card-dark rounded-xl p-6 border border-border-light dark:border-border-dark hover-lift"
                             data-aos="fade-up" data-aos-delay="400">
                             <div class="flex items-center mb-3">
-                                <i class="fas fa-globe text-secondary dark:text-secondary-dark text-xl mr-3"></i>
-                                <h4 class="font-semibold">Idiomas</h4>
+                                <i
+                                    class="fas fa-globe text-secondary dark:text-secondary-dark text-xl mr-3"></i>
+                                <h4 class="font-semibold" data-i18n="about.languages_label">Idiomas</h4>
                             </div>
-                            <p class="text-text-secondary-light dark:text-text-secondary-dark">Español (Nativo), Inglés
+                            <p class="text-text-secondary-light dark:text-textsecondary-dark" data-i18n="about.languages_value">Español (Nativo), Inglés
                                 (B2)</p>
                         </div>
                     </div>
@@ -584,7 +597,7 @@
 
                 <!-- Visual Timeline -->
                 <div class="space-y-6" data-aos="fade-left">
-                    <h3 class="text-2xl font-semibold gradient-text mb-8">Mi Trayectoria</h3>
+                    <h3 class="text-2xl font-semibold gradient-text mb-8" data-i18n="about.timeline_title">Mi Trayectoria</h3>
 
                     <!-- Professional Photo -->
                     <div class="relative mb-8">
@@ -594,8 +607,8 @@
                         </div>
                         <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent rounded-2xl"></div>
                         <div class="absolute bottom-4 left-4 text-white">
-                            <p class="text-sm opacity-90">Mi workspace actual</p>
-                            <p class="font-semibold">DevOps & Full Stack Development</p>
+                            <p class="text-sm opacity-90" data-i18n="about.workspace_current">Mi workspace actual</p>
+                            <p class="font-semibold" data-i18n="about.workspace_role">DevOps & Full Stack Development</p>
                         </div>
                     </div>
 
@@ -615,16 +628,18 @@
                                     class="ml-10 bg-card-light dark:bg-card-dark rounded-xl p-6 border border-border-light dark:border-border-dark hover-lift">
                                     <div class="flex items-center gap-2 mb-2">
                                         <span
-                                            class="text-sm text-secondary dark:text-secondary-dark font-semibold bg-secondary/10 dark:bg-secondary-dark/10 px-2 py-1 rounded-full">
+                                            class="text-sm text-secondary dark:text-secondary-dark font-semibold bg-secondary/10 dark:bg-secondary-dark/10 px-2 py-1 rounded-full"
+                                            data-i18n="about.timeline.accusys.period">
                                             2024 - Actualidad
                                         </span>
                                         <span
-                                            class="text-xs bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 px-2 py-1 rounded-full">
+                                            class="text-xs bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 px-2 py-1 rounded-full"
+                                            data-i18n="about.timeline.current">
                                             Actual
                                         </span>
                                     </div>
-                                    <h4 class="text-lg font-semibold mt-1">DevOps Analyst - Accusys Technology</h4>
-                                    <p class="text-text-secondary-light dark:text-text-secondary-dark mt-2 text-sm">
+                                    <h4 class="text-lg font-semibold mt-1" data-i18n="about.timeline.accusys.title">DevOps Analyst - Accusys Technology</h4>
+                                    <p class="text-text-secondary-light dark:text-text-secondary-dark mt-2 text-sm" data-i18n="about.timeline.accusys.desc">
                                         Gestión de CI/CD, optimización de infraestructura y desarrollo de herramientas
                                         con React y NodeJS.
                                         Trabajo con Jenkins, Ansible, SonarQube y Git.
@@ -639,11 +654,12 @@
                                 <div
                                     class="ml-10 bg-card-light dark:bg-card-dark rounded-xl p-6 border border-border-light dark:border-border-dark hover-lift">
                                     <span
-                                        class="text-sm text-primary dark:text-primary-dark font-semibold bg-primary/10 dark:bg-primary-dark/10 px-2 py-1 rounded-full">
+                                        class="text-sm text-primary dark:text-primary-dark font-semibold bg-primary/10 dark:bg-primary-dark/10 px-2 py-1 rounded-full"
+                                        data-i18n="about.timeline.rdigital.period">
                                         2023 - 2024
                                     </span>
-                                    <h4 class="text-lg font-semibold mt-1">Full Stack Developer & DevOps Engineer - RDigital</h4>
-                                    <p class="text-text-secondary-light dark:text-text-secondary-dark mt-2 text-sm">
+                                    <h4 class="text-lg font-semibold mt-1" data-i18n="about.timeline.rdigital.title">Full Stack Developer & DevOps Engineer - RDigital</h4>
+                                    <p class="text-text-secondary-light dark:text-textsecondary-dark mt-2 text-sm" data-i18n="about.timeline.rdigital.desc">
                                         Desarrollo de e-commerces con NodeJS, React, NestJS y PostgreSQL.
                                         Despliegue con Docker-Compose y PM2 en servidores Linux. Implementación de
                                         CI/CD con GitHub Actions. Infraestructura en Hostinger y AWS.
@@ -658,12 +674,12 @@
                                 <div
                                     class="ml-10 bg-card-light dark:bg-card-dark rounded-xl p-6 border border-border-light dark:border-border-dark hover-lift">
                                     <span
-                                        class="text-sm text-secondary dark:text-secondary-dark font-semibold bg-secondary/10 dark:bg-secondary-dark/10 px-2 py-1 rounded-full">
+                                        class="text-sm text-secondary dark:text-secondary-dark font-semibold bg-secondary/10 dark:bg-secondary-dark/10 px-2 py-1 rounded-full"
+                                        data-i18n="about.timeline.municipal.period">
                                         2022 - 2023
                                     </span>
-                                    <h4 class="text-lg font-semibold mt-1">Admin. IT - Municipalidad Lomas de Zamora
-                                    </h4>
-                                    <p class="text-text-secondary-light dark:text-text-secondary-dark mt-2 text-sm">
+                                    <h4 class="text-lg font-semibold mt-1" data-i18n="about.timeline.municipal.title">Admin. IT - Municipalidad Lomas de Zamora</h4>
+                                    <p class="text-text-secondary-light dark:text-textsecondary-dark mt-2 text-sm" data-i18n="about.timeline.municipal.desc">
                                         Administración de servidores Windows/Linux, VPNs, virtualizadores y sistemas de
                                         seguridad.
                                     </p>
@@ -677,11 +693,12 @@
                                 <div
                                     class="ml-10 bg-card-light dark:bg-card-dark rounded-xl p-6 border border-border-light dark:border-border-dark hover-lift">
                                     <span
-                                        class="text-sm text-purple-500 font-semibold bg-purple-100 dark:bg-purple-900/30 px-2 py-1 rounded-full">
+                                        class="text-sm text-purple-500 font-semibold bg-purple-100 dark:bg-purple-900/30 px-2 py-1 rounded-full"
+                                        data-i18n="about.timeline.unlam.period">
                                         2022 - 2024
                                     </span>
-                                    <h4 class="text-lg font-semibold mt-1">Alumno Investigador - UNLaM</h4>
-                                    <p class="text-text-secondary-light dark:text-text-secondary-dark mt-2 text-sm">
+                                    <h4 class="text-lg font-semibold mt-1" data-i18n="about.timeline.unlam.title">Alumno Investigador - UNLaM</h4>
+                                    <p class="text-text-secondary-light dark:text-textsecondary-dark mt-2 text-sm" data-i18n="about.timeline.unlam.desc">
                                         Desarrollo de sistemas aeroespaciales, integración con Satnogs API y NASA
                                         OPENMCT.
                                     </p>
@@ -690,16 +707,14 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
     </section>
 
     <!-- Experience Section -->
     <section id="experience" class="py-20 bg-card-light dark:bg-card-dark">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16" data-aos="fade-up">
-                <h2 class="text-3xl sm:text-4xl font-bold gradient-text mb-4">Experiencia Profesional</h2>
-                <p class="text-lg text-text-secondary-light dark:text-text-secondary-dark max-w-2xl mx-auto">
+                <h2 class="text-3xl sm:text-4xl font-bold gradient-text mb-4" data-i18n="experience.title">Experiencia Profesional</h2>
+                <p class="text-lg text-text-secondary-light dark:text-textsecondary-dark max-w-2xl mx-auto" data-i18n="experience.subtitle">
                     Mi recorrido profesional en desarrollo de software, DevOps e Infraestructura IT
                 </p>
             </div>
@@ -717,7 +732,7 @@
                                     alt="Accusys Technology"
                                     class="w-24 h-24 rounded-xl object-cover mx-auto lg:mx-0 shadow-lg">
                                 <div
-                                    class="absolute -top-2 -right-2 bg-secondary dark:bg-secondary-dark text-white text-xs px-2 py-1 rounded-full font-semibold">
+                                    class="absolute -top-2 -right-2 bg-secondary dark:bg-secondary-dark text-white text-xs px-2 py-1 rounded-full font-semibold" data-i18n="experience.current">
                                     Actual
                                 </div>
                             </div>
@@ -727,21 +742,21 @@
                         <div class="lg:col-span-3">
                             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-4">
                                 <div>
-                                    <h3 class="text-2xl font-bold mb-2">DevOps Analyst</h3>
-                                    <p class="text-lg text-primary dark:text-primary-dark font-semibold">Accusys
+                                    <h3 class="text-2xl font-bold mb-2" data-i18n="experience.accusys_role">DevOps Analyst</h3>
+                                    <p class="text-lg text-primary dark:text-primary-dark font-semibold" data-i18n="experience.accusys_company">Accusys
                                         Technology</p>
-                                    <p class="text-text-secondary-light dark:text-text-secondary-dark text-sm">may. 2024
+                                    <p class="text-text-secondary-light dark:text-textsecondary-dark text-sm" data-i18n="experience.accusys_period">may. 2024
                                         - actualidad • Buenos Aires, Argentina • Híbrido</p>
                                 </div>
                                 <div class="mt-4 lg:mt-0">
                                     <span
-                                        class="bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 px-3 py-1 rounded-full text-sm font-semibold">
+                                        class="bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 px-3 py-1 rounded-full text-sm font-semibold" data-i18n="experience.full_time">
                                         Full Time
                                     </span>
                                 </div>
                             </div>
 
-                            <p class="text-text-secondary-light dark:text-text-secondary-dark mb-4 leading-relaxed">
+                            <p class="text-text-secondary-light dark:text-textsecondary-dark mb-4 leading-relaxed" data-i18n="experience.accusys_description">
                                 Como DevOps SSR gestiono procesos de <strong>Integración Continua (CI)</strong> y
                                 entrega continua (CD),
                                 optimizando la infraestructura y automatizando despliegues. También desarrollo
@@ -751,7 +766,7 @@
 
                             <div class="grid sm:grid-cols-2 gap-4 mb-4">
                                 <div>
-                                    <h5 class="font-semibold text-sm mb-2">Tecnologías principales:</h5>
+                                    <h5 class="font-semibold text-sm mb-2" data-i18n="experience.main_technologies">Tecnologías principales:</h5>
                                     <div class="flex flex-wrap gap-2">
                                         <span
                                             class="px-2 py-1 bg-primary/10 dark:bg-primary-dark/10 text-primary dark:text-primary-dark rounded-full text-xs">Jenkins</span>
@@ -766,12 +781,12 @@
                                     </div>
                                 </div>
                                 <div>
-                                    <h5 class="font-semibold text-sm mb-2">Responsabilidades:</h5>
+                                    <h5 class="font-semibold text-sm mb-2" data-i18n="experience.responsibilities">Responsabilidades:</h5>
                                     <ul
-                                        class="text-xs text-text-secondary-light dark:text-text-secondary-dark space-y-1">
-                                        <li>• Gestión de pipelines CI/CD</li>
-                                        <li>• Desarrollo de herramientas de automatización</li>
-                                        <li>• Optimización de infraestructura</li>
+                                        class="text-xs text-text-secondary-light dark:text-textsecondary-dark space-y-1">
+                                        <li data-i18n="experience.cicd_management">• Gestión de pipelines CI/CD</li>
+                                        <li data-i18n="experience.automation_tools">• Desarrollo de herramientas de automatización</li>
+                                        <li data-i18n="experience.infrastructure_optimization">• Optimización de infraestructura</li>
                                     </ul>
                                 </div>
                             </div>
@@ -779,7 +794,7 @@
                             <a href="https://accusystechnology.com/" target="_blank"
                                 class="inline-flex items-center gap-2 text-primary dark:text-primary-dark hover:underline text-sm">
                                 <i class="fas fa-external-link-alt"></i>
-                                Ver empresa
+                                <span data-i18n="experience.view_company">Ver empresa</span>
                             </a>
                         </div>
                     </div>
@@ -794,21 +809,20 @@
                             <img src="/assets/images/rdigital.png"
                                 alt="RDigital" class="w-16 h-16 rounded-lg object-cover shadow-md">
                             <div class="flex-1">
-                                <h3 class="text-xl font-bold">Full Stack Developer / DevOps</h3>
-                                <p class="text-primary dark:text-primary-dark font-semibold">RDigital</p>
-                                <p class="text-sm text-text-secondary-light dark:text-text-secondary-dark">sept. 2023 -
+                                <h3 class="text-xl font-bold" data-i18n="experience.rdigital_role">Full Stack Developer / DevOps</h3>
+                                <p class="text-primary dark:text-primary-dark font-semibold" data-i18n="experience.rdigital_company">RDigital</p>
+                                <p class="text-sm text-text-secondary-light dark:text-textsecondary-dark" data-i18n="experience.rdigital_period">sept. 2023 -
                                     may. 2024</p>
                                 <span
-                                    class="inline-block bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 px-2 py-1 rounded-full text-xs mt-1">
+                                    class="inline-block bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 px-2 py-1 rounded-full text-xs mt-1"
+                                    data-i18n="experience.part_time">
                                     Part Time
                                 </span>
                             </div>
                         </div>
 
-                        <p class="text-text-secondary-light dark:text-text-secondary-dark mb-4 text-sm leading-relaxed">
-                            Desarrollo de software para e-commerces utilizando NodeJS, React, NestJS y PostgreSQL para RDigital.
-                            Mantenimiento de aplicaciones web, documentación, despliegue con Docker-Compose y hosting en AWS.
-                            Participación en los proyectos Dealshop y MarketFull.
+                        <p class="text-text-secondary-light dark:text-textsecondary-dark mb-4 text-sm leading-relaxed" data-i18n="experience.rdigital_description">
+                            Desarrollo completo de e-commerces B2B y B2C desde la concepción hasta el despliegue. Implementé arquitecturas escalables con NodeJS, React, NestJS y PostgreSQL. Gestión de infraestructura con Docker-Compose, PM2 y CI/CD con GitHub Actions.
                         </p>
 
                         <div class="flex flex-wrap gap-2 mb-4">
@@ -825,7 +839,7 @@
                         <a href="https://www.dealshop.com.ar/" target="_blank"
                             class="inline-flex items-center gap-2 text-secondary dark:text-secondary-dark hover:underline text-sm">
                             <i class="fas fa-external-link-alt"></i>
-                            Ver proyecto
+                            <span data-i18n="projects.view_project">Ver proyecto</span>
                         </a>
                     </div>
 
@@ -836,22 +850,20 @@
                             <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=80&h=80&fit=crop"
                                 alt="Municipalidad Lomas de Zamora" class="w-16 h-16 rounded-lg object-cover shadow-md">
                             <div class="flex-1">
-                                <h3 class="text-xl font-bold">Administrador de IT</h3>
-                                <p class="text-primary dark:text-primary-dark font-semibold">Municipalidad Lomas de
+                                <h3 class="text-xl font-bold" data-i18n="experience.municipal_role">Administrador de IT</h3>
+                                <p class="text-primary dark:text-primary-dark font-semibold" data-i18n="experience.municipal_company">Municipalidad Lomas de
                                     Zamora</p>
-                                <p class="text-sm text-text-secondary-light dark:text-text-secondary-dark">ago. 2022 -
+                                <p class="text-sm text-text-secondary-light dark:text-textsecondary-dark" data-i18n="experience.municipal_period">ago. 2022 -
                                     sept. 2023</p>
                                 <span
-                                    class="inline-block bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 px-2 py-1 rounded-full text-xs mt-1">
+                                    class="inline-block bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 px-2 py-1 rounded-full text-xs mt-1" data-i18n="experience.full_time">
                                     Full Time
                                 </span>
                             </div>
                         </div>
 
-                        <p class="text-text-secondary-light dark:text-text-secondary-dark mb-4 text-sm leading-relaxed">
-                            Responsable de administrar y mantener servidores Windows/Linux, VPNs, virtualizadores,
-                            aplicaciones web,
-                            controladores de dominio, sistemas de cámaras e infraestructura de red.
+                        <p class="text-text-secondary-light dark:text-textsecondary-dark mb-4 text-sm leading-relaxed" data-i18n="experience.municipal_description">
+                            Administración integral de infraestructura IT municipal. Gestión de servidores Windows/Linux, implementación de VPNs corporativas, administración de virtualizadores VMware y sistemas de seguridad perimetral.
                         </p>
 
                         <div class="flex flex-wrap gap-2 mb-4">
@@ -884,365 +896,60 @@
                         <div class="lg:col-span-3">
                             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-4">
                                 <div>
-                                    <h3 class="text-2xl font-bold mb-2">Estudiante Investigador</h3>
-                                    <p class="text-lg text-primary dark:text-primary-dark font-semibold">Universidad
+                                    <h3 class="text-2xl font-bold mb-2" data-i18n="experience.unlam_role">Estudiante Investigador</h3>
+                                    <p class="text-lg text-primary dark:text-primary-dark font-semibold" data-i18n="experience.unlam_company">Universidad
                                         Nacional de La Matanza - GIDSA</p>
-                                    <p class="text-text-secondary-light dark:text-text-secondary-dark text-sm">mar. 2022
+                                    <p class="text-text-secondary-light dark:text-textsecondary-dark text-sm" data-i18n="experience.unlam_period">mar. 2022
                                         - mar. 2024 • Buenos Aires, Argentina • Híbrido</p>
                                 </div>
                                 <div class="mt-4 lg:mt-0">
                                     <span
-                                        class="bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 px-3 py-1 rounded-full text-sm font-semibold">
+                                        class="bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 px-3 py-1 rounded-full text-sm font-semibold"
+                                        data-i18n="experience.research_badge">
                                         Investigación
                                     </span>
                                 </div>
                             </div>
 
-                            <p class="text-text-secondary-light dark:text-text-secondary-dark leading-relaxed mb-4">
-                                Trabajé en la integración en tiempo real de <strong>Unlam Ground Segment (UGS)</strong>
-                                mediante websockets.
-                                Realizamos pruebas de estrés en nuestra tecnología de backend para confirmar su
-                                viabilidad y entender nuestros límites.
-                                Además, colaboramos en la integración con la API de la red Satnogs y la actualización de
-                                la integración con NASA OPENMCT.
+                            <p class="text-text-secondary-light dark:text-textsecondary-dark leading-relaxed mb-4" data-i18n="experience.unlam_description">
+                                Desarrollo de sistemas de telemetría y control para aplicaciones aeroespaciales. Integración con APIs de Satnogs y NASA OPENMCT para monitoreo de satélites. Implementación de protocolos de comunicación espacial.
                             </p>
 
                             <div class="grid sm:grid-cols-2 gap-4">
                                 <div>
-                                    <h5 class="font-semibold text-sm mb-2">Tecnologías de investigación:</h5>
+                                    <h5 class="font-semibold text-sm mb-2" data-i18n="experience.research_technologies">Tecnologías de investigación:</h5>
                                     <div class="flex flex-wrap gap-2">
                                         <span
-                                            class="px-2 py-1 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-full text-xs">WebSockets</span>
+                                            class="px-2 py-1 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-full text-sm">WebSockets</span>
                                         <span
-                                            class="px-2 py-1 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-full text-xs">NASA
+                                            class="px-2 py-1 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-full text-sm">NASA
                                             OPENMCT</span>
                                         <span
-                                            class="px-2 py-1 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-full text-xs">Satnogs
+                                            class="px-2 py-1 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-full text-sm">Satnogs
                                             API</span>
                                     </div>
                                 </div>
                                 <div>
-                                    <h5 class="font-semibold text-sm mb-2">Logros:</h5>
+                                    <h5 class="font-semibold text-sm mb-2" data-i18n="experience.achievements">Logros:</h5>
                                     <ul
-                                        class="text-xs text-text-secondary-light dark:text-text-secondary-dark space-y-1">
-                                        <li>• Integración tiempo real exitosa</li>
-                                        <li>• Pruebas de estrés completadas</li>
-                                        <li>• Colaboración internacional</li>
+                                        class="text-xs text-text-secondary-light dark:text-textsecondary-dark space-y-1">
+                                        <li data-i18n="experience.realtime_integration">• Integración tiempo real exitosa</li>
+                                        <li data-i18n="experience.stress_tests">• Pruebas de estrés completadas</li>
+                                        <li data-i18n="experience.international_collaboration">• Colaboración internacional</li>
                                     </ul>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Skills Section -->
-    <section id="skills" class="py-20">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16" data-aos="fade-up">
-                <h2 class="text-3xl sm:text-4xl font-bold gradient-text mb-4">Habilidades Técnicas</h2>
-                <p class="text-lg text-text-secondary-light dark:text-text-secondary-dark max-w-2xl mx-auto">
-                    Tecnologías y herramientas que domino para crear soluciones robustas y escalables
-                </p>
-            </div>
-
-            <!-- Skills Categories -->
-            <div class="grid lg:grid-cols-2 gap-12">
-                <!-- Frontend Skills -->
-                <div class="space-y-8" data-aos="fade-right">
-                    <div
-                        class="bg-card-light dark:bg-card-dark rounded-2xl p-8 border border-border-light dark:border-border-dark hover-lift">
-                        <div class="flex items-center mb-6">
-                            <i class="fas fa-laptop-code text-3xl text-primary dark:text-primary-dark mr-4"></i>
-                            <h3 class="text-2xl font-bold gradient-text">Frontend</h3>
-                        </div>
-
-                        <div class="space-y-4">
-                            <div class="skill-item">
-                                <div class="flex justify-between items-center mb-2">
-                                    <span class="font-semibold">React / Next.js</span>
-                                    <span
-                                        class="text-sm text-text-secondary-light dark:text-text-secondary-dark">Advanced</span>
-                                </div>
-                                <div class="w-full bg-border-light dark:bg-border-dark rounded-full h-2">
-                                    <div class="bg-gradient-to-r from-primary to-secondary h-2 rounded-full"
-                                        style="width: 90%"></div>
-                                </div>
-                            </div>
-
-                            <div class="skill-item">
-                                <div class="flex justify-between items-center mb-2">
-                                    <span class="font-semibold">TypeScript</span>
-                                    <span
-                                        class="text-sm text-text-secondary-light dark:text-text-secondary-dark">Advanced</span>
-                                </div>
-                                <div class="w-full bg-border-light dark:bg-border-dark rounded-full h-2">
-                                    <div class="bg-gradient-to-r from-primary to-secondary h-2 rounded-full"
-                                        style="width: 85%"></div>
-                                </div>
-                            </div>
-
-                            <div class="skill-item">
-                                <div class="flex justify-between items-center mb-2">
-                                    <span class="font-semibold">HTML5 / CSS3</span>
-                                    <span
-                                        class="text-sm text-text-secondary-light dark:text-text-secondary-dark">Expert</span>
-                                </div>
-                                <div class="w-full bg-border-light dark:bg-border-dark rounded-full h-2">
-                                    <div class="bg-gradient-to-r from-primary to-secondary h-2 rounded-full"
-                                        style="width: 95%"></div>
-                                </div>
-                            </div>
-
-                            <div class="skill-item">
-                                <div class="flex justify-between items-center mb-2">
-                                    <span class="font-semibold">Tailwind CSS</span>
-                                    <span
-                                        class="text-sm text-text-secondary-light dark:text-text-secondary-dark">Advanced</span>
-                                </div>
-                                <div class="w-full bg-border-light dark:bg-border-dark rounded-full h-2">
-                                    <div class="bg-gradient-to-r from-primary to-secondary h-2 rounded-full"
-                                        style="width: 88%"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="flex flex-wrap gap-2 mt-6">
-                            <span
-                                class="px-3 py-1 bg-primary/10 dark:bg-primary-dark/10 text-primary dark:text-primary-dark rounded-full text-sm">JavaScript</span>
-                            <span
-                                class="px-3 py-1 bg-primary/10 dark:bg-primary-dark/10 text-primary dark:text-primary-dark rounded-full text-sm">Material-UI</span>
-                            <span
-                                class="px-3 py-1 bg-primary/10 dark:bg-primary-dark/10 text-primary dark:text-primary-dark rounded-full text-sm">Bootstrap</span>
-                            <span
-                                class="px-3 py-1 bg-primary/10 dark:bg-primary-dark/10 text-primary dark:text-primary-dark rounded-full text-sm">Angular</span>
-                        </div>
-                    </div>
-
-                    <!-- DevOps Skills -->
-                    <div
-                        class="bg-card-light dark:bg-card-dark rounded-2xl p-8 border border-border-light dark:border-border-dark hover-lift">
-                        <div class="flex items-center mb-6">
-                            <i class="fas fa-cogs text-3xl text-secondary dark:text-secondary-dark mr-4"></i>
-                            <h3 class="text-2xl font-bold gradient-text">DevOps</h3>
-                        </div>
-
-                        <div class="space-y-4">
-                            <div class="skill-item">
-                                <div class="flex justify-between items-center mb-2">
-                                    <span class="font-semibold">Docker / Kubernetes</span>
-                                    <span
-                                        class="text-sm text-text-secondary-light dark:text-text-secondary-dark">Advanced</span>
-                                </div>
-                                <div class="w-full bg-border-light dark:bg-border-dark rounded-full h-2">
-                                    <div class="bg-gradient-to-r from-secondary to-primary h-2 rounded-full"
-                                        style="width: 85%"></div>
-                                </div>
-                            </div>
-
-                            <div class="skill-item">
-                                <div class="flex justify-between items-center mb-2">
-                                    <span class="font-semibold">Jenkins / CI/CD</span>
-                                    <span
-                                        class="text-sm text-text-secondary-light dark:text-text-secondary-dark">Advanced</span>
-                                </div>
-                                <div class="w-full bg-border-light dark:bg-border-dark rounded-full h-2">
-                                    <div class="bg-gradient-to-r from-secondary to-primary h-2 rounded-full"
-                                        style="width: 90%"></div>
-                                </div>
-                            </div>
-
-                            <div class="skill-item">
-                                <div class="flex justify-between items-center mb-2">
-                                    <span class="font-semibold">Azure DevOps</span>
-                                    <span
-                                        class="text-sm text-text-secondary-light dark:text-text-secondary-dark">Intermediate</span>
-                                </div>
-                                <div class="w-full bg-border-light dark:bg-border-dark rounded-full h-2">
-                                    <div class="bg-gradient-to-r from-secondary to-primary h-2 rounded-full"
-                                        style="width: 75%"></div>
-                                </div>
-                            </div>
-
-                            <div class="skill-item">
-                                <div class="flex justify-between items-center mb-2">
-                                    <span class="font-semibold">Terraform</span>
-                                    <span
-                                        class="text-sm text-text-secondary-light dark:text-text-secondary-dark">Basic</span>
-                                </div>
-                                <div class="w-full bg-border-light dark:bg-border-dark rounded-full h-2">
-                                    <div class="bg-gradient-to-r from-secondary to-primary h-2 rounded-full"
-                                        style="width: 53%"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="flex flex-wrap gap-2 mt-6">
-                            <span
-                                class="px-3 py-1 bg-secondary/10 dark:bg-secondary-dark/10 text-secondary dark:text-secondary-dark rounded-full text-sm">Git</span>
-                            <span
-                                class="px-3 py-1 bg-secondary/10 dark:bg-secondary-dark/10 text-secondary dark:text-secondary-dark rounded-full text-sm">GitHub
-                                Actions</span>
-                            <span
-                                class="px-3 py-1 bg-secondary/10 dark:bg-secondary-dark/10 text-secondary dark:text-secondary-dark rounded-full text-sm">Nginx</span>
-                            <span
-                                class="px-3 py-1 bg-secondary/10 dark:bg-secondary-dark/10 text-secondary dark:text-secondary-dark rounded-full text-sm">SonarQube</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Backend Skills -->
-                <div class="space-y-8" data-aos="fade-left">
-                    <div
-                        class="bg-card-light dark:bg-card-dark rounded-2xl p-8 border border-border-light dark:border-border-dark hover-lift">
-                        <div class="flex items-center mb-6">
-                            <i class="fas fa-server text-3xl text-primary dark:text-primary-dark mr-4"></i>
-                            <h3 class="text-2xl font-bold gradient-text">Backend</h3>
-                        </div>
-
-                        <div class="space-y-4">
-                            <div class="skill-item">
-                                <div class="flex justify-between items-center mb-2">
-                                    <span class="font-semibold">Node.js / Express</span>
-                                    <span
-                                        class="text-sm text-text-secondary-light dark:text-text-secondary-dark">Advanced</span>
-                                </div>
-                                <div class="w-full bg-border-light dark:bg-border-dark rounded-full h-2">
-                                    <div class="bg-gradient-to-r from-primary to-secondary h-2 rounded-full"
-                                        style="width: 90%"></div>
-                                </div>
-                            </div>
-
-                            <div class="skill-item">
-                                <div class="flex justify-between items-center mb-2">
-                                    <span class="font-semibold">NestJS</span>
-                                    <span
-                                        class="text-sm text-text-secondary-light dark:text-text-secondary-dark">Advanced</span>
-                                </div>
-                                <div class="w-full bg-border-light dark:bg-border-dark rounded-full h-2">
-                                    <div class="bg-gradient-to-r from-primary to-secondary h-2 rounded-full"
-                                        style="width: 85%"></div>
-                                </div>
-                            </div>
-
-                            <div class="skill-item">
-                                <div class="flex justify-between items-center mb-2">
-                                    <span class="font-semibold">PostgreSQL</span>
-                                    <span
-                                        class="text-sm text-text-secondary-light dark:text-text-secondary-dark">Advanced</span>
-                                </div>
-                                <div class="w-full bg-border-light dark:bg-border-dark rounded-full h-2">
-                                    <div class="bg-gradient-to-r from-primary to-secondary h-2 rounded-full"
-                                        style="width: 88%"></div>
-                                </div>
-                            </div>
-
-                            <div class="skill-item">
-                                <div class="flex justify-between items-center mb-2">
-                                    <span class="font-semibold">API REST</span>
-                                    <span
-                                        class="text-sm text-text-secondary-light dark:text-text-secondary-dark">Expert</span>
-                                </div>
-                                <div class="w-full bg-border-light dark:bg-border-dark rounded-full h-2">
-                                    <div class="bg-gradient-to-r from-primary to-secondary h-2 rounded-full"
-                                        style="width: 95%"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="flex flex-wrap gap-2 mt-6">
-                            <span
-                                class="px-3 py-1 bg-primary/10 dark:bg-primary-dark/10 text-primary dark:text-primary-dark rounded-full text-sm">MySQL</span>
-                            <span
-                                class="px-3 py-1 bg-primary/10 dark:bg-primary-dark/10 text-primary dark:text-primary-dark rounded-full text-sm">MongoDB</span>
-                            <span
-                                class="px-3 py-1 bg-primary/10 dark:bg-primary-dark/10 text-primary dark:text-primary-dark rounded-full text-sm">Microservicios</span>
-                            <span
-                                class="px-3 py-1 bg-primary/10 dark:bg-primary-dark/10 text-primary dark:text-primary-dark rounded-full text-sm">Java</span>
-                        </div>
-                    </div>
-
-                    <!-- Infrastructure Skills -->
-                    <div
-                        class="bg-card-light dark:bg-card-dark rounded-2xl p-8 border border-border-light dark:border-border-dark hover-lift">
-                        <div class="flex items-center mb-6">
-                            <i class="fas fa-network-wired text-3xl text-secondary dark:text-secondary-dark mr-4"></i>
-                            <h3 class="text-2xl font-bold gradient-text">Infraestructura</h3>
-                        </div>
-
-                        <div class="space-y-4">
-                            <div class="skill-item">
-                                <div class="flex justify-between items-center mb-2">
-                                    <span class="font-semibold">Linux / Windows Server</span>
-                                    <span
-                                        class="text-sm text-text-secondary-light dark:text-text-secondary-dark">Advanced</span>
-                                </div>
-                                <div class="w-full bg-border-light dark:bg-border-dark rounded-full h-2">
-                                    <div class="bg-gradient-to-r from-secondary to-primary h-2 rounded-full"
-                                        style="width: 90%"></div>
-                                </div>
-                            </div>
-
-                            <div class="skill-item">
-                                <div class="flex justify-between items-center mb-2">
-                                    <span class="font-semibold">Virtualización</span>
-                                    <span
-                                        class="text-sm text-text-secondary-light dark:text-text-secondary-dark">Advanced</span>
-                                </div>
-                                <div class="w-full bg-border-light dark:bg-border-dark rounded-full h-2">
-                                    <div class="bg-gradient-to-r from-secondary to-primary h-2 rounded-full"
-                                        style="width: 85%"></div>
-                                </div>
-                            </div>
-
-                            <div class="skill-item">
-                                <div class="flex justify-between items-center mb-2">
-                                    <span class="font-semibold">Redes / VPN</span>
-                                    <span
-                                        class="text-sm text-text-secondary-light dark:text-text-secondary-dark">Intermediate</span>
-                                </div>
-                                <div class="w-full bg-border-light dark:bg-border-dark rounded-full h-2">
-                                    <div class="bg-gradient-to-r from-secondary to-primary h-2 rounded-full"
-                                        style="width: 75%"></div>
-                                </div>
-                            </div>
-
-                            <div class="skill-item">
-                                <div class="flex justify-between items-center mb-2">
-                                    <span class="font-semibold">Controladores de Dominio</span>
-                                    <span
-                                        class="text-sm text-text-secondary-light dark:text-text-secondary-dark">Intermediate</span>
-                                </div>
-                                <div class="w-full bg-border-light dark:bg-border-dark rounded-full h-2">
-                                    <div class="bg-gradient-to-r from-secondary to-primary h-2 rounded-full"
-                                        style="width: 78%"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="flex flex-wrap gap-2 mt-6">
-                            <span
-                                class="px-3 py-1 bg-secondary/10 dark:bg-secondary-dark/10 text-secondary dark:text-secondary-dark rounded-full text-sm">VMware</span>
-                            <span
-                                class="px-3 py-1 bg-secondary/10 dark:bg-secondary-dark/10 text-secondary dark:text-secondary-dark rounded-full text-sm">VirtualBox</span>
-                            <span
-                                class="px-3 py-1 bg-secondary/10 dark:bg-secondary-dark/10 text-secondary dark:text-secondary-dark rounded-full text-sm">Active
-                                Directory</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
     </section>
 
     <!-- Projects Section -->
     <section id="projects" class="py-20 bg-card-light dark:bg-card-dark">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16" data-aos="fade-up">
-                <h2 class="text-3xl sm:text-4xl font-bold gradient-text mb-4">Proyectos Destacados</h2>
-                <p class="text-lg text-text-secondary-light dark:text-text-secondary-dark max-w-2xl mx-auto">
+                <h2 class="text-3xl sm:text-4xl font-bold gradient-text mb-4" data-i18n="projects.title">Proyectos Destacados</h2>
+                <p class="text-lg text-text-secondary-light dark:text-text-secondary-dark max-w-2xl mx-auto" data-i18n="projects.subtitle">
                     Algunos de los proyectos más importantes en los que he trabajado
                 </p>
             </div>
@@ -1250,29 +957,27 @@
             <!-- Project Tabs -->
             <div class="flex justify-center mb-12" data-aos="fade-up">
                 <div class="w-full max-w-lg">
-                    
-                    <!-- Tab Buttons Container -->
                     <div class="bg-bg-light dark:bg-bg-dark rounded-xl p-1.5 border border-border-light dark:border-border-dark shadow-lg">
                         <div class="grid grid-cols-3 gap-1">
                             <button class="project-tab active px-3 py-3 sm:px-4 sm:py-3 rounded-lg font-semibold transition-all duration-300 text-sm sm:text-base hover:scale-105 active:scale-95"
                                 data-tab="professional">
                                 <div class="flex flex-col items-center gap-1">
                                     <i class="fas fa-briefcase text-lg"></i>
-                                    <span>Profesionales</span>
+                                    <span data-i18n="projects.tabs.professional">Profesionales</span>
                                 </div>
                             </button>
                             <button class="project-tab px-3 py-3 sm:px-4 sm:py-3 rounded-lg font-semibold transition-all duration-300 text-sm sm:text-base hover:scale-105 active:scale-95"
                                 data-tab="personal">
                                 <div class="flex flex-col items-center gap-1">
                                     <i class="fas fa-user text-lg"></i>
-                                    <span>Personales</span>
+                                    <span data-i18n="projects.tabs.personal">Personales</span>
                                 </div>
                             </button>
                             <button class="project-tab px-3 py-3 sm:px-4 sm:py-3 rounded-lg font-semibold transition-all duration-300 text-sm sm:text-base hover:scale-105 active:scale-95"
                                 data-tab="research">
                                 <div class="flex flex-col items-center gap-1">
                                     <i class="fas fa-flask text-lg"></i>
-                                    <span>Investigación</span>
+                                    <span data-i18n="projects.tabs.research">Investigación</span>
                                 </div>
                             </button>
                         </div>
@@ -1285,28 +990,23 @@
                 <div class="grid lg:grid-cols-2 gap-8">
 
                     <!-- CI/CD Automation -->
-                    <div class="bg-bg-light dark:bg-bg-dark rounded-2xl overflow-hidden border border-border-light dark:border-border-dark hover-lift"
-                        data-aos="fade-up" data-aos-delay="250">
+                    <div class="bg-bg-light dark:bg-bg-dark rounded-2xl overflow-hidden border border-border-light dark:border-border-dark hover-lift" data-aos="fade-up" data-aos-delay="250">
                         <div class="h-48 relative overflow-hidden">
-                            <img src="https://images.unsplash.com/photo-1518432031352-d6fc5c10da5a?w=600&h=300&fit=crop"
-                                alt="Sistema CI/CD"
-                                class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
+                            <img src="https://images.unsplash.com/photo-1518432031352-d6fc5c10da5a?w=600&h=300&fit=crop" alt="Sistema CI/CD" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
                             <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
                             <div class="absolute top-4 right-4 bg-white/20 backdrop-blur-sm rounded-lg px-3 py-1">
-                                <span class="text-white text-sm font-semibold">Infraestructura Privada</span>
+                                <span class="text-white text-sm font-semibold" data-i18n="projects.cicd.badge">Infraestructura Privada</span>
                             </div>
                             <div class="absolute bottom-4 left-4 text-white">
-                                <h4 class="font-semibold">CI/CD Pipeline</h4>
-                                <p class="text-sm opacity-90">Automatización de despliegues</p>
+                                <h4 class="font-semibold" data-i18n="projects.cicd.overlay_title">CI/CD Pipeline</h4>
+                                <p class="text-sm opacity-90" data-i18n="projects.cicd.overlay_sub">Automatización de despliegues</p>
                             </div>
                         </div>
                         <div class="p-8">
-                            <h3 class="text-2xl font-bold mb-3">Sistema CI/CD Automatizado</h3>
-                            <p class="text-text-secondary-light dark:text-text-secondary-dark mb-4">
-                                Implementación de pipeline CI/CD completo con Jenkins, Ansible y SonarQube para
-                                infraestructura empresarial privada.
-                                Automatización de despliegues, gestión de artefactos y monitoreo de calidad de código en
-                                entorno corporativo.
+                            <h3 class="text-2xl font-bold mb-3" data-i18n="projects.cicd.title">Sistema CI/CD Automatizado</h3>
+                            <p class="text-text-secondary-light dark:text-text-secondary-dark mb-4" data-i18n="projects.cicd.desc">
+                                Implementación de pipeline CI/CD completo con Jenkins, Ansible y SonarQube para infraestructura empresarial privada.
+                                Automatización de despliegues, gestión de artefactos y monitoreo de calidad de código en entorno corporativo.
                             </p>
                             <div class="flex flex-wrap gap-2 mb-6">
                                 <span
@@ -1319,13 +1019,11 @@
                                     class="px-3 py-1 bg-secondary/10 dark:bg-secondary-dark/10 text-secondary dark:text-secondary-dark rounded-full text-sm">Docker</span>
                             </div>
                             <div class="flex space-x-4">
-                                <button
-                                    class="flex-1 bg-secondary dark:bg-secondary-dark text-white px-4 py-2 rounded-lg font-semibold transition-colors duration-300 cursor-not-allowed opacity-75">
+                                <button class="flex-1 bg-secondary dark:bg-secondary-dark text-white px-4 py-2 rounded-lg font-semibold transition-colors duration-300 cursor-not-allowed opacity-75">
                                     <i class="fas fa-lock mr-2"></i>
-                                    Infraestructura Privada
+                                    <span data-i18n="projects.cicd.private_infra">Infraestructura Privada</span>
                                 </button>
-                                <button
-                                    class="bg-border-light dark:bg-border-dark text-text-primary-light dark:text-text-primary-dark px-4 py-2 rounded-lg font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-300">
+                                <button class="bg-border-light dark:bg-border-dark text-text-primary-light dark:text-text-primary-dark px-4 py-2 rounded-lg font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-300">
                                     <i class="fas fa-cog"></i>
                                 </button>
                             </div>
@@ -1333,27 +1031,22 @@
                     </div>
 
                     <!-- EasySync - Internal Tool -->
-                    <div class="bg-bg-light dark:bg-bg-dark rounded-2xl overflow-hidden border border-border-light dark:border-border-dark hover-lift"
-                        data-aos="fade-up" data-aos-delay="400">
+                    <div class="bg-bg-light dark:bg-bg-dark rounded-2xl overflow-hidden border border-border-light dark:border-border-dark hover-lift" data-aos="fade-up" data-aos-delay="400">
                         <div class="h-48 relative overflow-hidden">
-                            <img src="assets/images/easysync.png" alt="EasySync Sistema de Gestión"
-                                class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
+                            <img src="assets/images/easysync.png" alt="EasySync Sistema de Gestión" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
                             <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
                             <div class="absolute top-4 right-4 bg-white/20 backdrop-blur-sm rounded-lg px-3 py-1">
-                                <span class="text-white text-sm font-semibold">Herramienta Interna</span>
+                                <span class="text-white text-sm font-semibold" data-i18n="projects.easysync.badge">Herramienta Interna</span>
                             </div>
                             <div class="absolute bottom-4 left-4 text-white">
-                                <h4 class="font-semibold">EasySync</h4>
-                                <p class="text-sm opacity-90">Sistema de gestión de releases automatizado</p>
+                                <h4 class="font-semibold" data-i18n="projects.easysync.overlay_title">EasySync</h4>
+                                <p class="text-sm opacity-90" data-i18n="projects.easysync.overlay_sub">Sistema de gestión de releases automatizado</p>
                             </div>
                         </div>
                         <div class="p-8">
-                            <h3 class="text-2xl font-bold mb-3">EasySync - Gestión de Releases</h3>
-                            <p class="text-text-secondary-light dark:text-text-secondary-dark mb-4">
-                                Aplicación web completa para la gestión automatizada de artefactos y releases. Sistema
-                                de publicación,
-                                distribución y notificación de versiones con interfaz moderna React y backend Node.js
-                                robusto.
+                            <h3 class="text-2xl font-bold mb-3" data-i18n="projects.easysync.title">EasySync - Gestión de Releases</h3>
+                            <p class="text-text-secondary-light dark:text-text-secondary-dark mb-4" data-i18n="projects.easysync.desc">
+                                Aplicación web completa para la gestión automatizada de artefactos y releases. Sistema de publicación, distribución y notificación de versiones con interfaz moderna React y backend Node.js robusto.
                             </p>
 
                             <div class="flex flex-wrap gap-2 mb-6">
@@ -1374,41 +1067,34 @@
                                     Integration</span>
                             </div>
                             <div class="flex space-x-4">
-                                <button
-                                    class="flex-1 bg-purple-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-purple-600 transition-colors duration-300 cursor-not-allowed opacity-75">
+                                <button class="flex-1 bg-purple-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-purple-600 transition-colors duration-300 cursor-not-allowed opacity-75">
                                     <i class="fas fa-lock mr-2"></i>
-                                    Herramienta Interna
+                                    <span data-i18n="projects.easysync.internal_tool">Herramienta Interna</span>
                                 </button>
-                                <button
-                                    class="bg-border-light dark:bg-border-dark text-text-primary-light dark:text-text-primary-dark px-4 py-2 rounded-lg font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-300">
+                                <button class="bg-border-light dark:bg-border-dark text-text-primary-light dark:text-text-primary-dark px-4 py-2 rounded-lg font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-300">
                                     <i class="fas fa-tools"></i>
                                 </button>
                             </div>
                         </div>
                     </div>
 
-                    <!-- E-commerce Platform -->
-                    <div class="bg-bg-light dark:bg-bg-dark rounded-2xl overflow-hidden border border-border-light dark:border-border-dark hover-lift"
-                        data-aos="fade-up" data-aos-delay="100">
+                    <!-- E-commerce Platform (Dealshop) -->
+                    <div class="bg-bg-light dark:bg-bg-dark rounded-2xl overflow-hidden border border-border-light dark:border-border-dark hover-lift" data-aos="fade-up" data-aos-delay="100">
                         <div class="h-48 relative overflow-hidden">
-                            <img src="assets/images/dealshop.png" alt="Plataforma E-commerce"
-                                class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
+                            <img src="assets/images/dealshop.png" alt="Plataforma E-commerce" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
                             <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
                             <div class="absolute top-4 right-4 bg-white/20 backdrop-blur-sm rounded-lg px-3 py-1">
-                                <span class="text-white text-sm font-semibold">E-commerce</span>
+                                <span class="text-white text-sm font-semibold" data-i18n="projects.common.badge_ecommerce">E-commerce</span>
                             </div>
                             <div class="absolute bottom-4 left-4 text-white">
-                                <h4 class="font-semibold">Dealshop Platform</h4>
-                                <p class="text-sm opacity-90">Plataforma de comercio electrónico</p>
+                                <h4 class="font-semibold" data-i18n="projects.dealshop.overlay_title">Dealshop Platform</h4>
+                                <p class="text-sm opacity-90" data-i18n="projects.common.overlay_sub_ecommerce">Plataforma de comercio electrónico</p>
                             </div>
                         </div>
                         <div class="p-8">
-                            <h3 class="text-2xl font-bold mb-3">Plataforma E-commerce</h3>
-                            <p class="text-text-secondary-light dark:text-text-secondary-dark mb-4">
-                                Desarrollo y Mantenimiento de plataforma e-commerce con React, NodeJS, NestJS y
-                                PostgreSQL.
-                                Implementación de CI/CD con Docker-Compose y despliegue en Hostinger con documentación
-                                completa.
+                            <h3 class="text-2xl font-bold mb-3" data-i18n="projects.dealshop.title">Plataforma E-commerce</h3>
+                            <p class="text-text-secondary-light dark:text-text-secondary-dark mb-4" data-i18n="projects.dealshop.desc">
+                                Desarrollo y Mantenimiento de plataforma e-commerce con React, NodeJS, NestJS y PostgreSQL. Implementación de CI/CD con Docker-Compose y despliegue en Hostinger con documentación completa.
                             </p>
                             <div class="flex flex-wrap gap-2 mb-6">
                                 <span
@@ -1426,10 +1112,9 @@
                                 <a href="https://www.dealshop.com.ar/" target="_blank"
                                     class="flex-1 bg-primary dark:bg-primary-dark text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-600 dark:hover:bg-blue-400 transition-colors duration-300 text-center">
                                     <i class="fas fa-external-link-alt mr-2"></i>
-                                    Ver Sitio
+                                    <span data-i18n="projects.view_site">Ver Sitio</span>
                                 </a>
-                                <button
-                                    class="bg-border-light dark:bg-border-dark text-text-primary-light dark:text-text-primary-dark px-4 py-2 rounded-lg font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-300">
+                                <button class="bg-border-light dark:bg-border-dark text-text-primary-light dark:text-text-primary-dark px-4 py-2 rounded-lg font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-300">
                                     <i class="fas fa-shopping-cart"></i>
                                 </button>
                             </div>
@@ -1437,27 +1122,22 @@
                     </div>
 
                     <!-- MarketFull E-commerce -->
-                    <div class="bg-bg-light dark:bg-bg-dark rounded-2xl overflow-hidden border border-border-light dark:border-border-dark hover-lift"
-                        data-aos="fade-up" data-aos-delay="150">
+                    <div class="bg-bg-light dark:bg-bg-dark rounded-2xl overflow-hidden border border-border-light dark:border-border-dark hover-lift" data-aos="fade-up" data-aos-delay="150">
                         <div class="h-48 relative overflow-hidden">
-                            <img src="https://marketfull.com.ar/img/banner-home.png" alt="MarketFull E-commerce"
-                                class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
+                            <img src="https://marketfull.com.ar/img/banner-home.png" alt="MarketFull E-commerce" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
                             <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
                             <div class="absolute top-4 right-4 bg-white/20 backdrop-blur-sm rounded-lg px-3 py-1">
-                                <span class="text-white text-sm font-semibold">E-commerce</span>
+                                <span class="text-white text-sm font-semibold" data-i18n="projects.common.badge_ecommerce">E-commerce</span>
                             </div>
                             <div class="absolute bottom-4 left-4 text-white">
-                                <h4 class="font-semibold">MarketFull Platform</h4>
-                                <p class="text-sm opacity-90">Plataforma de comercio electrónico</p>
+                                <h4 class="font-semibold" data-i18n="projects.marketfull.overlay_title">MarketFull Platform</h4>
+                                <p class="text-sm opacity-90" data-i18n="projects.common.overlay_sub_ecommerce">Plataforma de comercio electrónico</p>
                             </div>
                         </div>
                         <div class="p-8">
-                            <h3 class="text-2xl font-bold mb-3">Plataforma E-commerce</h3>
-                            <p class="text-text-secondary-light dark:text-text-secondary-dark mb-4">
-                                Marketplace multi-vendedor desarrollado con arquitectura de microservicios. Sistema de
-                                gestión
-                                de inventario en tiempo real, pasarela de pagos integrada y panel administrativo
-                                avanzado con React y Node.js.
+                            <h3 class="text-2xl font-bold mb-3" data-i18n="projects.marketfull.title">Plataforma E-commerce</h3>
+                            <p class="text-text-secondary-light dark:text-text-secondary-dark mb-4" data-i18n="projects.marketfull.desc">
+                                Marketplace multi-vendedor desarrollado con arquitectura de microservicios. Sistema de gestión de inventario en tiempo real, pasarela de pagos integrada y panel administrativo avanzado con React y Node.js.
                             </p>
                             <div class="flex flex-wrap gap-2 mb-6">
                                 <span
@@ -1473,40 +1153,32 @@
                                 <a href="https://marketfull.com.ar/" target="_blank"
                                     class="flex-1 bg-green-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-green-600 transition-colors duration-300 text-center">
                                     <i class="fas fa-external-link-alt mr-2"></i>
-                                    Ver Sitio
+                                    <span data-i18n="projects.view_site">Ver Sitio</span>
                                 </a>
-                                <button
-                                    class="bg-border-light dark:bg-border-dark text-text-primary-light dark:text-text-primary-dark px-4 py-2 rounded-lg font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-300">
+                                <button class="bg-border-light dark:bg-border-dark text-text-primary-light dark:text-text-primary-dark px-4 py-2 rounded-lg font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-300">
                                     <i class="fas fa-shopping-cart"></i>
                                 </button>
                             </div>
                         </div>
                     </div>
 
-
                     <!-- Infrastructure Management -->
-                    <div class="bg-bg-light dark:bg-bg-dark rounded-2xl overflow-hidden border border-border-light dark:border-border-dark hover-lift"
-                        data-aos="fade-up" data-aos-delay="350">
+                    <div class="bg-bg-light dark:bg-bg-dark rounded-2xl overflow-hidden border border-border-light dark:border-border-dark hover-lift" data-aos="fade-up" data-aos-delay="350">
                         <div class="h-48 relative overflow-hidden">
-                            <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=600&h=300&fit=crop"
-                                alt="Gestión de Infraestructura"
-                                class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
+                            <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=600&h=300&fit=crop" alt="Gestión de Infraestructura" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
                             <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
                             <div class="absolute top-4 right-4 bg-white/20 backdrop-blur-sm rounded-lg px-3 py-1">
-                                <span class="text-white text-sm font-semibold">Red Gubernamental</span>
+                                <span class="text-white text-sm font-semibold" data-i18n="projects.infrastructure.badge">Red Gubernamental</span>
                             </div>
                             <div class="absolute bottom-4 left-4 text-white">
-                                <h4 class="font-semibold">Server Management</h4>
-                                <p class="text-sm opacity-90">Administración de infraestructura IT</p>
+                                <h4 class="font-semibold" data-i18n="projects.infrastructure.overlay_title">Server Management</h4>
+                                <p class="text-sm opacity-90" data-i18n="projects.infrastructure.overlay_sub">Administración de infraestructura IT</p>
                             </div>
                         </div>
                         <div class="p-8">
-                            <h3 class="text-2xl font-bold mb-3">Gestión de Infraestructura IT</h3>
-                            <p class="text-text-secondary-light dark:text-text-secondary-dark mb-4">
-                                Administración completa de infraestructura gubernamental: servidores Windows/Linux,
-                                VPNs, sistemas de virtualización,
-                                controladores de dominio y sistemas de monitoreo en red privada de la Municipalidad de
-                                Lomas de Zamora.
+                            <h3 class="text-2xl font-bold mb-3" data-i18n="projects.infrastructure.title">Gestión de Infraestructura IT</h3>
+                            <p class="text-text-secondary-light dark:text-text-secondary-dark mb-4" data-i18n="projects.infrastructure.desc">
+                                Administración completa de infraestructura gubernamental: servidores Windows/Linux, VPNs, sistemas de virtualización, controladores de dominio y sistemas de monitoreo en red privada de la Municipalidad de Lomas de Zamora.
                             </p>
                             <div class="flex flex-wrap gap-2 mb-6">
                                 <span
@@ -1521,13 +1193,11 @@
                                     Directory</span>
                             </div>
                             <div class="flex space-x-4">
-                                <button
-                                    class="flex-1 bg-blue-500 text-white px-4 py-2 rounded-lg font-semibold transition-colors duration-300 cursor-not-allowed opacity-75">
+                                <button class="flex-1 bg-blue-500 text-white px-4 py-2 rounded-lg font-semibold transition-colors duration-300 cursor-not-allowed opacity-75">
                                     <i class="fas fa-shield-alt mr-2"></i>
-                                    Red Gubernamental Privada
+                                    <span data-i18n="projects.infrastructure.private_network">Red Gubernamental Privada</span>
                                 </button>
-                                <button
-                                    class="bg-border-light dark:bg-border-dark text-text-primary-light dark:text-text-primary-dark px-4 py-2 rounded-lg font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-300">
+                                <button class="bg-border-light dark:bg-border-dark text-text-primary-light dark:text-text-primary-dark px-4 py-2 rounded-lg font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-300">
                                     <i class="fas fa-network-wired"></i>
                                 </button>
                             </div>
@@ -1541,25 +1211,22 @@
             <!-- Personal Projects -->
             <div id="personal-projects" class="project-content hidden">
                 <div class="grid lg:grid-cols-2 gap-8">
-                    <div class="bg-bg-light dark:bg-bg-dark rounded-2xl overflow-hidden border border-border-light dark:border-border-dark hover-lift"
-                        data-aos="fade-up">
+                    <div class="bg-bg-light dark:bg-bg-dark rounded-2xl overflow-hidden border border-border-light dark:border-border-dark hover-lift" data-aos="fade-up">
                         <div class="h-48 bg-gradient-to-br from-purple-500 to-pink-500 relative overflow-hidden">
-                            <img src="./assets/images/portfolio.png" alt="Smart Store - Tienda online inteligente"
-                                class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
+                            <img src="./assets/images/portfolio.png" alt="Portfolio" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
                             <div class="absolute inset-0 flex items-center justify-center">
                                 <i class="fas fa-globe text-6xl text-white opacity-20"></i>
                             </div>
                             <div class="absolute top-4 right-4 bg-white/20 backdrop-blur-sm rounded-lg px-3 py-1">
-                                <span class="text-white text-sm font-semibold">Portfolio</span>
+                                <span class="text-white text-sm font-semibold" data-i18n="projects.portfolio.badge">Portfolio</span>
                             </div>
                         </div>
                         <div class="p-8">
-                            <h3 class="text-2xl font-bold mb-3">Portfolio Personal</h3>
-                            <p class="text-text-secondary-light dark:text-text-secondary-dark mb-4">
-                                Portfolio web moderno con Tailwind CSS, modo oscuro, animaciones avanzadas y
-                                optimización SEO. Diseño responsive y performance optimizada.
+                            <h3 class="text-2xl font-bold mb-3" data-i18n="projects.portfolio.title">Portfolio Personal</h3>
+                            <p class="text-text-secondary-light dark:text-text-secondary-dark mb-4" data-i18n="projects.portfolio.desc">
+                                Portfolio web moderno con Tailwind CSS, modo oscuro, animaciones avanzadas y optimización SEO. Diseño responsive y performance optimizada.
                             </p>
-                            <div class="flex flex-wrap gap-2 mb-6">
+                                                        <div class="flex flex-wrap gap-2 mb-6">
                                 <span
                                     class="px-3 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded-full text-sm">HTML5</span>
                                 <span
@@ -1573,7 +1240,7 @@
                                 <a href="https://smansfeldg.github.io/" target="_blank"
                                     class="flex-1 bg-purple-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-purple-600 transition-colors duration-300 text-center">
                                     <i class="fas fa-external-link-alt mr-2"></i>
-                                    Ver Sitio
+                                    <span data-i18n="projects.view_site">Ver Sitio</span>
                                 </a>
                                 <a href="https://github.com/smansfeldg" target="_blank"
                                     class="bg-border-light dark:bg-border-dark text-text-primary-light dark:text-text-primary-dark px-4 py-2 rounded-lg font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-300">
@@ -1583,20 +1250,17 @@
                         </div>
                     </div>
 
-
-                    <div class="bg-bg-light dark:bg-bg-dark rounded-2xl overflow-hidden border border-border-light dark:border-border-dark hover-lift"
-                        data-aos="fade-up" data-aos-delay="200">
+                    <div class="bg-bg-light dark:bg-bg-dark rounded-2xl overflow-hidden border border-border-light dark:border-border-dark hover-lift" data-aos="fade-up" data-aos-delay="200">
                         <div class="h-48 relative overflow-hidden">
-                            <img src="./assets/images/tienda.png" alt="Smart Store - Tienda online inteligente"
-                                class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
+                            <img src="./assets/images/tienda.png" alt="Smart Store - Tienda online inteligente" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
                             <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
                             <div class="absolute top-4 right-4 bg-white/20 backdrop-blur-sm rounded-lg px-3 py-1">
-                                <span class="text-white text-sm font-semibold">E-commerce</span>
+                                <span class="text-white text-sm font-semibold" data-i18n="projects.common.badge_ecommerce">E-commerce</span>
                             </div>
                         </div>
                         <div class="p-8">
-                            <h3 class="text-2xl font-bold mb-3">Smart Store</h3>
-                            <p class="text-text-secondary-light dark:text-text-secondary-dark mb-4">
+                            <h3 class="text-2xl font-bold mb-3" data-i18n="projects.smartstore.title">Smart Store</h3>
+                            <p class="text-text-secondary-light dark:text-text-secondary-dark mb-4" data-i18n="projects.smartstore.desc">
                                 Tienda online inteligente con gestión de inventario en tiempo real. Los productos se actualizan automáticamente desde Google Sheets, ofreciendo una experiencia de compra fluida y moderna.
                             </p>
                             <div class="flex flex-wrap gap-2 mb-6">
@@ -1615,7 +1279,7 @@
                                 <a href="https://4b98bc0eb28b.ngrok-free.app/" target="_blank"
                                     class="flex-1 bg-green-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-green-600 transition-colors duration-300 text-center">
                                     <i class="fas fa-external-link-alt mr-2"></i>
-                                    Ver Demo
+                                    <span data-i18n="projects.view_demo">Ver Demo</span>
                                 </a>
                                 <a href="https://goo.su/uS8Pr" target="_blank"
                                     class="bg-border-light dark:bg-border-dark text-text-primary-light dark:text-text-primary-dark px-4 py-2 rounded-lg font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-300">
@@ -1630,19 +1294,16 @@
             <!-- Research Projects -->
             <div id="research-projects" class="project-content hidden">
                 <div class="max-w-4xl mx-auto">
-                    <div class="bg-bg-light dark:bg-bg-dark rounded-2xl overflow-hidden border border-border-light dark:border-border-dark hover-lift"
-                        data-aos="fade-up">
+                    <div class="bg-bg-light dark:bg-bg-dark rounded-2xl overflow-hidden border border-border-light dark:border-border-dark hover-lift" data-aos="fade-up">
                         <div class="h-64 relative overflow-hidden">
-                            <img src="https://images.unsplash.com/photo-1446776653964-20c1d3a81b06?w=800&h=400&fit=crop"
-                                alt="Sistemas satelitales"
-                                class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
+                            <img src="https://images.unsplash.com/photo-1446776653964-20c1d3a81b06?w=800&h=400&fit=crop" alt="Sistemas satelitales" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
                             <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
                             <div class="absolute top-4 right-4 bg-white/20 backdrop-blur-sm rounded-lg px-3 py-1">
-                                <span class="text-white text-sm font-semibold">Investigación Aeroespacial</span>
+                                <span class="text-white text-sm font-semibold" data-i18n="projects.research.badge">Investigación Aeroespacial</span>
                             </div>
                             <div class="absolute bottom-4 left-4 text-white">
-                                <h4 class="text-2xl font-bold mb-2">UNLaM Ground Segment (UGS)</h4>
-                                <p class="opacity-90">Sistemas de comunicación satelital en tiempo real</p>
+                                <h4 class="text-2xl font-bold mb-2" data-i18n="projects.research.ugs_title">UNLaM Ground Segment (UGS)</h4>
+                                <p class="opacity-90" data-i18n="projects.research.ugs_sub">Sistemas de comunicación satelital en tiempo real</p>
                             </div>
                         </div>
                         <div class="p-8">
@@ -1650,22 +1311,16 @@
                                 <div>
                                     <h4 class="font-semibold text-lg mb-4 flex items-center gap-2">
                                         <i class="fas fa-satellite text-primary dark:text-primary-dark"></i>
-                                        Sobre el Proyecto
+                                        <span data-i18n="projects.research.about_title">Sobre el Proyecto</span>
                                     </h4>
-                                    <p
-                                        class="text-text-secondary-light dark:text-text-secondary-dark mb-4 leading-relaxed">
-                                        Proyecto de investigación desarrollado en el GIDSA (Grupo de Investigación y
-                                        Desarrollo en Sistemas Aeroespaciales)
-                                        de la Universidad Nacional de La Matanza, enfocado en la integración en tiempo
-                                        real de sistemas de comunicación
-                                        satelital mediante tecnologías web modernas.
+                                    <p class="text-text-secondary-light dark:text-text-secondary-dark mb-4 leading-relaxed" data-i18n="projects.research.about_desc">
+                                        Proyecto de investigación desarrollado en el GIDSA (Grupo de Investigación y Desarrollo en Sistemas Aeroespaciales) de la Universidad Nacional de La Matanza, enfocado en la integración en tiempo real de sistemas de comunicación satelital mediante tecnologías web modernas.
                                     </p>
-                                    <div
-                                        class="bg-primary/5 dark:bg-primary-dark/5 rounded-lg p-4 border-l-4 border-primary dark:border-primary-dark">
+                                    <div class="bg-primary/5 dark:bg-primary-dark/5 rounded-lg p-4 border-l-4 border-primary dark:border-primary-dark">
                                         <p class="text-sm text-text-secondary-light dark:text-text-secondary-dark">
-                                            <strong>Período:</strong> Marzo 2022 - Marzo 2024<br>
-                                            <strong>Rol:</strong> Desarrollador de Software Aeroespacial<br>
-                                            <strong>Modalidad:</strong> Colaborador - Híbrido
+                                            <strong data-i18n="projects.research.period_label">Período:</strong> Marzo 2022 - Marzo 2024<br>
+                                            <strong data-i18n="projects.research.role_label">Rol:</strong> Desarrollador de Software Aeroespacial<br>
+                                            <strong data-i18n="projects.research.mode_label">Modalidad:</strong> Colaborador - Híbrido
                                         </p>
                                     </div>
                                 </div>
@@ -1673,28 +1328,24 @@
                                 <div>
                                     <h4 class="font-semibold text-lg mb-4 flex items-center gap-2">
                                         <i class="fas fa-rocket text-secondary dark:text-secondary-dark"></i>
-                                        Logros Principales
+                                        <span data-i18n="projects.research.achievements_title">Logros Principales</span>
                                     </h4>
-                                    <ul class="space-y-3 text-text-secondary-light dark:text-text-secondary-dark">
+                                    <ul class="space-y-3 text-text-secondary-light dark:text-textsecondary-dark">
                                         <li class="flex items-start gap-3">
-                                            <i
-                                                class="fas fa-check-circle text-secondary dark:text-secondary-dark mt-1 flex-shrink-0"></i>
-                                            <span>Integración exitosa en tiempo real mediante WebSockets</span>
+                                            <i class="fas fa-check-circle text-secondary dark:text-secondary-dark mt-1 flex-shrink-0"></i>
+                                            <span data-i18n="projects.research.achievements.ws_success">Integración exitosa en tiempo real mediante WebSockets</span>
                                         </li>
                                         <li class="flex items-start gap-3">
-                                            <i
-                                                class="fas fa-check-circle text-secondary dark:text-secondary-dark mt-1 flex-shrink-0"></i>
-                                            <span>Pruebas de estrés completadas en tecnología backend</span>
+                                            <i class="fas fa-check-circle text-secondary dark:text-secondary-dark mt-1 flex-shrink-0"></i>
+                                            <span data-i18n="projects.research.achievements.stress_tests">Pruebas de estrés completadas en tecnología backend</span>
                                         </li>
                                         <li class="flex items-start gap-3">
-                                            <i
-                                                class="fas fa-check-circle text-secondary dark:text-secondary-dark mt-1 flex-shrink-0"></i>
-                                            <span>Integración con API de red Satnogs</span>
+                                            <i class="fas fa-check-circle text-secondary dark:text-secondary-dark mt-1 flex-shrink-0"></i>
+                                            <span data-i18n="projects.research.achievements.satnogs">Integración con API de red Satnogs</span>
                                         </li>
                                         <li class="flex items-start gap-3">
-                                            <i
-                                                class="fas fa-check-circle text-secondary dark:text-secondary-dark mt-1 flex-shrink-0"></i>
-                                            <span>Actualización de integración con NASA OPENMCT</span>
+                                            <i class="fas fa-check-circle text-secondary dark:text-secondary-dark mt-1 flex-shrink-0"></i>
+                                            <span data-i18n="projects.research.achievements.openmct">Actualización de integración con NASA OPENMCT</span>
                                         </li>
                                     </ul>
                                 </div>
@@ -1704,12 +1355,11 @@
                             <div class="mb-8">
                                 <h4 class="font-semibold text-lg mb-4 flex items-center gap-2">
                                     <i class="fas fa-code text-primary dark:text-primary-dark"></i>
-                                    Tecnologías y Metodología
+                                    <span data-i18n="projects.research.tech_title">Tecnologías y Metodología</span>
                                 </h4>
                                 <div class="grid md:grid-cols-2 gap-6">
-                                    <div
-                                        class="bg-card-light dark:bg-card-dark rounded-lg p-4 border border-border-light dark:border-border-dark">
-                                        <h5 class="font-semibold mb-3">Stack Tecnológico</h5>
+                                    <div class="bg-card-light dark:bg-card-dark rounded-lg p-4 border border-border-light dark:border-border-dark">
+                                        <h5 class="font-semibold mb-3" data-i18n="projects.research.stack_title">Stack Tecnológico</h5>
                                         <div class="flex flex-wrap gap-2">
                                             <span
                                                 class="px-3 py-1 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-full text-sm">WebSockets</span>
@@ -1727,55 +1377,39 @@
                                         </div>
                                     </div>
 
-                                    <div
-                                        class="bg-card-light dark:bg-card-dark rounded-lg p-4 border border-border-light dark:border-border-dark">
-                                        <h5 class="font-semibold mb-3">Metodología de Trabajo</h5>
-                                        <ul
-                                            class="text-sm text-text-secondary-light dark:text-text-secondary-dark space-y-1">
-                                            <li>• Desarrollo ágil con sprints de 2 semanas</li>
-                                            <li>• Testing de carga y performance</li>
-                                            <li>• Documentación técnica detallada</li>
-                                            <li>• Colaboración con equipos internacionales</li>
+                                    <div class="bg-card-light dark:bg-card-dark rounded-lg p-4 border border-border-light dark:border-border-dark">
+                                        <h5 class="font-semibold mb-3" data-i18n="projects.research.method_title">Metodología de Trabajo</h5>
+                                        <ul class="text-sm text-text-secondary-light dark:text-text-secondary-dark space-y-1">
+                                            <li data-i18n="projects.research.method.agile">• Desarrollo ágil con sprints de 2 semanas</li>
+                                            <li data-i18n="projects.research.method.load_testing">• Testing de carga y performance</li>
+                                            <li data-i18n="projects.research.method.docs">• Documentación técnica detallada</li>
+                                            <li data-i18n="projects.research.method.collab">• Colaboración con equipos internacionales</li>
                                         </ul>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Project Impact -->
-                            <div
-                                class="bg-gradient-to-r from-primary/5 to-secondary/5 dark:from-primary-dark/5 dark:to-secondary-dark/5 rounded-xl p-6 border border-border-light dark:border-border-dark">
+                            <div class="bg-gradient-to-r from-primary/5 to-secondary/5 dark:from-primary-dark/5 dark:to-secondary-dark/5 rounded-xl p-6 border border-border-light dark:border-border-dark">
                                 <h4 class="font-semibold text-lg mb-3 flex items-center gap-2">
                                     <i class="fas fa-chart-line text-secondary dark:text-secondary-dark"></i>
-                                    Impacto del Proyecto
+                                    <span data-i18n="projects.research.impact_title">Impacto del Proyecto</span>
                                 </h4>
-                                <p class="text-text-secondary-light dark:text-text-secondary-dark leading-relaxed mb-4">
-                                    El proyecto UGS representa un avance significativo en la capacidad de Argentina para
-                                    el monitoreo
-                                    y control de satélites en tiempo real. Mi contribución se centró en el desarrollo
-                                    del backend,
-                                    implementación de comunicación WebSocket bidireccional, y la optimización del
-                                    rendimiento del sistema
-                                    para manejar múltiples conexiones simultáneas.
+                                <p class="text-text-secondary-light dark:text-textsecondary-dark leading-relaxed mb-4" data-i18n="projects.research.impact_desc">
+                                    El proyecto UGS representa un avance significativo en la capacidad de Argentina para el monitoreo y control de satélites en tiempo real. Mi contribución se centró en el desarrollo del backend, implementación de comunicación WebSocket bidireccional, y la optimización del rendimiento del sistema para manejar múltiples conexiones simultáneas.
                                 </p>
                                 <div class="grid sm:grid-cols-3 gap-4 text-center">
                                     <div>
-                                        <div class="text-2xl font-bold text-primary dark:text-primary-dark">100+</div>
-                                        <div class="text-sm text-text-secondary-light dark:text-text-secondary-dark">
-                                            Conexiones concurrentes</div>
+                                        <div class="text-2xl font-bold text-primary dark:text-primary-dark mb-1">100+</div>
+                                        <div class="text-sm text-text-secondary-light dark:text-textsecondary-dark" data-i18n="projects.research.metric_concurrent">Conexiones concurrentes</div>
                                     </div>
                                     <div>
-                                        <div class="text-2xl font-bold text-secondary dark:text-secondary-dark">24/7
-                                        </div>
-                                        <div class="text-sm text-text-secondary-light dark:text-text-secondary-dark">
-                                            Operación continua</div>
+                                        <div class="text-2xl font-bold text-secondary dark:text-secondary-dark mb-1">24/7</div>
+                                        <div class="text-sm text-text-secondary-light dark:text-textsecondary-dark" data-i18n="projects.research.metric_uptime">Operación continua</div>
                                     </div>
                                     <div>
-                                        <div class="text-2xl font-bold text-primary dark:text-primary-dark">
-                                            < 100ms</div>
-                                                <div
-                                                    class="text-sm text-text-secondary-light dark:text-text-secondary-dark">
-                                                    Latencia promedio</div>
-                                        </div>
+                                        <div class="text-2xl font-bold text-primary dark:text-primary-dark mb-1">< 100ms</div>
+                                        <div class="text-sm text-text-secondary-light dark:text-textsecondary-dark" data-i18n="projects.research.metric_latency">Latencia promedio</div>
                                     </div>
                                 </div>
 
@@ -1784,18 +1418,15 @@
                                     <a href="https://gidsa.unlam.edu.ar/" target="_blank"
                                         class="flex-1 bg-primary dark:bg-primary-dark text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-600 dark:hover:bg-blue-400 transition-colors duration-300 text-center">
                                         <i class="fas fa-external-link-alt mr-2"></i>
-                                        Visitar GIDSA
+                                        <span data-i18n="projects.research.visit_gidsa">Visitar GIDSA</span>
                                     </a>
-                                    <a href="https://reddi.unlam.edu.ar/index.php/ReDDi/article/download/192/351/"
-                                        target="_blank">
-                                        <button
-                                            class="flex-1 bg-secondary dark:bg-secondary-dark text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-600 dark:hover:bg-green-400 transition-colors duration-300">
+                                    <a href="https://reddi.unlam.edu.ar/index.php/ReDDi/article/download/192/351/" target="_blank">
+                                        <button class="flex-1 bg-secondary dark:bg-secondary-dark text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-600 dark:hover:bg-green-400 transition-colors duration-300">
                                             <i class="fas fa-file-alt mr-2"></i>
-                                            Ver Documentación
+                                            <span data-i18n="projects.research.view_docs">Ver Documentación</span>
                                         </button>
                                     </a>
-                                    <button
-                                        class="bg-border-light dark:bg-border-dark text-text-primary-light dark:text-text-primary-dark px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-300">
+                                    <button class="bg-border-light dark:bg-border-dark text-text-primary-light dark:text-text-primary-dark px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-300">
                                         <i class="fas fa-share-alt"></i>
                                     </button>
                                 </div>
@@ -1810,8 +1441,8 @@
     <section id="contact" class="py-20">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16" data-aos="fade-up">
-                <h2 class="text-3xl sm:text-4xl font-bold gradient-text mb-4">Trabajemos Juntos</h2>
-                <p class="text-lg text-text-secondary-light dark:text-text-secondary-dark max-w-2xl mx-auto">
+                <h2 class="text-3xl sm:text-4xl font-bold gradient-text mb-4" data-i18n="contact.title">Trabajemos Juntos</h2>
+                <p class="text-lg text-text-secondary-light dark:text-text-secondary-dark max-w-2xl mx-auto" data-i18n="contact.subtitle">
                     ¿Tienes un proyecto en mente? Me encantaría ayudarte a hacerlo realidad
                 </p>
             </div>
@@ -1819,9 +1450,8 @@
             <div class="grid lg:grid-cols-2 gap-12 items-start">
                 <!-- Contact Info -->
                 <div class="space-y-8" data-aos="fade-right">
-                    <div
-                        class="bg-card-light dark:bg-card-dark rounded-2xl p-8 border border-border-light dark:border-border-dark">
-                        <h3 class="text-2xl font-bold gradient-text mb-6">Información de Contacto</h3>
+                    <div class="bg-card-light dark:bg-card-dark rounded-2xl p-8 border border-border-light dark:border-border-dark">
+                        <h3 class="text-2xl font-bold gradient-text mb-6" data-i18n="contact.info.title">Información de Contacto</h3>
 
                         <div class="space-y-6">
                             <div class="flex items-center">
@@ -1830,9 +1460,8 @@
                                     <i class="fas fa-envelope text-primary dark:text-primary-dark text-xl"></i>
                                 </div>
                                 <div>
-                                    <h4 class="font-semibold">Email</h4>
-                                    <a href="mailto:santimansfeld@proton.me"
-                                        class="text-text-secondary-light dark:text-text-secondary-dark hover:text-primary dark:hover:text-primary-dark transition-colors duration-300">
+                                    <h4 class="font-semibold" data-i18n="contact.info.email_label">Email</h4>
+                                    <a href="mailto:santimansfeld@proton.me" class="text-text-secondary-light dark:text-text-secondary-dark hover:text-primary dark:hover:text-primary-dark transition-colors duration-300">
                                         santimansfeld@proton.me
                                     </a>
                                 </div>
@@ -1844,9 +1473,8 @@
                                     <i class="fas fa-phone text-secondary dark:text-secondary-dark text-xl"></i>
                                 </div>
                                 <div>
-                                    <h4 class="font-semibold">Teléfono</h4>
-                                    <a href="tel:+5491125415924"
-                                        class="text-text-secondary-light dark:text-text-secondary-dark hover:text-secondary dark:hover:text-secondary-dark transition-colors duration-300">
+                                    <h4 class="font-semibold" data-i18n="contact.info.phone_label">Teléfono</h4>
+                                    <a href="tel:+5491125415924" class="text-text-secondary-light dark:text-text-secondary-dark hover:text-secondary dark:hover:text-secondary-dark transition-colors duration-300">
                                         (+54)9 11 2541-5924
                                     </a>
                                 </div>
@@ -1858,10 +1486,8 @@
                                     <i class="fas fa-map-marker-alt text-primary dark:text-primary-dark text-xl"></i>
                                 </div>
                                 <div>
-                                    <h4 class="font-semibold">Ubicación</h4>
-                                    <p class="text-text-secondary-light dark:text-text-secondary-dark">
-                                        Buenos Aires, Argentina
-                                    </p>
+                                    <h4 class="font-semibold" data-i18n="contact.info.location_label">Ubicación</h4>
+                                    <p class="text-text-secondary-light dark:text-text-secondary-dark" data-i18n="contact.info.location_value">Buenos Aires, Argentina</p>
                                 </div>
                             </div>
 
@@ -1871,32 +1497,34 @@
                                     <i class="fas fa-clock text-secondary dark:text-secondary-dark text-xl"></i>
                                 </div>
                                 <div>
-                                    <h4 class="font-semibold">Disponibilidad</h4>
-                                    <p class="text-text-secondary-light dark:text-text-secondary-dark">
-                                        Lun - Vie: 9:00 - 18:00 (ART)
-                                    </p>
+                                    <h4 class="font-semibold" data-i18n="contact.info.availability_label">Disponibilidad</h4>
+                                    <p class="text-text-secondary-light dark:text-textsecondary-dark" data-i18n="contact.info.availability_value">Lun - Vie: 9:00 - 18:00 (ART)</p>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Social Links -->
                         <div class="mt-8 pt-8 border-t border-border-light dark:border-border-dark">
-                            <h4 class="font-semibold mb-4">Sígueme en</h4>
+                            <h4 class="font-semibold mb-4" data-i18n="contact.info.follow">Sígueme en</h4>
                             <div class="flex space-x-4">
                                 <a href="https://github.com/smansfeldg" target="_blank"
                                     class="w-10 h-10 bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center hover:bg-gray-900 dark:hover:bg-gray-700 transition-colors duration-300 group">
                                     <i
-                                        class="fab fa-github text-gray-600 dark:text-gray-400 group-hover:text-white"></i>
+                                        class="fab fa-github text-lg group-hover:text-white dark:group-hover:text-gray-900 transition-colors duration-300"></i>
                                 </a>
                                 <a href="https://www.linkedin.com/in/santiago-mansfeld/" target="_blank"
                                     class="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center hover:bg-blue-600 transition-colors duration-300 group">
                                     <i
-                                        class="fab fa-linkedin text-blue-600 dark:text-blue-400 group-hover:text-white"></i>
+                                        class="fab fa-linkedin text-lg group-hover:text-white transition-colors duration-300"></i>
                                 </a>
                                 <a href="mailto:santimansfeld@proton.me"
                                     class="w-10 h-10 bg-red-100 dark:bg-red-900/30 rounded-lg flex items-center justify-center hover:bg-red-600 transition-colors duration-300 group">
                                     <i
-                                        class="fas fa-envelope text-red-600 dark:text-red-400 group-hover:text-white"></i>
+                                        class="fas fa-envelope text-lg group-hover:text-white transition-colors duration-300"></i>
+                                </a>
+                                <a href="tel:+5491125415924"
+                                    class="w-10 h-10 bg-green-500/10 rounded-lg flex items-center justify-center hover:bg-green-600 transition-colors duration-300 group">
+                                    <i class="fas fa-phone text-lg group-hover:text-white transition-colors duration-300"></i>
                                 </a>
                             </div>
                         </div>
@@ -1904,45 +1532,43 @@
                 </div>
 
                 <!-- Contact Form -->
-                <div class="bg-card-light dark:bg-card-dark rounded-2xl p-8 border border-border-light dark:border-border-dark"
-                    data-aos="fade-left">
-                    <h3 class="text-2xl font-bold gradient-text mb-6">Envíame un Mensaje</h3>
+                <div class="bg-card-light dark:bg-card-dark rounded-2xl p-8 border border-border-light dark:border-border-dark" data-aos="fade-left">
+                    <h3 class="text-2xl font-bold gradient-text mb-6" data-i18n="contact.form.title">Envíame un Mensaje</h3>
 
                     <form id="contactForm" class="space-y-6">
                         <div class="grid sm:grid-cols-2 gap-6">
                             <div>
-                                <label for="name" class="block text-sm font-semibold mb-2">Nombre</label>
+                                <label for="name" class="block text-sm font-semibold mb-2" data-i18n="contact.form.name_label">Nombre</label>
                                 <input type="text" id="name" name="name" required
                                     class="w-full px-4 py-3 rounded-lg border border-border-light dark:border-border-dark bg-bg-light dark:bg-bg-dark focus:ring-2 focus:ring-primary dark:focus:ring-primary-dark focus:border-transparent transition-all duration-300"
-                                    placeholder="Tu nombre">
+                                    placeholder="Tu nombre" data-i18n-placeholder="contact.form.name_placeholder">
                             </div>
                             <div>
-                                <label for="email" class="block text-sm font-semibold mb-2">Email</label>
+                                <label for="email" class="block text-sm font-semibold mb-2" data-i18n="contact.form.email_label">Email</label>
                                 <input type="email" id="email" name="email" required
                                     class="w-full px-4 py-3 rounded-lg border border-border-light dark:border-border-dark bg-bg-light dark:bg-bg-dark focus:ring-2 focus:ring-primary dark:focus:ring-primary-dark focus:border-transparent transition-all duration-300"
-                                    placeholder="tu@email.com">
+                                    placeholder="tu@email.com" data-i18n-placeholder="contact.form.email_placeholder">
                             </div>
                         </div>
 
                         <div>
-                            <label for="subject" class="block text-sm font-semibold mb-2">Asunto</label>
+                            <label for="subject" class="block text-sm font-semibold mb-2" data-i18n="contact.form.subject_label">Asunto</label>
                             <input type="text" id="subject" name="subject" required
                                 class="w-full px-4 py-3 rounded-lg border border-border-light dark:border-border-dark bg-bg-light dark:bg-bg-dark focus:ring-2 focus:ring-primary dark:focus:ring-primary-dark focus:border-transparent transition-all duration-300"
-                                placeholder="¿En qué puedo ayudarte?">
+                                placeholder="¿En qué puedo ayudarte?" data-i18n-placeholder="contact.form.subject_placeholder">
                         </div>
 
                         <div>
-                            <label for="message" class="block text-sm font-semibold mb-2">Mensaje</label>
+                            <label for="message" class="block text-sm font-semibold mb-2" data-i18n="contact.form.message_label">Mensaje</label>
                             <textarea id="message" name="message" rows="5" required
                                 class="w-full px-4 py-3 rounded-lg border border-border-light dark:border-border-dark bg-bg-light dark:bg-bg-dark focus:ring-2 focus:ring-primary dark:focus:ring-primary-dark focus:border-transparent transition-all duration-300 resize-none"
-                                placeholder="Cuéntame sobre tu proyecto..."></textarea>
+                                placeholder="Cuéntame sobre tu proyecto..." data-i18n-placeholder="contact.form.message_placeholder"></textarea>
                         </div>
 
-                        <button type="submit"
-                            class="w-full bg-primary dark:bg-primary-dark text-white px-8 py-4 rounded-lg font-semibold hover:bg-blue-600 dark:hover:bg-blue-400 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl">
+                        <button type="submit" class="w-full bg-primary dark:bg-primary-dark text-white px-8 py-4 rounded-lg font-semibold hover:bg-blue-600 dark:hover:bg-blue-400 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl">
                             <span class="flex items-center justify-center">
                                 <i class="fas fa-paper-plane mr-2"></i>
-                                Enviar Mensaje
+                                <span data-i18n="contact.form.submit">Enviar Mensaje</span>
                             </span>
                         </button>
                     </form>
@@ -1952,8 +1578,7 @@
     </section>
 
     <!-- Footer -->
-    <footer
-        class="bg-gradient-to-br from-primary/5 to-secondary/5 dark:from-primary-dark/5 dark:to-secondary-dark/5 border-t border-border-light dark:border-border-dark py-16">
+    <footer class="bg-gradient-to-br from-primary/5 to-secondary/5 dark:from-primary-dark/5 dark:to-secondary-dark/5 border-t border-border-light dark:border-border-dark py-16">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Main Footer Content -->
             <div class="grid lg:grid-cols-4 md:grid-cols-2 gap-8 mb-12">
@@ -1966,9 +1591,8 @@
                         </div>
                         <span class="text-2xl font-bold gradient-text">Santiago Ariel Mansfeld</span>
                     </div>
-                    <p class="text-text-secondary-light dark:text-text-secondary-dark mb-6 max-w-md leading-relaxed">
-                        DevOps Engineer & Full Stack Developer especializado en crear soluciones tecnológicas escalables
-                        y eficientes.
+                    <p class="text-text-secondary-light dark:text-text-secondary-dark mb-6 max-w-md leading-relaxed" data-i18n="footer.brand_desc">
+                        DevOps Engineer & Full Stack Developer especializado en crear soluciones tecnológicas escalables y eficientes.
                         Transformando ideas en realidad digital.
                     </p>
 
@@ -1998,46 +1622,34 @@
 
                 <!-- Quick Links -->
                 <div>
-                    <h3 class="font-semibold text-lg mb-6 text-text-primary-light dark:text-text-primary-dark">
-                        Navegación</h3>
+                    <h3 class="font-semibold text-lg mb-6 text-text-primary-light dark:text-text-primary-dark" data-i18n="footer.nav_title">Navegación</h3>
                     <ul class="space-y-3">
-                        <li><a href="#home"
-                                class="text-text-secondary-light dark:text-text-secondary-dark hover:text-primary dark:hover:text-primary-dark transition-colors duration-300 flex items-center group">
-                                <i
-                                    class="fas fa-chevron-right text-xs mr-2 group-hover:translate-x-1 transition-transform duration-300"></i>
-                                Inicio
-                            </a></li>
-                        <li><a href="#about"
-                                class="text-text-secondary-light dark:text-text-secondary-dark hover:text-primary dark:hover:text-primary-dark transition-colors duration-300 flex items-center group">
-                                <i
-                                    class="fas fa-chevron-right text-xs mr-2 group-hover:translate-x-1 transition-transform duration-300"></i>
-                                Sobre mí
-                            </a></li>
-                        <li><a href="#experience"
-                                class="text-text-secondary-light dark:text-text-secondary-dark hover:text-primary dark:hover:text-primary-dark transition-colors duration-300 flex items-center group">
-                                <i
-                                    class="fas fa-chevron-right text-xs mr-2 group-hover:translate-x-1 transition-transform duration-300"></i>
-                                Experiencia
-                            </a></li>
-                        <li><a href="#skills"
-                                class="text-text-secondary-light dark:text-text-secondary-dark hover:text-primary dark:hover:text-primary-dark transition-colors duration-300 flex items-center group">
-                                <i
-                                    class="fas fa-chevron-right text-xs mr-2 group-hover:translate-x-1 transition-transform duration-300"></i>
-                                Habilidades
-                            </a></li>
-                        <li><a href="#projects"
-                                class="text-text-secondary-light dark:text-text-secondary-dark hover:text-primary dark:hover:text-primary-dark transition-colors duration-300 flex items-center group">
-                                <i
-                                    class="fas fa-chevron-right text-xs mr-2 group-hover:translate-x-1 transition-transform duration-300"></i>
-                                Proyectos
-                            </a></li>
+                        <li><a href="#home" class="text-text-secondary-light dark:text-text-secondary-dark hover:text-primary dark:hover:text-primary-dark transition-colors duration-300 flex items-center group">
+                            <i class="fas fa-chevron-right text-xs mr-2 group-hover:translate-x-1 transition-transform duration-300"></i>
+                            <span data-i18n="nav.home">Inicio</span>
+                        </a></li>
+                        <li><a href="#about" class="text-text-secondary-light dark:text-text-secondary-dark hover:text-primary dark:hover:text-primary-dark transition-colors duration-300 flex items-center group">
+                            <i class="fas fa-chevron-right text-xs mr-2 group-hover:translate-x-1 transition-transform duration-300"></i>
+                            <span data-i18n="nav.about">Sobre mí</span>
+                        </a></li>
+                        <li><a href="#experience" class="text-text-secondary-light dark:text-text-secondary-dark hover:text-primary dark:hover:text-primary-dark transition-colors duration-300 flex items-center group">
+                            <i class="fas fa-chevron-right text-xs mr-2 group-hover:translate-x-1 transition-transform duration-300"></i>
+                            <span data-i18n="nav.experience">Experiencia</span>
+                        </a></li>
+                        <li><a href="#skills" class="text-text-secondary-light dark:text-text-secondary-dark hover:text-primary dark:hover:text-primary-dark transition-colors duration-300 flex items-center group">
+                            <i class="fas fa-chevron-right text-xs mr-2 group-hover:translate-x-1 transition-transform duration-300"></i>
+                            <span data-i18n="nav.skills">Habilidades</span>
+                        </a></li>
+                        <li><a href="#projects" class="text-text-secondary-light dark:text-text-secondary-dark hover:text-primary dark:hover:text-primary-dark transition-colors duration-300 flex items-center group">
+                            <i class="fas fa-chevron-right text-xs mr-2 group-hover:translate-x-1 transition-transform duration-300"></i>
+                            <span data-i18n="nav.projects">Proyectos</span>
+                        </a></li>
                     </ul>
                 </div>
 
                 <!-- Contact Info -->
                 <div>
-                    <h3 class="font-semibold text-lg mb-6 text-text-primary-light dark:text-text-primary-dark">Contacto
-                    </h3>
+                    <h3 class="font-semibold text-lg mb-6 text-text-primary-light dark:text-text-primary-dark" data-i18n="footer.contact_title">Contacto</h3>
                     <div class="space-y-4">
                         <div class="flex items-center text-text-secondary-light dark:text-text-secondary-dark">
                             <div
@@ -2045,7 +1657,7 @@
                                 <i class="fas fa-envelope text-primary dark:text-primary-dark text-sm"></i>
                             </div>
                             <div>
-                                <p class="text-sm font-medium">Email</p>
+                                <p class="text-sm font-medium" data-i18n="footer.contact.email_label">Email</p>
                                 <p class="text-xs">santimansfeld@proton.me</p>
                             </div>
                         </div>
@@ -2055,7 +1667,7 @@
                                 <i class="fas fa-phone text-secondary dark:text-secondary-dark text-sm"></i>
                             </div>
                             <div>
-                                <p class="text-sm font-medium">Teléfono</p>
+                                <p class="text-sm font-medium" data-i18n="footer.contact.phone_label">Teléfono</p>
                                 <p class="text-xs">(+54)9 11 2541-5924</p>
                             </div>
                         </div>
@@ -2064,8 +1676,8 @@
                                 <i class="fas fa-map-marker-alt text-green-500 text-sm"></i>
                             </div>
                             <div>
-                                <p class="text-sm font-medium">Ubicación</p>
-                                <p class="text-xs">Buenos Aires, Argentina</p>
+                                <p class="text-sm font-medium" data-i18n="footer.contact.location_label">Ubicación</p>
+                                <p class="text-xs" data-i18n="footer.contact.location_value">Buenos Aires, Argentina</p>
                             </div>
                         </div>
                     </div>
@@ -2073,39 +1685,31 @@
             </div>
 
             <!-- Stats Footer -->
-            <div
-                class="grid grid-cols-2 md:grid-cols-4 gap-8 py-8 border-t border-b border-border-light dark:border-border-dark">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 py-8 border-t border-b border-border-light dark:border-border-dark">
                 <div class="text-center">
                     <div class="text-2xl font-bold text-primary dark:text-primary-dark mb-1">3+</div>
-                    <div class="text-sm text-text-secondary-light dark:text-text-secondary-dark">Años de Experiencia
-                    </div>
+                    <div class="text-sm text-text-secondary-light dark:text-text-secondary-dark" data-i18n="footer.stats.years">Años de Experiencia</div>
                 </div>
                 <div class="text-center">
                     <div class="text-2xl font-bold text-secondary dark:text-secondary-dark mb-1">10+</div>
-                    <div class="text-sm text-text-secondary-light dark:text-text-secondary-dark">Proyectos Completados
-                    </div>
+                    <div class="text-sm text-text-secondary-light dark:text-textsecondary-dark" data-i18n="footer.stats.projects">Proyectos Completados</div>
                 </div>
                 <div class="text-center">
                     <div class="text-2xl font-bold text-primary dark:text-primary-dark mb-1">5+</div>
-                    <div class="text-sm text-text-secondary-light dark:text-text-secondary-dark">Tecnologías Dominadas
-                    </div>
+                    <div class="text-sm text-text-secondary-light dark:text-textsecondary-dark" data-i18n="footer.stats.techs">Tecnologías Dominadas</div>
                 </div>
                 <div class="text-center">
                     <div class="text-2xl font-bold text-secondary dark:text-secondary-dark mb-1">24/7</div>
-                    <div class="text-sm text-text-secondary-light dark:text-text-secondary-dark">Disponibilidad</div>
+                    <div class="text-sm text-text-secondary-light dark:text-textsecondary-dark" data-i18n="footer.stats.availability">Disponibilidad</div>
                 </div>
             </div>
 
             <!-- Bottom Footer -->
             <div class="pt-8 text-center">
-                <p class="text-text-secondary-light dark:text-text-secondary-dark text-sm">
-                    © 2024 <span class="font-semibold text-primary dark:text-primary-dark">Santiago Ariel
-                        Mansfeld</span>.
-                    Diseñado y desarrollado con
-                    <span class="text-red-500 animate-pulse">❤️</span>
-                    en Buenos Aires, Argentina.
+                <p class="text-text-secondary-light dark:text-text-secondary-dark text-sm" data-i18n="footer.copyright">
+                    © 2024 <span class="font-semibold text-primary dark:text-primary-dark">Santiago Ariel Mansfeld</span>. Diseñado y desarrollado con <span class="text-red-500 animate-pulse">❤️</span> en Buenos Aires, Argentina.
                 </p>
-                <p class="text-xs text-text-secondary-light dark:text-text-secondary-dark mt-2 opacity-75">
+                <p class="text-xs text-text-secondary-light dark:text-textsecondary-dark mt-2 opacity-75" data-i18n="footer.made_with">
                     Hecho con HTML5, Tailwind CSS, JavaScript y mucho café ☕
                 </p>
             </div>
@@ -2120,6 +1724,7 @@
 
     <!-- JavaScript -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="./assets/js/i18n.js"></script>
     <script src="./assets/js/main.js"></script>
 </body>
 

@@ -97,6 +97,16 @@ document.addEventListener('DOMContentLoaded', function() {
     darkModeToggle.addEventListener('click', toggleDarkMode);
     darkModeToggleMobile.addEventListener('click', toggleDarkMode);
 
+    // Language Toggle Functionality
+    const langToggleMobile = document.getElementById('lang-toggle-mobile');
+    if (langToggleMobile) {
+        langToggleMobile.addEventListener('click', function() {
+            if (window.i18n && window.i18n.getInstance()) {
+                window.i18n.getInstance().toggleLanguage();
+            }
+        });
+    }
+
     // Mobile Menu Functionality
     const mobileMenuToggle = document.getElementById('mobileMenuToggle');
     const mobileMenu = document.getElementById('mobileMenu');
