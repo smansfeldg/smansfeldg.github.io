@@ -14,7 +14,8 @@
     "experience": "Experiencia",
     "skills": "Habilidades",
     "projects": "Proyectos",
-    "contact": "Contacto"
+    "contact": "Contacto",
+    "lang_toggle": "EN"
   },
   "hero": {
     "greeting": "¡Hola! Soy",
