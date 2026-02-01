@@ -274,6 +274,15 @@ class I18n {
             const twitterDescText = this.getTranslation('meta.twitter_description');
             if (twitterDescText) twitterDescription.setAttribute('content', twitterDescText);
         }
+
+        // Actualizar enlace de descarga del CV según idioma
+        const cvDownload = document.getElementById('cv-download');
+        if (cvDownload) {
+            const cvFileName = this.currentLanguage === 'en' 
+                ? 'Santiago_Mansfeld_CV_EN.pdf' 
+                : 'Santiago_Mansfeld_CV.pdf';
+            cvDownload.setAttribute('href', `./assets/docs/${cvFileName}`);
+        }
     }
 
     /**
