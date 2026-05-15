@@ -1,11 +1,15 @@
 ---
 import Section from "../Section.astro"
 
-import { basics } from "@cv"
-const { summary } = basics
+interface Props { cv: any }
+const { cv } = Astro.props
+const { summary } = cv.basics
+
+const isEn = Astro.currentLocale === 'en';
+const title = isEn ? "About me" : "Sobre mí";
 ---
 
-<Section title="Sobre mí">
+<Section title={title}>
   <p>
     {summary}
   </p>

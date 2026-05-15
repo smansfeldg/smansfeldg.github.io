@@ -1,275 +1,191 @@
 {
   "basics": {
-    "name": "Miguel Ángel Durán",
-    "label": "Full-Stack developer with more than 15 years of experience & development content creator",
-    "image": "/me.webp",
-    "email": "miduga@gmail.com",
-    "phone": "+34 688888888",
-    "url": "https://midu.dev",
-    "summary": "+15 years of experience as a web developer. Currently I am a content creator and development dommunicator. I live in Barcelona, Spain. I have worked in different environments: from accelerating the development of start-ups to leading teams in multinational companies.",
+    "name": "Santiago Ariel Mansfeld",
+    "label": "DevOps Engineer & Full Stack Developer",
+    "image": "profile.png",
+    "email": "santimansfeld@proton.me",
+    "phone": "+5491125415924",
+    "url": "https://smansfeldg.github.io",
+    "summary": "DevOps & Infrastructure Engineer with experience in automation, CI/CD, cloud, and scalable infrastructure. Focused on optimization, reliability, and continuous improvement of platforms and processes.",
     "location": {
       "address": "",
-      "postalCode": "08820",
-      "city": "el Prat de Llobregat",
-      "countryCode": "ES",
-      "region": "Spain"
+      "postalCode": "",
+      "city": "Buenos Aires",
+      "countryCode": "AR",
+      "region": "Argentina"
     },
     "profiles": [
       {
         "network": "LinkedIn",
-        "username": "midudev",
-        "url": "https://linkedin.com/in/midudev"
-      },
-      {
-        "network": "X",
-        "username": "midudev",
-        "url": "https://x.com/midudev"
+        "username": "santiago-mansfeld",
+        "url": "https://www.linkedin.com/in/santiago-mansfeld/"
       },
       {
         "network": "GitHub",
-        "username": "midudev",
-        "url": "https://github.com/midudev"
+        "username": "smansfeldg",
+        "url": "https://github.com/smansfeldg"
       }
     ]
   },
   "work": [
     {
-      "name": "midudev",
-      "position": "Web programming communicator",
-      "url": "https://twitch.tv/midudev",
-      "startDate": "2021-01-01",
+      "name": "CVC Corp Argentina",
+      "position": "Senior DevOps Engineer",
+      "url": "",
+      "startDate": "2026-03-01",
       "endDate": null,
-      "summary": "Most watched development streamer in Spanish on Twitch. +1 million followers across all my social networks. Recognised by Google, Microsoft and GitHub for my impact on the development community.",
+      "summary": "As a Senior DevOps Engineer, I lead the design and evolution of scalable, high-availability Cloud architectures. I am responsible for defining automation standards using Infrastructure as Code (IaC), optimizing continuous deployment (CI/CD) pipelines for multiple development teams, and improving observability strategies for the company's critical systems.",
       "highlights": [
-        "Started the company"
+        "Technical leadership in Cloud infrastructure design",
+        "Advanced implementation of Infrastructure as Code",
+        "Evolution of SRE practices, observability, and DevOps culture"
       ]
     },
     {
-      "name": "Adevinta",
-      "position": "Lead Frontend Architect",
-      "url": "https://twitch.tv/midudev",
-      "startDate": "2016-06-01",
-      "endDate": "2022-09-01",
-      "summary": "I led a technical convergence between different products and migrated from a monolithic architecture to a more flexible and optimised one. I fostered best practices and performance culture improvements, as well as rapid delivery of value to users.",
+      "name": "Accusys Technology",
+      "position": "DevOps Analyst",
+      "url": "https://accusystechnology.com/",
+      "startDate": "2024-05-01",
+      "endDate": "2026-03-01",
+      "summary": "As a Mid-level (SSR) DevOps Engineer, I managed Continuous Integration (CI) and Continuous Delivery (CD) processes, optimizing infrastructure and automating deployments. Developed internal tools for artifact management using React and NodeJS. Key technologies: Jenkins, Ansible, SonarQube, React, NodeJS.",
       "highlights": [
-        "Started the company"
+        "CI/CD pipeline management",
+        "Automation tool development",
+        "Infrastructure optimization"
       ]
     },
     {
-      "name": "Hubii",
-      "position": "Senior FrontEnd Developer",
-      "startDate": "2011-03-01",
-      "endDate": "2016-05-01",
-      "summary": "I developed a geolocated news platform and an API to consume the information. Scaled services to support the load of over hundreds of thousands of requests per day. Cut delivery times and deployments to production by half. Collaborated with Mozilla and Telefónica to develop the first FirefoxOS TV app.",
+      "name": "RDigital",
+      "position": "Full Stack Developer / DevOps",
+      "url": "https://www.dealshop.com.ar/",
+      "startDate": "2023-09-01",
+      "endDate": "2024-05-01",
+      "summary": "End-to-end development of B2B and B2C e-commerce platforms from conception to deployment. Built scalable architectures with NodeJS, React, NestJS, and PostgreSQL. Infrastructure managed with Docker-Compose, PM2, and CI/CD via GitHub Actions. Deployments on AWS and Hostinger.",
       "highlights": [
-        "Started the company"
+        "Full-stack development",
+        "CI/CD implementation",
+        "Infrastructure management"
+      ]
+    },
+    {
+      "name": "Lomas de Zamora Municipality",
+      "position": "IT Administrator",
+      "startDate": "2022-08-01",
+      "endDate": "2023-09-01",
+      "summary": "Comprehensive administration of municipal IT infrastructure. Management of Windows/Linux servers, implementation of corporate VPNs, administration of VMware virtualization, and perimeter security systems.",
+      "highlights": [
+        "Server administration",
+        "Network management"
+      ]
+    },
+    {
+      "name": "National University of La Matanza - GIDSA",
+      "position": "Research Student",
+      "startDate": "2022-03-01",
+      "endDate": "2024-03-01",
+      "summary": "Development of telemetry and control systems for aerospace applications. Integration with Satnogs and NASA OPENMCT APIs for satellite monitoring and implementation of space communication protocols.",
+      "highlights": [
+        "Real-time integration",
+        "Stress tests completed"
       ]
     }
   ],
-  "volunteer": [{
-    "organization": "Organization",
-    "position": "Volunteer",
-    "url": "https://organization.com/",
-    "startDate": "2012-01-01",
-    "endDate": "2013-01-01",
-    "summary": "Description…",
-    "highlights": [
-      "Awarded 'Volunteer of the Month'"
-    ]
-  }],
+  "volunteer": [],
   "education": [{
-    "institution": "Universitat Oberta de Catalunya",
-    "url": "https://www.uoc.edu/portal/es/index.html",
-    "area": "Software Engineer",
-    "studyType": "Bachelor",
-    "startDate": "2003-01-01",
-    "endDate": "2009-01-01",
-    "score": "4.0",
-    "courses": [
-      "DB1101 - Basic SQL"
-    ]
+    "institution": "Universidad Nacional de La Matanza (UNLaM)",
+    "url": "https://www.unlam.edu.ar/",
+    "area": "Computer Engineering",
+    "studyType": "Bachelor's Degree",
+    "startDate": "2018-01-01",
+    "endDate": null,
+    "score": "",
+    "courses": []
   }],
-  "awards": [{
-    "title": "Award",
-    "date": "2014-11-01",
-    "awarder": "Company",
-    "summary": "There is no spoon."
-  }],
-  "certificates": [{
-    "name": "Certificate",
-    "date": "2021-11-07",
-    "issuer": "Company",
-    "url": "https://certificate.com"
-  }],
-  "publications": [{
-    "name": "Publication",
-    "publisher": "Company",
-    "releaseDate": "2014-10-01",
-    "url": "https://publication.com",
-    "summary": "Description…"
-  }],
+  "awards": [],
+  "certificates": [],
+  "publications": [],
   "skills": [
     {
-      "name": "HTML",
-      "level": "Master",
-      "keywords": [
-        "Web development", "Frontend"
-      ]
-    },
-    {
-      "name": "CSS",
-      "level": "Master",
-      "keywords": [
-        "Web development", "Frontend", "Diseño Responsive"
-      ]
-    },
-    {
-      "name": "JavaScript",
-      "level": "Master",
-      "keywords": [
-        "Web development", "Frontend", "Backend", "Fullstack"
-      ]
-    },
-    {
-      "name": "Tailwind",
+      "name": "React",
       "level": "Advanced",
-      "keywords": [
-        "Web development", "Frontend", "CSS Framework", "Diseño Responsive"
-      ]
-    },
-    {
-      "name": "TypeScript",
-      "level": "Advanced",
-      "keywords": [
-        "Web development", "Frontend", "Backend", "JavaScript Superset"
-      ]
+      "keywords": ["Frontend"]
     },
     {
       "name": "Node",
       "level": "Advanced",
-      "keywords": [
-        "Web development", "Backend", "JavaScript", "Servidor"
-      ]
+      "keywords": ["Backend"]
     },
     {
-      "name": "MySQL",
+      "name": "NestJS",
       "level": "Advanced",
-      "keywords": [
-        "Bases de Datos", "SQL", "Database", "Backend"
-      ]
+      "keywords": ["Backend"]
     },
     {
-      "name": "Git",
+      "name": "Docker",
       "level": "Advanced",
-      "keywords": [
-        "Version control", "Colaboración", "Source code"
-      ]
+      "keywords": ["DevOps"]
     },
     {
-      "name": "GitHub",
+      "name": "Jenkins",
       "level": "Advanced",
-      "keywords": [
-        "Version control", "Collaboration", "Source code", "Git"
-      ]
+      "keywords": ["DevOps", "CI/CD"]
     },
     {
-      "name": "Next.js",
-      "level": "Advanced",
-      "keywords": [
-        "Web development", "Frontend", "React Framework", "SSR", "Static Generation"
-      ]
+      "name": "Ansible",
+      "level": "Intermediate",
+      "keywords": ["DevOps"]
     },
     {
-      "name": "React",
+      "name": "PostgreSQL",
       "level": "Advanced",
-      "keywords": [
-        "Web development", "Frontend", "JavaScript Library", "UI"
-      ]
+      "keywords": ["Database"]
+    },
+    {
+      "name": "Linux",
+      "level": "Advanced",
+      "keywords": ["OS", "SysAdmin"]
     }
   ],
   "languages": [
     {
       "language": "Spanish",
-      "fluency": "Native speaker"
+      "fluency": "Native"
     },
     {
       "language": "English",
-      "fluency": "Advanced"
+      "fluency": "B2"
     }
   ],
-  "interests": [{
-    "name": "Wildlife",
-    "keywords": [
-      "Ferrets",
-      "Unicorns"
-    ]
-  }],
-  "references": [{
-    "name": "Jane Doe",
-    "reference": "Reference…"
-  }],
+  "interests": [],
+  "references": [],
   "projects": [
     {
-      "name": "mars.codes",
+      "name": "Automated CI/CD System",
       "isActive": true,
-      "description": "Interactive story with programming challenges to travel to Mars",
-      "highlights": [
-        "Choose your own adventure",
-        "In progress"
-      ],
-      "url": "https://mars.codes"
+      "description": "Complete CI/CD pipeline implementation with Jenkins, Ansible, and SonarQube for private infrastructure.",
+      "highlights": ["Jenkins", "Ansible", "SonarQube"],
+      "url": "https://github.com/smansfeldg"
     },
     {
-      "name": "AdventJS",
+      "name": "EasySync",
       "isActive": true,
-      "description": "JavaScript programming challenges for every day of December until Christmas",
-      "highlights": [
-        "+1 million visits",
-        "Multilanguage",
-        "JavaScript & TypeScript"
-      ],
-      "url": "https://advent.js/dev"
+      "description": "Release management. Full-stack web application for pipeline control, notifications, and distribution.",
+      "highlights": ["React", "Nodejs", "Docker"],
+      "url": "https://github.com/smansfeldg"
     },
     {
-      "name": "Codember",
+      "name": "Dealshop",
       "isActive": true,
-      "description": "Interactive programming game with challenges and secrets",
-      "highlights": [
-        "+2000 active users",
-        "Challenges for any language"
-      ],
-      "url": "https://codember.dev"
+      "description": "Full B2C / B2B e-commerce developed end-to-end and deployed in production.",
+      "highlights": ["React", "NestJS", "PM2"],
+      "url": "https://www.dealshop.com.ar/"
     },
     {
-      "name": "codi.link",
+      "name": "MarketFull",
       "isActive": true,
-      "description": "Playground of HTML, CSS and JavaScript code for sharing",
-      "highlights": [
-        "100k monthly visit",
-        "Developed by the community"
-      ],
-      "url": "https://codi.link",
-      "github": "https://github.com/midudev/codi.link"
-    },
-    {
-      "name": "Pruebas Técnicas",
-      "isActive": true,
-      "description": "List of technical tests of companies to practice programming",
-      "highlights": [
-        "100% free",
-        "+500 community solutions"
-      ],
-      "url": "https://pruebastecnicas.com",
-      "github": "https://github.com/midudev/pruebas-tecnicas"
-    },
-    {
-      "name": "miduConf",
-      "description": "Streaming programming conference for the Spanish-speaking community with top talks",
-      "highlights": [
-        "+15k tickets handed over",
-        "+50k live viewers"
-      ],
-      "url": "https://miduconf.com"
+      "description": "E-commerce marketplace featuring microservices architecture, inventory system, and payment gateway.",
+      "highlights": ["React", "NestJS", "PostgreSQL"],
+      "url": "https://marketfull.com.ar/"
     }
   ]
 }

@@ -11,7 +11,10 @@ import Git from "@/icons/git.astro"
 import GitHub from "@/icons/GitHub.astro"
 import Tailwind from "@/icons/tailwind.astro"
 import Next from "@/icons/next.astro"
-import { skills } from "@cv"
+
+interface Props { cv: any }
+const { cv } = Astro.props
+const { skills } = cv
 import Swift from "@/icons/swift.astro"
 import SwiftUI from "@/icons/swiftui.astro"
 import Kotlin from "@/icons/kotlin.astro"
@@ -34,12 +37,15 @@ const SKILLS_ICONS: Record<string, any> = {
   Kotlin,
   Flutter,
 }
+
+const isEn = Astro.currentLocale === 'en';
+const title = isEn ? "Skills" : "Habilidades";
 ---
 
-<Section title="Habilidades">
+<Section title={title}>
   <ul>
     {
-      skills.map(({ name }) => {
+      skills.map(({ name }: any) => {
         const iconName = name === "Next.js" ? "Next" : name
         const Icon = SKILLS_ICONS[iconName]
 
@@ -62,9 +68,9 @@ const SKILLS_ICONS: Record<string, any> = {
 
   li {
     align-items: center;
-    background: #eee;
+    background: var(--highlight);
     border-radius: 6px;
-    color: black;
+    color: var(--text-color);
     display: flex;
     font-size: 0.8rem;
     font-weight: 500;

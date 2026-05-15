@@ -1,21 +1,25 @@
 ---
-import GitHub from "@/icons/GitHub.astro"
 import Section from "../Section.astro"
 
-import { projects } from "@cv"
+interface Props { cv: any }
+const { cv } = Astro.props
+const { projects } = cv
+
+const isEn = Astro.currentLocale === 'en';
+const title = isEn ? "Projects" : "Proyectos";
 ---
 
-<Section title="Proyectos">
+<Section title={title}>
   <ul>
     {
       projects.map(
-        ({ url, description, highlights, name, isActive }) => {
+        ({ url, description, highlights, name, isActive }: any) => {
           return (
             <li>
               <article>
                 <header>
                   <h3>
-                    <a href={url} target="_blank" title={`Ver el proyecto ${name}`}>
+                    <a href={url} target="_blank" title={isEn ? `View project ${name}` : `Ver el proyecto ${name}`}>
                       {name}
                     </a>
                     {isActive && <span>•</span>}
@@ -23,7 +27,7 @@ import { projects } from "@cv"
                   <p>{description}</p>
                 </header>
                 <footer>
-                  {highlights.map((highlight) => {
+                  {highlights.map((highlight: any) => {
                     return <span>{highlight}</span>
                   })}
                 </footer>
@@ -46,7 +50,7 @@ import { projects } from "@cv"
 
   article {
     border-radius: 8px;
-    border: 1px solid #f2f2f2;
+    border: 1px solid var(--highlight);
     gap: 16px;
     display: flex;
     flex-direction: column;
@@ -63,7 +67,7 @@ import { projects } from "@cv"
   }
 
   article a {
-    color: #111;
+    color: var(--text-color);
   }
 
   article a:hover {
@@ -93,8 +97,8 @@ import { projects } from "@cv"
 
   footer span {
     border-radius: 6px;
-    background: #eee;
-    color: #444;
+    background: var(--highlight);
+    color: var(--text-color);
     font-size: 0.6rem;
     font-weight: 500;
     padding: 0.2rem 0.6rem;
@@ -123,7 +127,7 @@ import { projects } from "@cv"
 
     article {
       border: none;
-      box-shadow: 0 1px 1px #f2f2f2;
+      box-shadow: 0 1px 1px var(--highlight);
       padding: 0 0 16px 0;
     }
   }

@@ -1,17 +1,16 @@
 ---
-import { basics } from "@cv"
-
 interface Props {
   title: string
+  cv: any
 }
 
-const { title } = Astro.props
+const { title, cv } = Astro.props
 
-const { image, summary, url } = basics
+const { image, summary, url } = cv.basics
 ---
 
 <!doctype html>
-<html lang="es">
+<html lang={Astro.currentLocale || "es"}>
   <head>
     <meta charset="UTF-8" />
     <title>{title}</title>
@@ -32,13 +31,148 @@ const { image, summary, url } = basics
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={summary} />
     <meta name="twitter:image" content="" />
+    
+    <script is:inline>
+      window.getThemePreference = () => {
+        if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+          return localStorage.getItem('theme');
+        }
+        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      };
+      
+      window.applyTheme = (theme) => {
+        if (theme === 'dark') {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      };
+
+      const initTheme = () => {
+        const theme = window.getThemePreference();
+        window.applyTheme(theme);
+      };
+      
+      initTheme();
+
+      const initLang = () => {
+        const storedLang = localStorage.getItem('lang');
+        const currentIsEn = window.location.pathname.startsWith('/en');
+        
+        if (storedLang === 'en' && !currentIsEn) {
+          window.location.replace('/en');
+        } else if (storedLang === 'es' && currentIsEn) {
+          window.location.replace('/');
+        } else if (!storedLang) {
+          const browserIsEn = navigator.language.startsWith('en');
+          if (browserIsEn && !currentIsEn) {
+            window.location.replace('/en');
+          } else if (!browserIsEn && currentIsEn) {
+            window.location.replace('/');
+          }
+        }
+      };
+      
+      initLang();
+    </script>
   </head>
   <body>
+    <div class="fixed-floating-buttons no-print">
+      <button id="theme-toggle" aria-label="Toggle theme">
+        <svg id="moon-icon" class="theme-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+        <svg id="sun-icon" class="theme-icon" style="display: none;" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+      </button>
+      <a id="lang-toggle" class="lang-toggle" aria-label="Toggle language">
+        {Astro.currentLocale === 'en' ? 'ES' : 'EN'}
+      </a>
+    </div>
+    <script is:inline>
+      const themeToggle = document.getElementById('theme-toggle');
+      const moonIcon = document.getElementById('moon-icon');
+      const sunIcon = document.getElementById('sun-icon');
+
+      const updateIcons = (theme) => {
+        if (theme === 'dark') {
+          moonIcon.style.display = 'none';
+          sunIcon.style.display = 'block';
+        } else {
+          moonIcon.style.display = 'block';
+          sunIcon.style.display = 'none';
+        }
+      };
+
+      updateIcons(window.getThemePreference());
+
+      themeToggle.addEventListener('click', () => {
+        const isDark = document.documentElement.classList.contains('dark');
+        const newTheme = isDark ? 'light' : 'dark';
+        window.applyTheme(newTheme);
+        localStorage.setItem('theme', newTheme);
+        updateIcons(newTheme);
+      });
+
+      const langToggle = document.getElementById('lang-toggle');
+      if (langToggle) {
+        langToggle.addEventListener('click', (e) => {
+          e.preventDefault();
+          const currentIsEn = window.location.pathname.startsWith('/en');
+          const newLang = currentIsEn ? 'es' : 'en';
+          localStorage.setItem('lang', newLang);
+          window.location.href = currentIsEn ? '/' : '/en';
+        });
+      }
+    </script>
     <slot />
   </body>
 </html>
 
 <style is:global>
+  .fixed-floating-buttons {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    display: flex;
+    gap: 0.5rem;
+    z-index: 100;
+  }
+  
+  .fixed-floating-buttons button,
+  .fixed-floating-buttons a {
+    background: var(--bg-color);
+    border: 1px solid var(--highlight);
+    color: var(--text-color);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: all 0.2s ease;
+  }
+  
+  .fixed-floating-buttons button:hover,
+  .fixed-floating-buttons a:hover {
+    background: var(--highlight);
+  }
+
+  :root {
+    --bg-color: #fff;
+    --text-color: #111;
+    --text-muted: #666;
+    --highlight: #f3f3f3;
+  }
+  
+  :root.dark {
+    --bg-color: #121212;
+    --text-color: #ececec;
+    --text-muted: #a0a0a0;
+    --highlight: #222;
+  }
+
   html {
     font-family:
       Menlo,
@@ -47,7 +181,8 @@ const { image, summary, url } = basics
       "Courier New",
       Courier,
       monospace;
-    background: #fff;
+    background: var(--bg-color);
+    color: var(--text-color);
     letter-spacing: -0.025rem;
   }
 
@@ -59,6 +194,7 @@ const { image, summary, url } = basics
 
   a {
     text-decoration: none;
+    color: inherit;
   }
 
   ul {
@@ -78,6 +214,7 @@ const { image, summary, url } = basics
   h3,
   h4 {
     margin: 0;
+    color: var(--text-color);
     font-family:
       system-ui,
       -apple-system,
@@ -93,7 +230,7 @@ const { image, summary, url } = basics
   }
 
   p {
-    color: #666;
+    color: var(--text-muted);
     font-size: 0.9rem;
     line-height: 1.5;
     margin: 0;
