@@ -1,0 +1,223 @@
+{
+  "basics": {
+    "name": "Santiago Ariel Mansfeld",
+    "label": "DevOps Engineer & Full Stack Developer",
+    "image": "profile.png",
+    "email": "santimansfeld@proton.me",
+    "phone": "+5491125415924",
+    "url": "https://smansfeldg.github.io",
+    "summary": "DevOps & Infrastructure Engineer con experiencia en automatización, CI/CD, cloud e infraestructura escalable. Enfocado en optimización, confiabilidad y mejora continua de plataformas y procesos.",
+    "location": {
+      "address": "",
+      "postalCode": "",
+      "city": "Buenos Aires",
+      "countryCode": "AR",
+      "region": "Argentina"
+    },
+    "profiles": [
+      {
+        "network": "LinkedIn",
+        "username": "santiago-mansfeld",
+        "url": "https://www.linkedin.com/in/santiago-mansfeld/"
+      },
+      {
+        "network": "GitHub",
+        "username": "smansfeldg",
+        "url": "https://github.com/smansfeldg"
+      }
+    ]
+  },
+  "work": [
+    {
+      "name": "CVC Corp Argentina",
+      "position": "Senior DevOps Engineer",
+      "url": "",
+      "startDate": "2026-03-01",
+      "endDate": null,
+      "summary": "Como Senior DevOps Engineer lidero el diseño y evolución de arquitecturas Cloud escalables y de alta disponibilidad. Soy responsable de definir los estándares de automatización empleando Infraestructura como Código (IaC), optimizando pipelines de despliegue continuo (CI/CD) para múltiples equipos de desarrollo, y mejorando las estrategias de observabilidad de los sistemas críticos de la compañía.",
+      "highlights": [
+        "Liderazgo técnico en diseño de infraestructura Cloud",
+        "Implementación avanzada de Infraestructura como Código",
+        "Evolución de prácticas SRE, observabilidad y cultura DevOps"
+      ]
+    },
+    {
+      "name": "Accusys Technology",
+      "position": "DevOps Analyst",
+      "url": "https://accusystechnology.com/",
+      "startDate": "2024-05-01",
+      "endDate": "2026-03-01",
+      "summary": "Como DevOps SSR gestiono procesos de Integración Continua (CI) y entrega continua (CD), optimizando infraestructura y automatizando despliegues. Desarrollo herramientas para gestión de artefactos usando React y NodeJS. Tecnologías principales: Jenkins, Ansible, SonarQube, React, NodeJS.",
+      "highlights": [
+        "Gestión de pipeline CI/CD",
+        "Desarrollo de herramientas de automatización",
+        "Optimización de infraestructura"
+      ]
+    },
+    {
+      "name": "RDigital",
+      "position": "Full Stack Developer / DevOps",
+      "url": "https://www.dealshop.com.ar/",
+      "startDate": "2023-09-01",
+      "endDate": "2024-05-01",
+      "summary": "Desarrollo completo de e-commerces B2B y B2C desde la concepción hasta el despliegue. Arquitecturas escalables con NodeJS, React, NestJS y PostgreSQL. Infraestructura con Docker-Compose, PM2 y CI/CD con GitHub Actions. Despliegues en AWS y Hostinger.",
+      "highlights": [
+        "Desarrollo full-stack",
+        "Implementación CI/CD",
+        "Gestión de infraestructura"
+      ]
+    },
+    {
+      "name": "Municipalidad de Lomas de Zamora",
+      "position": "IT Administrator",
+      "startDate": "2022-08-01",
+      "endDate": "2023-09-01",
+      "summary": "Administración integral de la infraestructura IT municipal. Gestión de servidores Windows/Linux, implementación de VPN corporativas, administración de virtualizadores VMware y sistemas de seguridad perimetral.",
+      "highlights": [
+        "Administración de servidores",
+        "Gestión de redes"
+      ]
+    },
+    {
+      "name": "Universidad Nacional de La Matanza - GIDSA",
+      "position": "Research Student",
+      "startDate": "2022-03-01",
+      "endDate": "2024-03-01",
+      "summary": "Desarrollo de sistemas de telemetría y control para aplicaciones aeroespaciales. Integración con APIs de Satnogs y NASA OPENMCT para monitoreo de satélites e implementación de protocolos de comunicación espacial.",
+      "highlights": [
+        "Integración en tiempo real",
+        "Pruebas de estrés completadas"
+      ]
+    }
+  ],
+  "volunteer": [],
+  "education": [{
+    "institution": "Universidad Nacional de La Matanza (UNLaM)",
+    "url": "https://www.unlam.edu.ar/",
+    "area": "Ingeniería en Informática",
+    "studyType": "Universitario",
+    "startDate": "2018-01-01",
+    "endDate": null,
+    "score": "",
+    "courses": []
+  }],
+  "awards": [],
+  "certificates": [],
+  "publications": [],
+  "skills": [
+    {
+      "name": "React",
+      "level": "Avanzado",
+      "keywords": [
+        "Frontend"
+      ]
+    },
+    {
+      "name": "Node",
+      "level": "Avanzado",
+      "keywords": [
+        "Backend"
+      ]
+    },
+    {
+      "name": "NestJS",
+      "level": "Avanzado",
+      "keywords": [
+        "Backend"
+      ]
+    },
+    {
+      "name": "Docker",
+      "level": "Avanzado",
+      "keywords": [
+        "DevOps"
+      ]
+    },
+    {
+      "name": "Jenkins",
+      "level": "Avanzado",
+      "keywords": [
+        "DevOps", "CI/CD"
+      ]
+    },
+    {
+      "name": "Ansible",
+      "level": "Intermedio",
+      "keywords": [
+        "DevOps"
+      ]
+    },
+    {
+      "name": "PostgreSQL",
+      "level": "Avanzado",
+      "keywords": [
+        "Database"
+      ]
+    },
+    {
+      "name": "Linux",
+      "level": "Avanzado",
+      "keywords": [
+        "OS", "SysAdmin"
+      ]
+    }
+  ],
+  "languages": [
+    {
+      "language": "Español",
+      "fluency": "Nativo"
+    },
+    {
+      "language": "Inglés",
+      "fluency": "B2"
+    }
+  ],
+  "interests": [],
+  "references": [],
+  "projects": [
+    {
+      "name": "Automated CI/CD System",
+      "isActive": true,
+      "description": "Complete CI/CD pipeline implementation with Jenkins, Ansible and SonarQube para infraestructura privada.",
+      "highlights": [
+        "Jenkins",
+        "Ansible",
+        "SonarQube"
+      ],
+      "url": "https://github.com/smansfeldg"
+    },
+    {
+      "name": "EasySync",
+      "isActive": true,
+      "description": "Gestón de releases. Web fullstack para control de pipelines, notificaciones y distribución.",
+      "highlights": [
+        "React",
+        "Nodejs",
+        "Docker"
+      ],
+      "url": "https://github.com/smansfeldg"
+    },
+    {
+      "name": "Dealshop",
+      "isActive": true,
+      "description": "E-commerce completo B2C / B2B desarrollado de forma integral y desplegado en producción.",
+      "highlights": [
+        "React",
+        "NestJS",
+        "PM2"
+      ],
+      "url": "https://www.dealshop.com.ar/"
+    },
+    {
+      "name": "MarketFull",
+      "isActive": true,
+      "description": "E-commerce marketplace con arquitectura de microservicios, sistema de stock y pasarela de pago.",
+      "highlights": [
+        "React",
+        "NestJS",
+        "PostgreSQL"
+      ],
+      "url": "https://marketfull.com.ar/"
+    }
+  ]
+}
