@@ -14,9 +14,14 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout your repository using git
+      - name: Checkout your repository
         uses: actions/checkout@v4
         
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
       - name: Install pnpm
         uses: pnpm/action-setup@v3
         with:
@@ -25,11 +30,13 @@ jobs:
       - name: Install dependencies
         run: pnpm install --no-frozen-lockfile
 
-      - name: Install, build, and upload your site
-        uses: withastro/action@v3
+      - name: Build with Astro
+        run: pnpm run build
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          package-manager: pnpm
-          node-version: 22
+          path: ./dist
 
   deploy:
     needs: build
