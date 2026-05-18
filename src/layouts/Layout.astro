@@ -64,13 +64,13 @@ const { image, summary, url } = cv.basics
         const currentIsEn = window.location.pathname.startsWith('/en');
         
         if (storedLang === 'en' && !currentIsEn) {
-          window.location.replace('/en');
+          window.location.replace('/en/');
         } else if (storedLang === 'es' && currentIsEn) {
           window.location.replace('/');
         } else if (!storedLang) {
           const browserIsEn = navigator.language.startsWith('en');
           if (browserIsEn && !currentIsEn) {
-            window.location.replace('/en');
+            window.location.replace('/en/');
           } else if (!browserIsEn && currentIsEn) {
             window.location.replace('/');
           }

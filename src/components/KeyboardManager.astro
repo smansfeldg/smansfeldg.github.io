@@ -115,7 +115,7 @@ const profilesInfo = profiles.map(({ network, url }: any) => {
         const currentIsEn = window.location.pathname.startsWith('/en')
         const newLang = currentIsEn ? 'es' : 'en'
         localStorage.setItem('lang', newLang)
-        window.location.href = currentIsEn ? '/' : '/en'
+        window.location.href = currentIsEn ? '/' : '/en/'
       }
     },
     ...socialCommands
