@@ -6,129 +6,149 @@ const { cv } = Astro.props
 const { work } = cv
 
 const isEn = Astro.currentLocale === 'en';
-const title = isEn ? "Experience" : "Experiencia laboral";
+const title = isEn ? "Experience" : "Experiencia";
 ---
 
-<Section title={title}>
-  <ul>
-    {
-      work.map(
-          ({ name, startDate, endDate, position, summary, highlights, url }: any) => {
-          const startYear = new Date(startDate).getFullYear()
-          const endYear =
-            endDate != null ? new Date(endDate).getFullYear() : (isEn ? "Present" : "Actual")
+<Section id="experience" title={title}>
+  <ul class="experience-list">
+    {work.map(({ name, startDate, endDate, position, summary, url }: any, index: number) => {
+      const startYear = new Date(startDate).getFullYear()
+      const endYear = endDate != null ? new Date(endDate).getFullYear() : (isEn ? "Present" : "Actual")
+      const isCurrent = endDate == null
 
-          return (
-            <li>
-              <article>
-                <header>
-                  <div>
-                    <h3>
-                      <a href={url} title={isEn ? `View ${name}` : `Ver ${name}`} target="_blank">
-                        {name}
-                      </a>
-                    </h3>
-                    <h4>{position}</h4>
-                  </div>
-
-                  <div>
-                    <time 
-                      datetime={startDate}
-                      data-title={startDate}>
-                        {startYear}
-                    </time>
-                    {" - "}
-                    <time 
-                      datetime={endDate}
-                      data-title={endDate}>
-                        {endYear}
-                    </time>
-                  </div>
-                </header>
-
-                <footer>
-                  <p>{summary}</p>
-                </footer>
-              </article>
-            </li>
-          )
-        }
+      return (
+        <li>
+          <article class="exp-card">
+            <div class="exp-index">{String(index + 1).padStart(2, '0')}</div>
+            <div class="exp-content">
+              <header class="exp-header">
+                <div class="exp-title">
+                  <h3>
+                    <a href={url} title={isEn ? `View ${name}` : `Ver ${name}`} target="_blank">
+                      {name}
+                    </a>
+                  </h3>
+                  <h4>{position}</h4>
+                </div>
+                <div class="exp-period">
+                  <span class="period-start">{startYear}</span>
+                  <span class="period-sep">—</span>
+                  <span class={`period-end ${isCurrent ? 'current' : ''}`}>{endYear}</span>
+                </div>
+              </header>
+              <footer class="exp-footer">
+                <p>{summary}</p>
+              </footer>
+            </div>
+          </article>
+        </li>
       )
-    }
+    })}
   </ul>
 </Section>
 
 <style>
-  ul {
+  .experience-list {
     display: flex;
     flex-direction: column;
-    gap: 32px;
+    gap: 12px;
   }
 
-  article h3 {
-    font-weight: 500;
-    color: var(--text-color);
+  .exp-card {
+    position: relative;
+    background: var(--bg-panel);
+    border: 1px solid var(--border-color);
+    padding: 16px 16px 16px 56px;
+    transition: all var(--transition-normal);
   }
 
-  article a {
-    color: var(--text-color);
+  .exp-card:hover {
+    border-color: var(--border-hover);
+    background: var(--bg-panel-hover);
   }
 
-  article a:hover {
-    text-decoration: underline;
+  .exp-index {
+    position: absolute;
+    left: 16px;
+    top: 16px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
   }
 
-  article h4 {
-    color: var(--text-color);
-    font-weight: 400;
-  }
-
-  header {
+  .exp-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 4px;
+    gap: 16px;
+    margin-bottom: 8px;
   }
 
-  time {
+  .exp-title h3 {
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    font-weight: 500;
+    margin-bottom: 2px;
+  }
+
+  .exp-title h3 a {
+    color: var(--text-primary);
+    transition: color var(--transition-fast);
+  }
+
+  .exp-title h3 a:hover {
+    color: var(--accent-purple);
+  }
+
+  .exp-title h4 {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    font-weight: 400;
+    color: var(--accent-purple);
+  }
+
+  .exp-period {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-mono);
+    font-size: 11px;
     color: var(--text-muted);
-    font-size: 0.85rem;
-    min-width: 102px;
-    cursor: default;
-  }
-
-  [data-title]:hover:after {
-    opacity: 1;
-    transition: all 0.1s ease-in-out 0.5s;
-    visibility: visible;
-  }
-
-  [data-title]:after {
-    content: attr(data-title);
-    background-color: var(--text-color);
-    color: var(--bg-color);
-    font-size: .75rem;
-    font-family: Menlo, Monaco, Lucida Console, "Courier New", monospace;;
-    position: absolute;
-    padding: .2rem .5rem;
-    bottom: -1.4rem;
-    left: 50%;
     white-space: nowrap;
-    box-shadow: 1px 1px 1px var(--highlight);
-    opacity: 0;
-    border: 1px solid var(--text-color);
-    z-index: 99999;
-    visibility: hidden;
-    border-radius: 6px;
+    padding: 4px 8px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
   }
 
-  [data-title] {
-    position: relative;
+  .period-end.current {
+    color: var(--accent-green);
   }
 
-  @media (width <= 700px) {
-    time {
-      text-align: right;
+  .exp-footer p {
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+  }
+
+  @media (width <= 768px) {
+    .exp-card {
+      padding: 14px 14px 14px 48px;
+    }
+
+    .exp-index {
+      left: 12px;
+      top: 14px;
+    }
+
+    .exp-header {
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .exp-period {
+      align-self: flex-start;
     }
   }
 </style>

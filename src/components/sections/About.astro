@@ -6,11 +6,119 @@ const { cv } = Astro.props
 const { summary } = cv.basics
 
 const isEn = Astro.currentLocale === 'en';
-const title = isEn ? "About me" : "Sobre mí";
+const title = isEn ? "About" : "Acerca de";
 ---
 
-<Section title={title}>
-  <p>
-    {summary}
-  </p>
+<Section id="about" title={title}>
+  <div class="about-panel">
+    <div class="panel-header">
+      <span class="panel-label">{isEn ? 'SYSTEM.INFO' : 'SISTEMA.INFO'}</span>
+      <div class="panel-indicator"></div>
+    </div>
+    <div class="panel-body">
+      <p class="about-text">{summary}</p>
+      <div class="about-meta">
+        <div class="meta-row">
+          <span class="meta-key">{isEn ? 'STATUS' : 'ESTADO'}</span>
+          <span class="meta-val active">{isEn ? 'Active' : 'Activo'}</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-key">{isEn ? 'FOCUS' : 'ENFOQUE'}</span>
+          <span class="meta-val">DevOps / Infrastructure</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-key">{isEn ? 'LOCATION' : 'UBICACIÓN'}</span>
+          <span class="meta-val">Buenos Aires, AR</span>
+        </div>
+      </div>
+    </div>
+  </div>
 </Section>
+
+<style>
+  .about-panel {
+    background: var(--bg-panel);
+    border: 1px solid var(--border-color);
+    position: relative;
+    transition: border-color var(--transition-normal);
+  }
+
+  .about-panel:hover {
+    border-color: var(--border-hover);
+  }
+
+  .panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .panel-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    color: var(--accent-purple);
+  }
+
+  .panel-indicator {
+    width: 6px;
+    height: 6px;
+    background: var(--accent-purple);
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+  }
+
+  .panel-body {
+    padding: 20px 16px;
+  }
+
+  .about-text {
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    margin-bottom: 20px;
+  }
+
+  .about-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border-color);
+  }
+
+  .meta-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+  }
+
+  .meta-key {
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    min-width: 80px;
+  }
+
+  .meta-val {
+    color: var(--text-secondary);
+  }
+
+  .meta-val.active {
+    color: var(--accent-green);
+  }
+
+  @media (width <= 768px) {
+    .panel-body {
+      padding: 16px;
+    }
+
+    .about-text {
+      font-size: 0.85rem;
+    }
+  }
+</style>

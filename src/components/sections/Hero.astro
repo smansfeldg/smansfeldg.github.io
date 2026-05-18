@@ -24,162 +24,354 @@ const linkedInfo = profiles.find(({ network }: any) => network === "LinkedIn")
 const linkedUrl = linkedInfo?.url
 
 const printInfo = [email, phone, linkedUrl].filter(Boolean).join(" • ")
+
+const isEn = Astro.currentLocale === 'en'
 ---
 
-<Section>
-  <div class="container">
-    <div class="info">
-      <h1>{name}</h1>
-      <h2>{label}</h2>
-      <span>
-        <WorldMap />
-        {city}, {region}
-      </span>
-      <footer class="print">
-        {printInfo}
-      </footer>
-      <footer class="no-print">
-        {
-          email && (
-            <a
-              href={`mailto:${email}`}
-              title={`Enviar un correo electrónico a ${name} al correo ${email}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Mail />
-            </a>
-          )
-        }
-        {
-          phone && (
-            <a
-              href={`https://wa.me/${phone.replace(/[^0-9]/g, "")}`}
-              title={Astro.currentLocale === 'en' ? `Send a WhatsApp message to ${name}` : `Enviar un mensaje de WhatsApp a ${name}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <WhatsApp />
-            </a>
-          )
-        }
-        {
-          profiles.map(({ network, url, username }: any) => {
-            const Icon = SOCIAL_ICONS[network]
+<Section id="hero">
+  <div class="hero-panel">
+    <div class="panel-corner tl"></div>
+    <div class="panel-corner tr"></div>
+    <div class="panel-corner bl"></div>
+    <div class="panel-corner br"></div>
+    
+    <div class="terminal-bar">
+      <span class="terminal-prefix">$</span>
+      <span class="terminal-cmd">whoami</span>
+      <span class="cursor"></span>
+    </div>
 
+    <div class="hero-content">
+      <div class="hero-main">
+        <div class="identity-block">
+          <h1 class="hero-name">{name}</h1>
+          <h2 class="hero-role">{label}</h2>
+          <div class="hero-location">
+            <WorldMap />
+            <span>{city}, {region}</span>
+          </div>
+        </div>
+        
+        <div class="hero-image-wrapper">
+          <div class="image-frame">
+            <img src={image} alt={name} />
+            <div class="image-overlay"></div>
+          </div>
+          <div class="status-badge">
+            <span class="status-dot"></span>
+            <span class="status-text">{isEn ? 'Available' : 'Disponible'}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-footer">
+        <div class="contact-links">
+          {email && (
+            <a href={`mailto:${email}`} title={`Enviar un correo electrónico a ${name} al correo ${email}`} target="_blank" rel="noopener noreferrer" class="contact-link">
+              <Mail />
+              <span class="link-label">Email</span>
+            </a>
+          )}
+          {phone && (
+            <a href={`https://wa.me/${phone.replace(/[^0-9]/g, "")}`} title={isEn ? `Send a WhatsApp message to ${name}` : `Enviar un mensaje de WhatsApp a ${name}`} target="_blank" rel="noopener noreferrer" class="contact-link">
+              <WhatsApp />
+              <span class="link-label">WhatsApp</span>
+            </a>
+          )}
+          {profiles.map(({ network, url }: any) => {
+            const Icon = SOCIAL_ICONS[network]
             return (
-              <a
-                href={url}
-                title={`Visitar el perfil de ${name} en ${network}`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <a href={url} title={`Visitar el perfil de ${name} en ${network}`} target="_blank" rel="noopener noreferrer" class="contact-link">
                 <Icon />
+                <span class="link-label">{network}</span>
               </a>
             )
-          })
-        }
-      </footer>
+          })}
+        </div>
+        <div class="hero-meta">
+          <span class="meta-item print">{printInfo}</span>
+        </div>
+      </div>
     </div>
-    <figure>
-      <img src={image} alt={name} />
-    </figure>
   </div>
 </Section>
 
 <style>
-  .container {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
+  .hero-panel {
+    position: relative;
+    background: var(--bg-panel);
+    border: 1px solid var(--border-color);
+    padding: 0;
+    overflow: hidden;
+    transition: border-color var(--transition-normal);
   }
 
-  .info {
+  .hero-panel:hover {
+    border-color: var(--border-hover);
+  }
+
+  .panel-corner {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    z-index: 2;
+  }
+
+  .panel-corner::before,
+  .panel-corner::after {
+    content: '';
+    position: absolute;
+    background: var(--accent-purple);
+    opacity: 0.4;
+  }
+
+  .panel-corner.tl { top: -1px; left: -1px; }
+  .panel-corner.tl::before { width: 16px; height: 1px; top: 0; left: 0; }
+  .panel-corner.tl::after { width: 1px; height: 16px; top: 0; left: 0; }
+
+  .panel-corner.tr { top: -1px; right: -1px; }
+  .panel-corner.tr::before { width: 16px; height: 1px; top: 0; right: 0; }
+  .panel-corner.tr::after { width: 1px; height: 16px; top: 0; right: 0; }
+
+  .panel-corner.bl { bottom: -1px; left: -1px; }
+  .panel-corner.bl::before { width: 16px; height: 1px; bottom: 0; left: 0; }
+  .panel-corner.bl::after { width: 1px; height: 16px; bottom: 0; left: 0; }
+
+  .panel-corner.br { bottom: -1px; right: -1px; }
+  .panel-corner.br::before { width: 16px; height: 1px; bottom: 0; right: 0; }
+  .panel-corner.br::after { width: 1px; height: 16px; bottom: 0; right: 0; }
+
+  .terminal-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+    font-family: var(--font-mono);
+    font-size: 12px;
+  }
+
+  .terminal-prefix {
+    color: var(--accent-purple);
+    font-weight: 600;
+  }
+
+  .terminal-cmd {
+    color: var(--text-secondary);
+  }
+
+  .cursor {
+    display: inline-block;
+    width: 7px;
+    height: 14px;
+    background: var(--accent-purple);
+    animation: blink 1s step-end infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  .hero-content {
+    padding: 24px;
+  }
+
+  .hero-main {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .identity-block {
+    flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
-    padding-right: 32px;
+    gap: 8px;
   }
 
-  h1 {
+  .hero-name {
+    font-family: var(--font-heading);
     font-size: 2rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+    line-height: 1.1;
   }
 
-  h2 {
-    color: var(--text-color);
-    font-weight: 500;
-    font-size: 1.1rem;
-    text-wrap: balance;
-  }
-
-  img {
-    aspect-ratio: 1 / 1;
-    object-fit: cover;
-    width: 128px;
-    border-radius: 16px;
-  }
-
-  span {
-    color: var(--text-muted);
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
+  .hero-role {
+    font-family: var(--font-mono);
     font-size: 0.85rem;
-    letter-spacing: -0.05rem;
+    font-weight: 400;
+    color: var(--accent-purple);
+    letter-spacing: 0.02em;
   }
 
-  footer {
-    color: var(--text-muted);
-    font-size: 0.65rem;
+  .hero-location {
     display: flex;
-    gap: 4px;
-    margin-top: 8px;
-  }
-
-  footer a {
-    color: var(--text-muted);
-    display: inline-flex;
     align-items: center;
-    justify-content: center;
-    border: 1px solid var(--highlight);
-    padding: 4px;
-    height: 32px;
-    width: 32px;
-    border-radius: 6px;
-    transition: all 0.3s ease;
+    gap: 6px;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 4px;
   }
 
-  footer a:hover {
-    background: var(--highlight);
-    border: 1px solid var(--highlight);
+  .hero-image-wrapper {
+    position: relative;
+    flex-shrink: 0;
   }
 
-  @media (width <= 700px) {
-    .container {
+  .image-frame {
+    position: relative;
+    width: 112px;
+    height: 112px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+    clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+  }
+
+  .image-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: grayscale(20%) contrast(1.05);
+    transition: filter var(--transition-normal);
+  }
+
+  .hero-panel:hover .image-frame img {
+    filter: grayscale(0%) contrast(1);
+  }
+
+  .image-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--accent-purple-dim), transparent);
+    pointer-events: none;
+  }
+
+  .status-badge {
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent-green);
+    box-shadow: 0 0 6px var(--accent-green);
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  .status-text {
+    color: var(--accent-green);
+  }
+
+  .hero-footer {
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .contact-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .contact-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-secondary);
+    transition: all var(--transition-fast);
+    clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
+  }
+
+  .contact-link:hover {
+    color: var(--text-primary);
+    border-color: var(--border-hover);
+    background: var(--accent-purple-dim);
+  }
+
+  .contact-link svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .link-label {
+    letter-spacing: 0.05em;
+  }
+
+  .hero-meta {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-muted);
+  }
+
+  @media (width <= 768px) {
+    .hero-main {
       flex-direction: column-reverse;
-    }
-
-    .info {
-      justify-content: center;
       align-items: center;
-      padding-right: 0;
       text-align: center;
     }
 
-    figure {
-      display: flex;
-      justify-content: center;
+    .identity-block {
       align-items: center;
     }
 
-    h2 {
-      text-wrap: balance;
+    .hero-name {
+      font-size: 1.6rem;
     }
 
-    figure {
-      margin: 0 auto;
+    .hero-role {
+      font-size: 0.8rem;
+    }
+
+    .hero-location {
+      justify-content: center;
+    }
+
+    .contact-links {
+      justify-content: center;
+    }
+
+    .hero-content {
+      padding: 16px;
+    }
+
+    .image-frame {
+      width: 96px;
+      height: 96px;
     }
   }
 </style>

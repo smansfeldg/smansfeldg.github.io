@@ -9,40 +9,9 @@ const { cv } = Astro.props
 const { profiles } = cv.basics
 
 const SOCIAL_ICONS: SocialIcon = {
-  GitHub: `<svg
-  width="16"
-  height="16"
-  viewBox="0 0 24 24"
-  xmlns="http://www.w3.org/2000/svg"
-  style="margin-right: 8px"
-  ><path
-    fill="currentColor"
-    d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"
-  ></path></svg
->`,
-  LinkedIn: `<svg
-  height="16"
-  width="16"
-  viewBox="0 0 24 24"
-  xmlns="http://www.w3.org/2000/svg"
-  style="margin-right: 8px"
-  ><title>LinkedIn</title><path
-    fill="currentColor"
-    d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"
-  ></path></svg
->`,
-  X: `<svg
-  width="16"
-  height="16"
-  viewBox="0 0 24 24"
-  xmlns="http://www.w3.org/2000/svg"
-  style="margin-right: 8px"
-  ><title>X</title><path
-    fill="currentColor"
-    d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"
-  ></path></svg
->
-`
+  GitHub: `<svg width="16" height="16" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="margin-right: 8px"><path fill="currentColor" d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"></path></svg>`,
+  LinkedIn: `<svg height="16" width="16" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="margin-right: 8px"><title>LinkedIn</title><path fill="currentColor" d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"></path></svg>`,
+  X: `<svg width="16" height="16" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="margin-right: 8px"><title>X</title><path fill="currentColor" d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"></path></svg>`
 }
 
 const isEn = Astro.currentLocale === 'en';
@@ -63,36 +32,18 @@ const profilesInfo = profiles.map(({ network, url }: any) => {
 ---
 
 <footer id="normal-footer" class="no-print">
-  {isEn ? "Press" : "Pulsa"} <kbd>Cmd</kbd> + <kbd>K</kbd> {isEn ? "to open the command palette." : "para abrir la paleta de comandos."}
+  <span class="footer-prompt">&gt;</span>
+  <span class="footer-text">{isEn ? "Press" : "Pulsa"} <kbd>Cmd</kbd> + <kbd>K</kbd> {isEn ? "to open command palette" : "para abrir la paleta de comandos"}</span>
 </footer>
 
 <div id="footer-button" class="no-print">
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    class="icon icon-tabler icon-tabler-command"
-    width="32"
-    height="32"
-    viewBox="0 0 24 24"
-    stroke-width="1.5"
-    stroke="var(--text-muted)"
-    fill="none"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-  >
+  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
     <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-    <path
-      d="M7 9a2 2 0 1 1 2 -2v10a2 2 0 1 1 -2 -2h10a2 2 0 1 1 -2 2v-10a2 2 0 1 1 2 2h-10"
-    ></path>
+    <path d="M7 9a2 2 0 1 1 2 -2v10a2 2 0 1 1 -2 -2h10a2 2 0 1 1 -2 2v-10a2 2 0 1 1 2 2h-10"></path>
   </svg>
 </div>
 
-<div
-  id="hotkeypad"
-  data-placeholder={isEn ? "Search command" : "Buscar comando"}
-  data-info={JSON.stringify(profilesInfo)}
-  data-is-en={isEn ? "true" : "false"}
->
-</div>
+<div id="hotkeypad" data-placeholder={isEn ? "Search command" : "Buscar comando"} data-info={JSON.stringify(profilesInfo)} data-is-en={isEn ? "true" : "false"}></div>
 
 <script>
   interface Info {
@@ -139,6 +90,32 @@ const profilesInfo = profiles.map(({ network, url }: any) => {
         window.print()
       }
     },
+    {
+      id: "toggle-theme",
+      title: isEn ? "Toggle Dark Mode" : "Alternar modo oscuro",
+      icon: `<svg style="margin-right: 8px" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>`,
+      section: isEn ? "Preferences" : "Preferencias",
+      hotkey: "ctrl+T",
+      handler: () => {
+        const isDark = document.documentElement.classList.contains('dark')
+        const newTheme = isDark ? 'light' : 'dark'
+        ;(window as any).applyTheme(newTheme)
+        localStorage.setItem('theme', newTheme)
+      }
+    },
+    {
+      id: "switch-language",
+      title: isEn ? "Switch Language" : "Cambiar idioma",
+      icon: `<svg style="margin-right: 8px" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>`,
+      section: isEn ? "Preferences" : "Preferencias",
+      hotkey: "ctrl+L",
+      handler: () => {
+        const currentIsEn = window.location.pathname.startsWith('/en')
+        const newLang = currentIsEn ? 'es' : 'en'
+        localStorage.setItem('lang', newLang)
+        window.location.href = currentIsEn ? '/' : '/en'
+      }
+    },
     ...data
   ])
 
@@ -161,84 +138,83 @@ const profilesInfo = profiles.map(({ network, url }: any) => {
 
 <style>
   @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
+    from { opacity: 0; }
+    to { opacity: 1; }
   }
 
-  @media (min-width: 601px) {
-    #normal-footer {
-      display: block;
-    }
-
-    #footer-button {
-      display: none;
-    }
+  @media (min-width: 769px) {
+    #normal-footer { display: block; }
+    #footer-button { display: none; }
   }
 
-  @media (max-width: 600px) {
-    #normal-footer {
-      display: none;
-    }
-
+  @media (max-width: 768px) {
+    #normal-footer { display: none; }
     #footer-button {
-      background: var(--bg-color);
+      background: var(--bg-panel);
       position: fixed;
-      border: 1px solid var(--highlight);
-      right: 10px;
-      bottom: 10px;
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
+      border: 1px solid var(--border-color);
+      right: 12px;
+      bottom: 12px;
+      width: 44px;
+      height: 44px;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
+      color: var(--text-secondary);
+      transition: all var(--transition-fast);
+      z-index: 50;
+    }
+    #footer-button:hover {
+      border-color: var(--border-hover);
+      color: var(--text-primary);
     }
   }
 
   footer {
-    background: var(--bg-color);
-    border-top: 1px solid var(--highlight);
+    background: var(--bg-secondary);
+    border-top: 1px solid var(--border-color);
     position: fixed;
-    bottom: 0px;
-    width: 100%;
-    padding-block: 8px;
-    text-align: center;
-    font-size: 0.85rem;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-muted);
+    z-index: 50;
+  }
 
-    view-timeline-name: --revealing;
-    view-timeline-axis: block;
-
-    animation: linear 0.3s fadeIn;
-    animation-timeline: --revealing;
-    animation-range: entry 100% cover 10%;
+  .footer-prompt {
+    color: var(--accent-purple);
+    font-weight: 600;
   }
 
   kbd {
-    background: var(--highlight);
-    border-radius: 4px;
-    padding: 2px 4px;
-    font-size: 12px;
+    background: var(--bg-panel);
+    border: 1px solid var(--border-color);
+    border-radius: 2px;
+    padding: 1px 5px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-secondary);
   }
 </style>
 
 <style is:global>
   html #hotkeypad {
-    --hotkeypad-bg-kbd: var(--highlight);
-    --hotkeypad-bg-backdrop: rgba(0, 0, 0, 0.5);
-    --hotkeypad-bg-container: var(--bg-color);
-    --hotkeypad-bg-item-hover: var(--highlight);
-    --hotkeypad-border-container: var(--highlight);
-    --hotkeypad-border-container-hover: var(--text-color);
+    --hotkeypad-bg-kbd: var(--bg-panel);
+    --hotkeypad-bg-backdrop: rgba(5, 5, 5, 0.7);
+    --hotkeypad-bg-container: var(--bg-secondary);
+    --hotkeypad-bg-item-hover: var(--accent-purple-dim);
+    --hotkeypad-border-container: var(--border-color);
+    --hotkeypad-border-container-hover: var(--accent-purple);
     --hotkeypad-fg-muted: var(--text-muted);
-    color: var(--text-color);
-  }
-
-  html.dark #hotkeypad {
-    --hotkeypad-bg-backdrop: rgba(0, 0, 0, 0.8);
+    color: var(--text-primary);
+    font-family: var(--font-mono);
   }
 </style>

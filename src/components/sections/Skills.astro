@@ -11,14 +11,14 @@ import Git from "@/icons/git.astro"
 import GitHub from "@/icons/GitHub.astro"
 import Tailwind from "@/icons/tailwind.astro"
 import Next from "@/icons/next.astro"
-
-interface Props { cv: any }
-const { cv } = Astro.props
-const { skills } = cv
 import Swift from "@/icons/swift.astro"
 import SwiftUI from "@/icons/swiftui.astro"
 import Kotlin from "@/icons/kotlin.astro"
 import Flutter from "@/icons/flutter.astro"
+
+interface Props { cv: any }
+const { cv } = Astro.props
+const { skills } = cv
 
 const SKILLS_ICONS: Record<string, any> = {
   HTML,
@@ -42,39 +42,130 @@ const isEn = Astro.currentLocale === 'en';
 const title = isEn ? "Skills" : "Habilidades";
 ---
 
-<Section title={title}>
-  <ul>
-    {
-      skills.map(({ name }: any) => {
+<Section id="skills" title={title}>
+  <div class="skills-panel">
+    <div class="panel-header">
+      <span class="panel-label">{isEn ? 'CAPABILITIES' : 'CAPACIDADES'}</span>
+      <span class="panel-count">{skills.length} {isEn ? 'modules' : 'módulos'}</span>
+    </div>
+    <div class="skills-grid">
+      {skills.map(({ name, level }: any) => {
         const iconName = name === "Next.js" ? "Next" : name
         const Icon = SKILLS_ICONS[iconName]
 
         return (
-          <li>
-            {Icon && <Icon />} <span>{name}</span>
-          </li>
+          <div class="skill-item">
+            <div class="skill-icon">
+              {Icon && <Icon />}
+            </div>
+            <span class="skill-name">{name}</span>
+            <div class="skill-bar">
+              <div class="skill-fill" style={`width: ${level === 'Advanced' ? '90%' : level === 'Intermediate' ? '65%' : '40%'}`}></div>
+            </div>
+          </div>
         )
-      })
-    }
-  </ul>
+      })}
+    </div>
+  </div>
 </Section>
 
 <style>
-  ul {
-    display: inline-flex;
-    gap: 8px;
-    flex-wrap: wrap;
+  .skills-panel {
+    background: var(--bg-panel);
+    border: 1px solid var(--border-color);
+    transition: border-color var(--transition-normal);
   }
 
-  li {
-    align-items: center;
-    background: var(--highlight);
-    border-radius: 6px;
-    color: var(--text-color);
+  .skills-panel:hover {
+    border-color: var(--border-hover);
+  }
+
+  .panel-header {
     display: flex;
-    font-size: 0.8rem;
-    font-weight: 500;
-    gap: 4px;
-    padding: 0.2rem 0.6rem;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .panel-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    color: var(--accent-purple);
+  }
+
+  .panel-count {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+  }
+
+  .skills-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 16px;
+  }
+
+  .skill-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    transition: all var(--transition-fast);
+    position: relative;
+  }
+
+  .skill-item:hover {
+    border-color: var(--border-hover);
+    background: var(--accent-purple-dim);
+  }
+
+  .skill-icon {
+    display: flex;
+    align-items: center;
+    color: var(--text-secondary);
+  }
+
+  .skill-icon svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .skill-name {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-secondary);
+    letter-spacing: 0.03em;
+  }
+
+  .skill-bar {
+    width: 32px;
+    height: 3px;
+    background: var(--border-color);
+    margin-left: 4px;
+    overflow: hidden;
+  }
+
+  .skill-fill {
+    height: 100%;
+    background: var(--accent-purple);
+    transition: width var(--transition-normal);
+  }
+
+  @media (width <= 768px) {
+    .skills-grid {
+      padding: 12px;
+    }
+
+    .skill-item {
+      padding: 6px 10px;
+    }
   }
 </style>
