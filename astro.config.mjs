@@ -3,6 +3,7 @@ import { defineConfig } from 'astro/config';
 // https://astro.build/config
 export default defineConfig({
   site: 'https://smansfeldg.github.io',
+  base: '/',
   trailingSlash: 'always',
   i18n: {
     defaultLocale: "es",
