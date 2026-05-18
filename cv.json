@@ -43,7 +43,7 @@
     },
     {
       "name": "Accusys Technology",
-      "position": "DevOps Analyst",
+      "position": "Semi-Senior DevOps Engineer",
       "url": "https://accusystechnology.com/",
       "startDate": "2024-05-01",
       "endDate": "2026-03-01",
@@ -106,95 +106,84 @@
   "publications": [],
   "skills": [
     {
-      "name": "React",
-      "level": "Avanzado",
-      "keywords": [
-        "Frontend"
-      ]
-    },
-    {
-      "name": "Node",
-      "level": "Avanzado",
-      "keywords": [
-        "Backend"
-      ]
-    },
-    {
-      "name": "NestJS",
-      "level": "Avanzado",
-      "keywords": [
-        "Backend"
-      ]
-    },
-    {
-      "name": "Docker",
-      "level": "Avanzado",
-      "keywords": [
-        "DevOps"
-      ]
-    },
-    {
-      "name": "Jenkins",
-      "level": "Avanzado",
-      "keywords": [
-        "DevOps", "CI/CD"
-      ]
-    },
-    {
-      "name": "Ansible",
-      "level": "Intermedio",
-      "keywords": [
-        "DevOps"
-      ]
-    },
-    {
-      "name": "PostgreSQL",
-      "level": "Avanzado",
-      "keywords": [
-        "Database"
-      ]
-    },
-    {
-      "name": "Linux",
-      "level": "Avanzado",
-      "keywords": [
-        "OS", "SysAdmin"
-      ]
-    },
-    {
       "name": "AWS",
       "level": "Intermedio",
-      "keywords": [
-        "Cloud"
-      ]
+      "keywords": ["Cloud"]
     },
     {
       "name": "Kubernetes",
       "level": "Intermedio",
-      "keywords": [
-        "DevOps"
-      ]
+      "keywords": ["DevOps"]
     },
     {
       "name": "Terraform",
       "level": "Intermedio",
-      "keywords": [
-        "DevOps", "IaC"
-      ]
+      "keywords": ["DevOps", "IaC"]
+    },
+    {
+      "name": "Docker",
+      "level": "Avanzado",
+      "keywords": ["DevOps"]
+    },
+    {
+      "name": "Jenkins",
+      "level": "Avanzado",
+      "keywords": ["DevOps", "CI/CD"]
+    },
+    {
+      "name": "ArgoCD",
+      "level": "Intermedio",
+      "keywords": ["CI/CD", "GitOps"]
+    },
+    {
+      "name": "Prometheus",
+      "level": "Intermedio",
+      "keywords": ["Observability", "Monitoring"]
+    },
+    {
+      "name": "Grafana",
+      "level": "Intermedio",
+      "keywords": ["Observability", "Dashboards"]
+    },
+    {
+      "name": "Ansible",
+      "level": "Intermedio",
+      "keywords": ["DevOps"]
     },
     {
       "name": "Git",
       "level": "Avanzado",
-      "keywords": [
-        "Version Control"
-      ]
+      "keywords": ["Version Control"]
+    },
+    {
+      "name": "PostgreSQL",
+      "level": "Avanzado",
+      "keywords": ["Database"]
+    },
+    {
+      "name": "Linux",
+      "level": "Avanzado",
+      "keywords": ["OS", "SysAdmin"]
     },
     {
       "name": "TypeScript",
       "level": "Avanzado",
-      "keywords": [
-        "Frontend", "Backend"
-      ]
+      "keywords": ["Frontend", "Backend"]
+    },
+    {
+      "name": "Node",
+      "level": "Avanzado",
+      "keywords": ["Backend"]
+    },
+    {
+      "name": "NestJS",
+      "level": "Avanzado",
+      "keywords": ["Backend"]
+    },
+    {
+      "name": "React",
+      "level": "Avanzado",
+      "keywords": ["Frontend"]
     }
   ],
   "languages": [
@@ -230,7 +219,7 @@
         "Nodejs",
         "Docker"
       ],
-      "url": "https://github.com/smansfeldg"
+      "url": "https://easysync.gbsj.com.ar/"
     },
     {
       "name": "Dealshop",

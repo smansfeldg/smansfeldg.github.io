@@ -43,7 +43,7 @@
     },
     {
       "name": "Accusys Technology",
-      "position": "DevOps Analyst",
+      "position": "Semi-Senior DevOps Engineer",
       "url": "https://accusystechnology.com/",
       "startDate": "2024-05-01",
       "endDate": "2026-03-01",
@@ -106,19 +106,19 @@
   "publications": [],
   "skills": [
     {
-      "name": "React",
-      "level": "Advanced",
-      "keywords": ["Frontend"]
+      "name": "AWS",
+      "level": "Intermediate",
+      "keywords": ["Cloud"]
     },
     {
-      "name": "Node",
-      "level": "Advanced",
-      "keywords": ["Backend"]
+      "name": "Kubernetes",
+      "level": "Intermediate",
+      "keywords": ["DevOps"]
     },
     {
-      "name": "NestJS",
-      "level": "Advanced",
-      "keywords": ["Backend"]
+      "name": "Terraform",
+      "level": "Intermediate",
+      "keywords": ["DevOps", "IaC"]
     },
     {
       "name": "Docker",
@@ -131,9 +131,29 @@
       "keywords": ["DevOps", "CI/CD"]
     },
     {
+      "name": "ArgoCD",
+      "level": "Intermediate",
+      "keywords": ["CI/CD", "GitOps"]
+    },
+    {
+      "name": "Prometheus",
+      "level": "Intermediate",
+      "keywords": ["Observability", "Monitoring"]
+    },
+    {
+      "name": "Grafana",
+      "level": "Intermediate",
+      "keywords": ["Observability", "Dashboards"]
+    },
+    {
       "name": "Ansible",
       "level": "Intermediate",
       "keywords": ["DevOps"]
+    },
+    {
+      "name": "Git",
+      "level": "Advanced",
+      "keywords": ["Version Control"]
     },
     {
       "name": "PostgreSQL",
@@ -144,6 +164,26 @@
       "name": "Linux",
       "level": "Advanced",
       "keywords": ["OS", "SysAdmin"]
+    },
+    {
+      "name": "TypeScript",
+      "level": "Advanced",
+      "keywords": ["Frontend", "Backend"]
+    },
+    {
+      "name": "Node",
+      "level": "Advanced",
+      "keywords": ["Backend"]
+    },
+    {
+      "name": "NestJS",
+      "level": "Advanced",
+      "keywords": ["Backend"]
+    },
+    {
+      "name": "React",
+      "level": "Advanced",
+      "keywords": ["Frontend"]
     },
     {
       "name": "AWS",
@@ -196,7 +236,7 @@
       "isActive": true,
       "description": "Release management. Full-stack web application for pipeline control, notifications, and distribution.",
       "highlights": ["React", "Nodejs", "Docker"],
-      "url": "https://github.com/smansfeldg"
+      "url": "https://easysync.gbsj.com.ar/"
     },
     {
       "name": "Dealshop",
