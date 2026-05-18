@@ -160,6 +160,41 @@
       "keywords": [
         "OS", "SysAdmin"
       ]
+    },
+    {
+      "name": "AWS",
+      "level": "Intermedio",
+      "keywords": [
+        "Cloud"
+      ]
+    },
+    {
+      "name": "Kubernetes",
+      "level": "Intermedio",
+      "keywords": [
+        "DevOps"
+      ]
+    },
+    {
+      "name": "Terraform",
+      "level": "Intermedio",
+      "keywords": [
+        "DevOps", "IaC"
+      ]
+    },
+    {
+      "name": "Git",
+      "level": "Avanzado",
+      "keywords": [
+        "Version Control"
+      ]
+    },
+    {
+      "name": "TypeScript",
+      "level": "Avanzado",
+      "keywords": [
+        "Frontend", "Backend"
+      ]
     }
   ],
   "languages": [

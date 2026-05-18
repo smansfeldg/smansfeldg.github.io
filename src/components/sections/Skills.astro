@@ -52,6 +52,7 @@ const title = isEn ? "Skills" : "Habilidades";
       {skills.map(({ name, level }: any) => {
         const iconName = name === "Next.js" ? "Next" : name
         const Icon = SKILLS_ICONS[iconName]
+        const width = (level === 'Advanced' || level === 'Avanzado') ? '100%' : (level === 'Intermediate' || level === 'Intermedio') ? '60%' : '30%'
 
         return (
           <div class="skill-item">
@@ -60,7 +61,7 @@ const title = isEn ? "Skills" : "Habilidades";
             </div>
             <span class="skill-name">{name}</span>
             <div class="skill-bar">
-              <div class="skill-fill" style={`width: ${level === 'Advanced' ? '90%' : level === 'Intermediate' ? '65%' : '40%'}`}></div>
+              <div class="skill-fill" style={`width: ${width}`}></div>
             </div>
           </div>
         )

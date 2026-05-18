@@ -144,6 +144,31 @@
       "name": "Linux",
       "level": "Advanced",
       "keywords": ["OS", "SysAdmin"]
+    },
+    {
+      "name": "AWS",
+      "level": "Intermediate",
+      "keywords": ["Cloud"]
+    },
+    {
+      "name": "Kubernetes",
+      "level": "Intermediate",
+      "keywords": ["DevOps"]
+    },
+    {
+      "name": "Terraform",
+      "level": "Intermediate",
+      "keywords": ["DevOps", "IaC"]
+    },
+    {
+      "name": "Git",
+      "level": "Advanced",
+      "keywords": ["Version Control"]
+    },
+    {
+      "name": "TypeScript",
+      "level": "Advanced",
+      "keywords": ["Frontend", "Backend"]
     }
   ],
   "languages": [
