@@ -1,4 +1,6 @@
 ---
+import AIContext from "@/components/AIContext.astro"
+
 interface Props {
   title: string
   cv: any
@@ -81,6 +83,7 @@ const { image, summary, url } = cv.basics
     </script>
   </head>
   <body>
+    <AIContext />
     <div class="bg-effects">
       <div class="bg-grid"></div>
       <div class="bg-gradient-fog"></div>
