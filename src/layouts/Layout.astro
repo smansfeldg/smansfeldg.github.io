@@ -1,14 +1,90 @@
 ---
 import AIContext from "@/components/AIContext.astro"
 
+type LocaleCode = "es_AR" | "en_US" | string
+type AlternateLocale = {
+  locale: LocaleCode
+  href: string
+  hreflang?: string
+}
+
 interface Props {
   title: string
   cv: any
+  description?: string
+  image?: string
+  canonical?: string
+  locale?: LocaleCode
+  alternateLocales?: AlternateLocale[]
 }
 
-const { title, cv } = Astro.props
+const {
+  title,
+  cv,
+  description,
+  image,
+  canonical,
+  locale,
+  alternateLocales,
+} = Astro.props
 
-const { image, summary, url } = cv.basics
+const { basics, education } = cv
+const { name, label, email, phone, summary, url, profiles } = basics
+const site = Astro.site ?? new URL(Astro.url.origin)
+const defaultOgImage = "/og-home.png"
+const pageDescription = description ?? summary
+const canonicalUrl = new URL(canonical ?? Astro.url.pathname, site)
+const ogImageUrl = new URL(image || defaultOgImage, site)
+const profileImageUrl = new URL(basics.image, site)
+const currentOgLocale = locale ?? (Astro.currentLocale === "en" ? "en_US" : "es_AR")
+const defaultAlternateLocales: AlternateLocale[] = [
+  { locale: "es_AR", href: "/", hreflang: "es-AR" },
+  { locale: "en_US", href: "/en/", hreflang: "en-US" },
+]
+const localeAlternates = alternateLocales ?? defaultAlternateLocales
+const toHreflang = (value: string) => value.replace("_", "-")
+const alternateLinks = localeAlternates.map((alternate) => ({
+  ...alternate,
+  href: new URL(alternate.href, site).href,
+  hreflang: alternate.hreflang ?? toHreflang(alternate.locale),
+}))
+const xDefaultAlternate = alternateLinks.find(({ locale }) => locale === "es_AR") ?? alternateLinks[0]
+const ogLocaleAlternates = [...new Set(
+  localeAlternates
+    .map(({ locale }) => locale)
+    .filter((alternateLocale) => alternateLocale !== currentOgLocale)
+)]
+const sameAs = profiles?.map(({ url }: { url: string }) => url).filter(Boolean) ?? []
+const currentWork = cv.work?.find(({ endDate }: { endDate: string | null }) => endDate === null) ?? cv.work?.[0]
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name,
+  jobTitle: label,
+  url: new URL(url, site).href,
+  image: profileImageUrl.href,
+  email: `mailto:${email}`,
+  telephone: phone,
+  sameAs,
+  worksFor: currentWork?.name ? {
+    "@type": "Organization",
+    name: currentWork.name,
+    ...(currentWork.url ? { url: currentWork.url } : {}),
+  } : undefined,
+  alumniOf: education?.[0]?.institution ? {
+    "@type": "CollegeOrUniversity",
+    name: education[0].institution,
+    ...(education[0].url ? { url: education[0].url } : {}),
+  } : undefined,
+  knowsAbout: [
+    "Kubernetes",
+    "AWS",
+    "CI/CD",
+    "DevOps",
+    "Cloud Infrastructure",
+  ],
+}
+const safeJsonLd = JSON.stringify(jsonLd).replace(/</g, "\\u003c")
 ---
 
 <!doctype html>
@@ -16,29 +92,42 @@ const { image, summary, url } = cv.basics
   <head>
     <meta charset="UTF-8" />
     <title>{title}</title>
-    <meta name="description" content={summary} />
+    <meta name="description" content={pageDescription} />
     <meta name="viewport" content="width=device-width" />
+    <link rel="canonical" href={canonicalUrl.href} />
+    {alternateLinks.map(({ href, hreflang }) => (
+      <link rel="alternate" hreflang={hreflang} href={href} />
+    ))}
+    {xDefaultAlternate && (
+      <link rel="alternate" hreflang="x-default" href={xDefaultAlternate.href} />
+    )}
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="preload" as="image" href={image} />
+    <link rel="preload" as="image" href={basics.image} />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet" />
 
-    <meta property="og:url" content={url} />
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
-    <meta property="og:description" content={summary} />
-    <meta property="og:image" content="" />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:url" content={canonicalUrl.href} />
+    <meta property="og:image" content={ogImageUrl.href} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content={currentOgLocale} />
+    {ogLocaleAlternates.map((alternateLocale) => (
+      <meta property="og:locale:alternate" content={alternateLocale} />
+    ))}
+    <meta property="og:site_name" content="Santiago Ariel Mansfeld" />
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta property="twitter:domain" content={url.split("//")[1] ?? ''} />
-    <meta property="twitter:url" content={url} />
     <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content={summary} />
-    <meta name="twitter:image" content="" />
-        <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
-        <script is:inline>
+    <meta name="twitter:description" content={pageDescription} />
+    <meta name="twitter:image" content={ogImageUrl.href} />
+    <script type="application/ld+json" set:html={safeJsonLd}></script>
+    <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
+    <script is:inline>
       window.getThemePreference = () => {
         if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
           return localStorage.getItem('theme');

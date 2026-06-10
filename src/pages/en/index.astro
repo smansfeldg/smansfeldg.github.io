@@ -10,11 +10,17 @@ import Skills from "@/components/sections/Skills.astro"
 import KeyboardManager from "@/components/KeyboardManager.astro"
 
 import cv from "@/../cv_english.json"
-const { basics } = cv
-const { name, label } = basics
+
+const seo = {
+  title: "Santiago Ariel Mansfeld | DevOps Engineer",
+  description: "DevOps Engineer specializing in Kubernetes, AWS and CI/CD, focused on automation, cloud and reliable infrastructure.",
+  image: "/og-home.png",
+  canonical: "https://smansfeldg.github.io/en/",
+  locale: "en_US",
+}
 ---
 
-<Layout title={`${name}'s Portfolio - ${label}`} cv={cv}>
+<Layout cv={cv} {...seo}>
   <main>
     <Hero cv={cv} />
     <About cv={cv} />
