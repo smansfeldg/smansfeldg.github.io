@@ -16,21 +16,14 @@ const title = isEn ? "Skills" : "Habilidades";
       <span class="panel-count">{skills.length} {isEn ? 'modules' : 'módulos'}</span>
     </div>
     <div class="skills-grid">
-      {skills.map(({ name, level, icon }: any) => {
-        const width = (level === 'Advanced' || level === 'Avanzado') ? '100%' : (level === 'Intermediate' || level === 'Intermedio') ? '60%' : '30%'
-
-        return (
-          <div class="skill-item">
-            <div class="skill-icon">
-              {icon && <iconify-icon icon={icon}></iconify-icon>}
-            </div>
-            <span class="skill-name">{name}</span>
-            {/* <div class="skill-bar">
-              <div class="skill-fill" style={`width: ${width}`}></div>
-            </div> */}
+      {skills.map(({ name, icon }: any) => (
+        <div class="skill-item">
+          <div class="skill-icon">
+            {icon && <iconify-icon icon={icon}></iconify-icon>}
           </div>
-        )
-      })}
+          <span class="skill-name">{name}</span>
+        </div>
+      ))}
     </div>
   </div>
 </Section>
