@@ -1,5 +1,7 @@
 ---
 import AIContext from "@/components/AIContext.astro"
+import BootSequence from "@/components/BootSequence.astro"
+import { ViewTransitions } from "astro:transitions"
 
 type LocaleCode = "es_AR" | "en_US" | string
 type AlternateLocale = {
@@ -125,6 +127,7 @@ const safeJsonLd = JSON.stringify(jsonLd).replace(/</g, "\\u003c")
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={pageDescription} />
     <meta name="twitter:image" content={ogImageUrl.href} />
+    <ViewTransitions />
     <script type="application/ld+json" set:html={safeJsonLd}></script>
     <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
     <script is:inline>
@@ -135,17 +138,30 @@ const safeJsonLd = JSON.stringify(jsonLd).replace(/</g, "\\u003c")
         return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
       };
       
-      window.applyTheme = (theme) => {
-        if (theme === 'dark') {
-          document.documentElement.classList.add('dark');
-        } else {
-          document.documentElement.classList.remove('dark');
+      window.applyTheme = (theme, options = {}) => {
+        const commitTheme = () => {
+          if (theme === 'dark') {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        };
+
+        if (
+          options.transition !== false &&
+          document.startViewTransition &&
+          !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        ) {
+          document.startViewTransition(commitTheme);
+          return;
         }
+
+        commitTheme();
       };
 
       const initTheme = () => {
         const theme = window.getThemePreference();
-        window.applyTheme(theme);
+        window.applyTheme(theme, { transition: false });
       };
       
       initTheme();
@@ -172,6 +188,7 @@ const safeJsonLd = JSON.stringify(jsonLd).replace(/</g, "\\u003c")
     </script>
   </head>
   <body>
+    <BootSequence />
     <AIContext />
     <div class="bg-effects">
       <div class="bg-grid"></div>
@@ -185,6 +202,32 @@ const safeJsonLd = JSON.stringify(jsonLd).replace(/</g, "\\u003c")
     </div>
   </body>
 </html>
+
+<script>
+  import { animate, inView } from "motion"
+
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  const sections = document.querySelectorAll<HTMLElement>("section")
+
+  if (!reducedMotion) {
+    sections.forEach((section) => {
+      section.style.opacity = "0"
+      section.style.transform = "translateY(25px)"
+    })
+
+    inView(
+      sections,
+      (element) => {
+        animate(
+          element,
+          { opacity: [0, 1], y: [25, 0] },
+          { duration: 0.5 }
+        )
+      },
+      { margin: "0px 0px -120px 0px" }
+    )
+  }
+</script>
 
 <style is:global>
   :root {
@@ -256,6 +299,49 @@ const safeJsonLd = JSON.stringify(jsonLd).replace(/</g, "\\u003c")
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 220ms;
+    animation-timing-function: ease;
+  }
+
+  ::view-transition-old(root) {
+    animation-name: themeFadeOut;
+  }
+
+  ::view-transition-new(root) {
+    animation-name: themeFadeIn;
+  }
+
+  @keyframes themeFadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+  }
+
+  @keyframes themeFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .hero-panel,
+  .about-panel,
+  .exp-card,
+  .edu-card,
+  .project-card,
+  .skills-panel,
+  #hotkeypad [data-container],
+  footer,
+  #footer-button {
+    view-transition-name: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    ::view-transition-old(root),
+    ::view-transition-new(root) {
+      animation: none;
+    }
   }
 
   body {

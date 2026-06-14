@@ -1,0 +1,79 @@
+<div class="boot-sequence" aria-hidden="true">
+  <div class="boot-terminal">
+    <p data-boot-line></p>
+    <p data-boot-line></p>
+    <p data-boot-line></p>
+  </div>
+</div>
+
+<script>
+  import { animate } from "motion"
+
+  const boot = document.querySelector<HTMLElement>(".boot-sequence")
+  const lines = Array.from(document.querySelectorAll<HTMLElement>("[data-boot-line]"))
+  const commands = ["$ whoami", "> loading profile...", "> system ready_"]
+  const shouldReduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+
+  if (boot && lines.length > 0) {
+    const alreadySeen = localStorage.getItem("portfolioBootSeen") === "true"
+
+    if (alreadySeen || shouldReduceMotion) {
+      boot.remove()
+    } else {
+      localStorage.setItem("portfolioBootSeen", "true")
+
+      const wait = (ms: number) => new Promise((resolve) => window.setTimeout(resolve, ms))
+
+      const typeLine = async (element: HTMLElement, text: string) => {
+        for (const char of text) {
+          element.textContent += char
+          await wait(7)
+        }
+      }
+
+      const runBoot = async () => {
+        await typeLine(lines[0], commands[0])
+        await wait(70)
+        await typeLine(lines[1], commands[1])
+        await wait(70)
+        await typeLine(lines[2], commands[2])
+        await wait(120)
+        await animate(boot, { opacity: 0 }, { duration: 0.18 }).finished
+        boot.remove()
+      }
+
+      runBoot()
+    }
+  }
+</script>
+
+<style>
+  .boot-sequence {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: grid;
+    place-items: center;
+    background: #050805;
+    color: #7dff9b;
+    font-family: var(--font-mono);
+  }
+
+  .boot-terminal {
+    width: min(420px, calc(100vw - 32px));
+    min-height: 92px;
+    padding: 18px;
+    border: 1px solid rgba(125, 255, 155, 0.24);
+    background: rgba(3, 10, 5, 0.92);
+    box-shadow: 0 0 24px rgba(80, 200, 120, 0.12);
+  }
+
+  .boot-terminal p {
+    min-height: 20px;
+    margin: 0;
+    color: #7dff9b;
+    font-size: 12px;
+    line-height: 1.6;
+    letter-spacing: 0;
+  }
+</style>

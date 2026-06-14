@@ -46,6 +46,7 @@ const profilesInfo = profiles.map(({ network, url }: any) => {
 <div id="hotkeypad" data-placeholder={isEn ? "Search command" : "Buscar comando"} data-info={JSON.stringify(profilesInfo)} data-is-en={isEn ? "true" : "false"}></div>
 
 <script>
+  import { animate } from "motion"
   interface Info {
     id: string
     section: string
@@ -122,6 +123,92 @@ const profilesInfo = profiles.map(({ network, url }: any) => {
   ]
 
   hotkeypad.setCommands(allCommands)
+
+  const paletteRoot = document.getElementById("hotkeypad")
+  const getPaletteContainer = () => paletteRoot?.querySelector<HTMLElement>("[data-container]")
+  let lastOpenAnimation = 0
+
+  const animatePaletteOpen = () => {
+    const now = performance.now()
+    if (now - lastOpenAnimation < 80) return
+    lastOpenAnimation = now
+
+    const container = getPaletteContainer()
+    if (!container) return
+
+    animate(
+      container,
+      {
+        opacity: [0, 1],
+        transform: [
+          "translate(-50%, -50%) scale(0.95)",
+          "translate(-50%, -50%) scale(1)",
+        ],
+      },
+      {
+        type: "spring",
+        duration: 0.45,
+        bounce: 0.22,
+      }
+    )
+  }
+
+  const animatePaletteClose = async () => {
+    const container = getPaletteContainer()
+    if (!container) return
+
+    await animate(
+      container,
+      {
+        opacity: [1, 0],
+        transform: [
+          "translate(-50%, -50%) scale(1)",
+          "translate(-50%, -50%) scale(0.95)",
+        ],
+      },
+      {
+        duration: 0.18,
+        ease: "easeOut",
+      }
+    ).finished
+  }
+
+  const originalOpen = hotkeypad.open.bind(hotkeypad)
+  const originalClose = hotkeypad.close.bind(hotkeypad)
+  let isAnimatingClose = false
+
+  hotkeypad.open = () => {
+    originalOpen()
+    animatePaletteOpen()
+  }
+
+  hotkeypad.close = async () => {
+    if (isAnimatingClose) return
+    isAnimatingClose = true
+    await animatePaletteClose()
+    originalClose()
+    isAnimatingClose = false
+  }
+
+  window.addEventListener("hotkeypad:open", animatePaletteOpen)
+
+  if (paletteRoot) {
+    let wasVisible = paletteRoot.style.visibility === "visible"
+    const observer = new MutationObserver(() => {
+      const isVisible = paletteRoot.style.visibility === "visible"
+
+      if (isVisible && !wasVisible) {
+        animatePaletteOpen()
+      }
+
+      wasVisible = isVisible
+    })
+
+    observer.observe(paletteRoot, {
+      attributes: true,
+      attributeFilter: ["style", "class"],
+    })
+  }
 
   const footerButton = document.getElementById("footer-button")
   footerButton?.addEventListener("click", () => {

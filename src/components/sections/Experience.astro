@@ -5,77 +5,156 @@ interface Props { cv: any }
 const { cv } = Astro.props
 const { work } = cv
 
-const isEn = Astro.currentLocale === 'en';
-const title = isEn ? "Experience" : "Experiencia";
+const isEn = Astro.currentLocale === "en"
+const title = isEn ? "Experience" : "Experiencia"
 ---
 
 <Section id="experience" title={title}>
-  <ul class="experience-list">
-    {work.map(({ name, startDate, endDate, position, summary, url }: any, index: number) => {
-      const startYear = new Date(startDate).getFullYear()
-      const endYear = endDate != null ? new Date(endDate).getFullYear() : (isEn ? "Present" : "Actual")
-      const isCurrent = endDate == null
+  <div class="experience-timeline">
+    <div class="timeline-track" aria-hidden="true">
+      <div class="timeline-line"></div>
+    </div>
 
-      return (
-        <li>
-          <article class="exp-card">
-            <div class="exp-index">{String(index + 1).padStart(2, '0')}</div>
-            <div class="exp-content">
-              <header class="exp-header">
-                <div class="exp-title">
-                  <h3>
-                    <a href={url} title={isEn ? `View ${name}` : `Ver ${name}`} target="_blank">
-                      {name}
-                    </a>
-                  </h3>
-                  <h4>{position}</h4>
-                </div>
-                <div class="exp-period">
-                  <span class="period-start">{startYear}</span>
-                  <span class="period-sep">—</span>
-                  <span class={`period-end ${isCurrent ? 'current' : ''}`}>{endYear}</span>
-                </div>
-              </header>
-              <footer class="exp-footer">
-                <p>{summary}</p>
-              </footer>
-            </div>
-          </article>
-        </li>
-      )
-    })}
-  </ul>
+    <ul class="experience-list">
+      {work.map(({ name, startDate, endDate, position, summary, url }: any, index: number) => {
+        const startYear = new Date(startDate).getFullYear()
+        const endYear = endDate != null ? new Date(endDate).getFullYear() : (isEn ? "Present" : "Actual")
+        const isCurrent = endDate == null
+
+        return (
+          <li class="timeline-item">
+            <div class="timeline-node">{String(index + 1).padStart(2, "0")}</div>
+            <article class="exp-card">
+              <div class="exp-content">
+                <header class="exp-header">
+                  <div class="exp-title">
+                    <h3>
+                      <a href={url} title={isEn ? `View ${name}` : `Ver ${name}`} target="_blank">
+                        {name}
+                      </a>
+                    </h3>
+                    <h4>{position}</h4>
+                  </div>
+                  <div class="exp-period">
+                    <span class="period-start">{startYear}</span>
+                    <span class="period-sep">-</span>
+                    <span class={`period-end ${isCurrent ? "current" : ""}`}>{endYear}</span>
+                  </div>
+                </header>
+                <footer class="exp-footer">
+                  <p>{summary}</p>
+                </footer>
+              </div>
+            </article>
+          </li>
+        )
+      })}
+    </ul>
+  </div>
 </Section>
 
+<script>
+  import { animate, inView, scroll } from "motion"
+
+  const timeline = document.querySelector<HTMLElement>(".experience-timeline")
+  const line = document.querySelector<HTMLElement>(".timeline-line")
+  const nodes = document.querySelectorAll<HTMLElement>(".timeline-node")
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+
+  if (timeline && line && !reducedMotion) {
+    line.style.transformOrigin = "top"
+
+    scroll(
+      animate(line, { scaleY: [0, 1] }, { ease: "linear" }),
+      {
+        target: timeline,
+        offset: ["start 80%", "end 60%"],
+      }
+    )
+
+    nodes.forEach((node) => {
+      node.style.opacity = "0"
+      node.style.transform = "scale(0.8)"
+    })
+
+    inView(
+      nodes,
+      (node) => {
+        animate(
+          node,
+          { scale: [0.8, 1], opacity: [0, 1] },
+          { duration: 0.35 }
+        )
+      },
+      { margin: "0px 0px -80px 0px" }
+    )
+  }
+</script>
+
 <style>
+  .experience-timeline {
+    position: relative;
+  }
+
+  .timeline-track {
+    position: absolute;
+    top: 4px;
+    bottom: 4px;
+    left: 24px;
+    width: 1px;
+    background: var(--border-color);
+    overflow: hidden;
+  }
+
+  .timeline-line {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(180deg, var(--accent-purple), var(--accent-cyan));
+    transform: scaleY(0);
+    transform-origin: top;
+  }
+
   .experience-list {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 18px;
+  }
+
+  .timeline-item {
+    position: relative;
+    display: grid;
+    grid-template-columns: 48px minmax(0, 1fr);
+    gap: 16px;
+    align-items: start;
+  }
+
+  .timeline-node {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-hover);
+    color: var(--accent-purple);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    box-shadow: 0 0 0 6px var(--bg-primary);
   }
 
   .exp-card {
-    position: relative;
     background: var(--bg-panel);
     border: 1px solid var(--border-color);
-    padding: 16px 16px 16px 56px;
+    padding: 16px;
     transition: all var(--transition-normal);
   }
 
   .exp-card:hover {
     border-color: var(--border-hover);
     background: var(--bg-panel-hover);
-  }
-
-  .exp-index {
-    position: absolute;
-    left: 16px;
-    top: 16px;
-    font-family: var(--font-mono);
-    font-size: 10px;
-    font-weight: 600;
-    color: var(--text-muted);
-    letter-spacing: 0.05em;
   }
 
   .exp-header {
@@ -133,13 +212,24 @@ const title = isEn ? "Experience" : "Experiencia";
   }
 
   @media (width <= 768px) {
-    .exp-card {
-      padding: 14px 14px 14px 48px;
+    .timeline-track {
+      left: 18px;
     }
 
-    .exp-index {
-      left: 12px;
-      top: 14px;
+    .timeline-item {
+      grid-template-columns: 36px minmax(0, 1fr);
+      gap: 12px;
+    }
+
+    .timeline-node {
+      width: 36px;
+      height: 36px;
+      font-size: 9px;
+      box-shadow: 0 0 0 4px var(--bg-primary);
+    }
+
+    .exp-card {
+      padding: 14px;
     }
 
     .exp-header {

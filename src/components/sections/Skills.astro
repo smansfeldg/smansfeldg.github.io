@@ -28,6 +28,33 @@ const title = isEn ? "Skills" : "Habilidades";
   </div>
 </Section>
 
+<script>
+  import { animate, inView, stagger } from "motion"
+
+  const skillsPanel = document.querySelector<HTMLElement>(".skills-panel")
+  const skillItems = document.querySelectorAll<HTMLElement>(".skill-item")
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+
+  if (skillsPanel && skillItems.length > 0 && !reducedMotion) {
+    skillItems.forEach((item) => {
+      item.style.opacity = "0"
+      item.style.transform = "translateY(10px)"
+    })
+
+    inView(
+      skillsPanel,
+      () => {
+        animate(
+          skillItems,
+          { opacity: [0, 1], y: [10, 0] },
+          { delay: stagger(0.03), duration: 0.32 }
+        )
+      },
+      { margin: "0px 0px -100px 0px" }
+    )
+  }
+</script>
+
 <style>
   .skills-panel {
     background: var(--bg-panel);
