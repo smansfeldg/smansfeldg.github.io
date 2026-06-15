@@ -106,292 +106,278 @@
   "awards": [],
   "certificates": [],
   "publications": [],
-  "skills": [
-    {
-      "name": "AWS",
-      "level": "Intermediate",
-      "keywords": [
-        "Cloud"
-      ],
-      "icon": "logos:aws"
-    },
-    {
-      "name": "Azure",
-      "level": "Intermediate",
-      "keywords": [
-        "Cloud"
-      ],
-      "icon": "logos:azure-icon"
-    },
-    {
-      "name": "Kubernetes",
-      "level": "Intermediate",
-      "keywords": [
-        "DevOps"
-      ],
-      "icon": "logos:kubernetes"
-    },
-    {
-      "name": "Terraform",
-      "level": "Intermediate",
-      "keywords": [
-        "DevOps",
-        "IaC"
-      ],
-      "icon": "logos:terraform-icon"
-    },
-    {
-      "name": "Docker",
-      "level": "Advanced",
-      "keywords": [
-        "DevOps"
-      ],
-      "icon": "logos:docker-icon"
-    },
-    {
-      "name": "Jenkins",
-      "level": "Advanced",
-      "keywords": [
-        "DevOps",
-        "CI/CD"
-      ],
-      "icon": "logos:jenkins"
-    },
-    {
-      "name": "ArgoCD",
-      "level": "Intermediate",
-      "keywords": [
-        "CI/CD",
-        "GitOps"
-      ],
-      "icon": "devicon:argocd"
-    },
-    {
-      "name": "Prometheus",
-      "level": "Intermediate",
-      "keywords": [
-        "Observability",
-        "Monitoring"
-      ],
-      "icon": "logos:prometheus"
-    },
-    {
-      "name": "Grafana",
-      "level": "Intermediate",
-      "keywords": [
-        "Observability",
-        "Dashboards"
-      ],
-      "icon": "logos:grafana"
-    },
-    {
-      "name": "Ansible",
-      "level": "Intermediate",
-      "keywords": [
-        "DevOps"
-      ],
-      "icon": "logos:ansible"
-    },
-    {
-      "name": "Git",
-      "level": "Advanced",
-      "keywords": [
-        "Version Control"
-      ],
-      "icon": "logos:git-icon"
-    },
-    {
-      "name": "PostgreSQL",
-      "level": "Advanced",
-      "keywords": [
-        "Database"
-      ],
-      "icon": "logos:postgresql"
-    },
-    {
-      "name": "Linux",
-      "level": "Advanced",
-      "keywords": [
-        "OS",
-        "SysAdmin"
-      ],
-      "icon": "logos:linux-tux"
-    },
-    {
-      "name": "TypeScript",
-      "level": "Advanced",
-      "keywords": [
-        "Frontend",
-        "Backend"
-      ],
-      "icon": "logos:typescript-icon"
-    },
-    {
-      "name": "Node",
-      "level": "Advanced",
-      "keywords": [
-        "Backend"
-      ],
-      "icon": "logos:nodejs-icon"
-    },
-    {
-      "name": "NestJS",
-      "level": "Advanced",
-      "keywords": [
-        "Backend"
-      ],
-      "icon": "logos:nestjs"
-    },
-    {
-      "name": "React",
-      "level": "Advanced",
-      "keywords": [
-        "Frontend"
-      ],
-      "icon": "logos:react"
-    },
-    {
-      "name": "Helm",
-      "level": "Intermediate",
-      "keywords": [
-        "Kubernetes",
-        "Package Manager"
-      ],
-      "icon": "logos:helm"
-    },
-    {
-      "name": "GitHub Actions",
-      "level": "Intermediate",
-      "keywords": [
-        "CI/CD",
-        "Automation"
-      ],
-      "icon": "logos:github-actions"
-    },
-    {
-      "name": "GitLab CI",
-      "level": "Intermediate",
-      "keywords": [
-        "CI/CD",
-        "Automation"
-      ],
-      "icon": "material-icon-theme:gitlab"
-    },
-    {
-      "name": "Python",
-      "level": "Intermediate",
-      "keywords": [
-        "Automation",
-        "Scripting"
-      ],
-      "icon": "logos:python"
-    },
-    {
-      "name": "Bash",
-      "level": "Advanced",
-      "keywords": [
-        "Scripting",
-        "Linux"
-      ],
-      "icon": "logos:bash-icon"
-    },
-    {
-      "name": "OpenTelemetry",
-      "level": "Beginner",
-      "keywords": [
-        "Observability",
-        "Tracing"
-      ],
-      "icon": "logos:opentelemetry-icon"
-    },
-    {
-      "name": "Vault",
-      "level": "Beginner",
-      "keywords": [
-        "Secrets Management",
-        "Security"
-      ],
-      "icon": "logos:vault-icon"
-    },
-    {
-      "name": "Istio",
-      "level": "Beginner",
-      "keywords": [
-        "Service Mesh",
-        "Kubernetes"
-      ],
-      "icon": "devicon:istio"
-    },
-    {
-      "name": "OpenSearch",
-      "level": "Beginner",
-      "keywords": [
-        "Logging",
-        "Search"
-      ],
-      "icon": "simple-icons:opensearch"
-    },
-    {
-      "name": "EKS",
-      "level": "Intermediate",
-      "keywords": [
-        "AWS",
-        "Kubernetes"
-      ],
-      "icon": "logos:aws-eks"
-    },
-    {
-      "name": "SonarQube",
-      "level": "Intermediate",
-      "keywords": [
-        "Code Quality",
-        "DevSecOps"
-      ],
-      "icon": "devicon:sonarqube"
-    },
-    {
-      "name": "Next.js",
-      "level": "Intermediate",
-      "keywords": [
-        "Frontend",
-        "Fullstack"
-      ],
-      "icon": "logos:nextjs-icon"
-    },
-    {
-      "name": "Tailwind CSS",
-      "level": "Intermediate",
-      "keywords": [
-        "Frontend",
-        "Design"
-      ],
-      "icon": "logos:tailwindcss-icon"
-    },
-    {
-      "name": "Astro",
-      "level": "Intermediate",
-      "keywords": [
-        "Frontend"
-      ],
-      "icon": "devicon:astro"
-    },
-    {
-      "name": "Nginx",
-      "level": "Intermediate",
-      "keywords": [
-        "Infra"
-      ],
-      "icon": "logos:nginx"
-    },
-    {
-      "name": "Redis",
-      "level": "Intermediate",
-      "keywords": [
-        "Database"
-      ],
-      "icon": "logos:redis"
-    }
-  ],
+"skills": [
+  {
+    "name": "EC2",
+    "level": "Advanced",
+    "category": "AWS",
+    "icon": "logos:aws-ec2"
+  },
+  {
+    "name": "ECS",
+    "level": "Advanced",
+    "category": "AWS",
+    "icon": "logos:aws-ecs"
+  },
+  {
+    "name": "Lambda",
+    "level": "Intermediate",
+    "category": "AWS",
+    "icon": "logos:aws-lambda"
+  },
+  {
+    "name": "IAM",
+    "level": "Advanced",
+    "category": "AWS",
+    "icon": "logos:aws-iam"
+  },
+  {
+    "name": "S3",
+    "level": "Advanced",
+    "category": "AWS",
+    "icon": "logos:aws-s3"
+  },
+  {
+    "name": "Route53",
+    "level": "Intermediate",
+    "category": "AWS",
+    "icon": "logos:aws-route53"
+  },
+  {
+    "name": "API Gateway",
+    "level": "Intermediate",
+    "category": "AWS",
+    "icon": "logos:aws-api-gateway"
+  },
+  {
+    "name": "Secrets Manager",
+    "level": "Intermediate",
+    "category": "AWS",
+    "icon": "logos:aws-secrets-manager"
+  },
+  {
+    "name": "Systems Manager",
+    "level": "Intermediate",
+    "category": "AWS",
+    "icon": "logos:aws-systems-manager"
+  },
+  {
+    "name": "Auto Scaling",
+    "level": "Intermediate",
+    "category": "AWS",
+    "icon": "logos:aws-auto-scaling"
+  },
+  {
+    "name": "GuardDuty",
+    "level": "Intermediate",
+    "category": "AWS",
+    "icon": "simple-icons:awsguardduty"
+  },
+  {
+    "name": "CloudTrail",
+    "level": "Intermediate",
+    "category": "AWS",
+    "icon": "logos:aws-cloudtrail"
+  },
+  {
+    "name": "EKS",
+    "level": "Intermediate",
+    "category": "AWS",
+    "icon": "logos:aws-eks"
+  },
+  {
+    "name": "Kubernetes",
+    "level": "Intermediate",
+    "category": "Containers & Orchestration",
+    "icon": "logos:kubernetes"
+  },
+  {
+    "name": "Docker",
+    "level": "Advanced",
+    "category": "Containers & Orchestration",
+    "icon": "logos:docker-icon"
+  },
+  {
+    "name": "Helm",
+    "level": "Intermediate",
+    "category": "Containers & Orchestration",
+    "icon": "logos:helm"
+  },
+  {
+    "name": "ArgoCD",
+    "level": "Intermediate",
+    "category": "Containers & Orchestration",
+    "icon": "devicon:argocd"
+  },
+  {
+    "name": "Jenkins",
+    "level": "Advanced",
+    "category": "CI/CD",
+    "icon": "logos:jenkins"
+  },
+  {
+    "name": "GitHub Actions",
+    "level": "Intermediate",
+    "category": "CI/CD",
+    "icon": "logos:github-actions"
+  },
+  {
+    "name": "GitLab CI",
+    "level": "Intermediate",
+    "category": "CI/CD",
+    "icon": "material-icon-theme:gitlab"
+  },
+  {
+    "name": "SonarQube",
+    "level": "Intermediate",
+    "category": "CI/CD",
+    "icon": "devicon:sonarqube"
+  },
+  {
+    "name": "Azure DevOps",
+    "level": "Intermediate",
+    "category": "CI/CD",
+    "icon": "logos:azure-icon"
+  },
+  {
+    "name": "Terraform",
+    "level": "Intermediate",
+    "category": "IaC",
+    "icon": "logos:terraform-icon"
+  },
+  {
+    "name": "Ansible",
+    "level": "Intermediate",
+    "category": "IaC",
+    "icon": "logos:ansible"
+  },
+  {
+    "name": "CloudFormation",
+    "level": "Intermediate",
+    "category": "IaC",
+    "icon": "logos:aws-cloudformation"
+  },
+  {
+    "name": "Prometheus",
+    "level": "Intermediate",
+    "category": "Observability",
+    "icon": "logos:prometheus"
+  },
+  {
+    "name": "Grafana",
+    "level": "Intermediate",
+    "category": "Observability",
+    "icon": "logos:grafana"
+  },
+  {
+    "name": "CloudWatch",
+    "level": "Intermediate",
+    "category": "Observability",
+    "icon": "logos:aws-cloudwatch"
+  },
+  {
+    "name": "X-Ray",
+    "level": "Intermediate",
+    "category": "Observability",
+    "icon": "logos:aws-xray"
+  },
+  {
+    "name": "OpenSearch",
+    "level": "Intermediate",
+    "category": "Observability",
+    "icon": "simple-icons:opensearch"
+  },
+  {
+    "name": "Linux",
+    "level": "Advanced",
+    "category": "Infrastructure",
+    "icon": "logos:linux-tux"
+  },
+  {
+    "name": "Windows Server",
+    "level": "Intermediate",
+    "category": "Infrastructure",
+    "icon": "devicon:windows11"
+  },
+  {
+    "name": "Nginx",
+    "level": "Intermediate",
+    "category": "Infrastructure",
+    "icon": "logos:nginx"
+  },
+  {
+    "name": "Git",
+    "level": "Advanced",
+    "category": "Infrastructure",
+    "icon": "logos:git-icon"
+  },
+  {
+    "name": "Bash",
+    "level": "Advanced",
+    "category": "Development",
+    "icon": "logos:bash-icon"
+  },
+  {
+    "name": "Python",
+    "level": "Intermediate",
+    "category": "Development",
+    "icon": "logos:python"
+  },
+  {
+    "name": "TypeScript",
+    "level": "Advanced",
+    "category": "Development",
+    "icon": "logos:typescript-icon"
+  },
+  {
+    "name": "Node",
+    "level": "Advanced",
+    "category": "Development",
+    "icon": "logos:nodejs-icon"
+  },
+  {
+    "name": "NestJS",
+    "level": "Advanced",
+    "category": "Development",
+    "icon": "logos:nestjs"
+  },
+  {
+    "name": "React",
+    "level": "Advanced",
+    "category": "Development",
+    "icon": "logos:react"
+  },
+  {
+    "name": "Next.js",
+    "level": "Intermediate",
+    "category": "Development",
+    "icon": "logos:nextjs-icon"
+  },
+  {
+    "name": "Tailwind CSS",
+    "level": "Intermediate",
+    "category": "Development",
+    "icon": "logos:tailwindcss-icon"
+  },
+  {
+    "name": "Astro",
+    "level": "Intermediate",
+    "category": "Development",
+    "icon": "devicon:astro"
+  },
+  {
+    "name": "PostgreSQL",
+    "level": "Advanced",
+    "category": "Data",
+    "icon": "logos:postgresql"
+  },
+  {
+    "name": "DynamoDB",
+    "level": "Intermediate",
+    "category": "Data",
+    "icon": "logos:aws-dynamodb"
+  }
+],
   "languages": [
     {
       "language": "Español",

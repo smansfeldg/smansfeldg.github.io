@@ -3,10 +3,37 @@ import Section from "../Section.astro"
 
 interface Props { cv: any }
 const { cv } = Astro.props
-const { skills } = cv
+type Skill = {
+  name: string;
+  level: string;
+  category?: string;
+  icon?: string;
+};
+
+type SkillGroup = {
+  category: string;
+  skills: Array<Skill>;
+};
+
+const skills = cv.skills as Array<Skill>
 
 const isEn = Astro.currentLocale === 'en';
 const title = isEn ? "Skills" : "Habilidades";
+
+const groupedSkills: Array<SkillGroup> = skills.reduce((groups: Array<SkillGroup>, skill: Skill) => {
+  const category = skill.category || (isEn ? "Other" : "Otros");
+  const group = groups.find((item: SkillGroup) => item.category === category);
+
+  if (group) {
+    group.skills.push(skill);
+  } else {
+    groups.push({ category, skills: [skill] });
+  }
+
+  return groups;
+}, [] as Array<SkillGroup>);
+
+const getCategoryId = (category: string) => `skill-category-${category.toLowerCase().replace(/[^a-z0-9-]/g, "-")}`;
 ---
 
 <Section id="skills" title={title}>
@@ -15,14 +42,21 @@ const title = isEn ? "Skills" : "Habilidades";
       <span class="panel-label">{isEn ? 'CAPABILITIES' : 'CAPACIDADES'}</span>
       <span class="panel-count">{skills.length} {isEn ? 'modules' : 'módulos'}</span>
     </div>
-    <div class="skills-grid">
-      {skills.map(({ name, icon }: any) => (
-        <div class="skill-item">
-          <div class="skill-icon">
-            {icon && <iconify-icon icon={icon}></iconify-icon>}
+    <div class="skill-groups">
+      {groupedSkills.map((group: SkillGroup) => (
+        <section class="skill-group" aria-labelledby={getCategoryId(group.category)}>
+          <h3 id={getCategoryId(group.category)} class="skill-category">{group.category}</h3>
+          <div class="skills-grid">
+            {group.skills.map(({ name, icon, level }: Skill) => (
+              <div class="skill-item" data-level={level} title={level}>
+                <div class="skill-icon">
+                  {icon && <iconify-icon icon={icon}></iconify-icon>}
+                </div>
+                <span class="skill-name">{name}</span>
+              </div>
+            ))}
           </div>
-          <span class="skill-name">{name}</span>
-        </div>
+        </section>
       ))}
     </div>
   </div>
@@ -63,11 +97,31 @@ const title = isEn ? "Skills" : "Habilidades";
     letter-spacing: 0.08em;
   }
 
+  .skill-groups {
+    display: grid;
+    gap: 16px;
+    padding: 16px;
+  }
+
+  .skill-group {
+    display: grid;
+    gap: 8px;
+  }
+
+  .skill-category {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+  }
+
   .skills-grid {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    padding: 16px;
   }
 
   .skill-item {
@@ -83,8 +137,32 @@ const title = isEn ? "Skills" : "Habilidades";
     position: relative;
   }
 
+  .skill-item::after {
+    content: attr(data-level);
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% + 6px);
+    transform: translateX(-50%) translateY(2px);
+    padding: 3px 6px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.04em;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--transition-fast), transform var(--transition-fast);
+    z-index: 1;
+    white-space: nowrap;
+  }
+
+  .skill-item:hover::after {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
   .skill-item:hover {
-    border-color: var(--border-hover);
     background: var(--accent-purple-dim);
   }
 
@@ -121,8 +199,9 @@ const title = isEn ? "Skills" : "Habilidades";
   }
 
   @media (width <= 768px) {
-    .skills-grid {
+    .skill-groups {
       padding: 12px;
+      gap: 14px;
     }
 
     .skill-item {
