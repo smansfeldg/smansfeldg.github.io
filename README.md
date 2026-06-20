@@ -12,6 +12,7 @@ Sitio personal tipo portfolio y curriculo hecho con **Astro**.
 - **Iconify**: renderiza los iconos de habilidades mediante `<iconify-icon>`.
 - **Google Fonts**: tipografias externas para la identidad visual.
 - **SEO y metadatos**: incluye Open Graph, Twitter Cards y datos estructurados JSON-LD.
+- **Analítica Integrada**: utiliza Microsoft Clarity y un sistema modular de eventos para trackear el uso.
 
 ## Estructura
 
@@ -19,8 +20,18 @@ Sitio personal tipo portfolio y curriculo hecho con **Astro**.
 - `src/layouts/`: layout base y configuracion global.
 - `src/components/`: componentes reutilizables y secciones del CV.
 - `src/icons/`: iconos SVG propios.
+- `src/analytics/`: sistema modular de analíticas y eventos.
 - `public/`: imagenes y recursos estaticos.
 - `cv.json` / `cv_english.json`: contenido del perfil y experiencia.
+
+## Tracking y Analítica
+
+El proyecto incluye un sistema de analíticas centralizado en `src/analytics/`:
+- Integración global con **Microsoft Clarity**.
+- Tracking de scroll avanzado (25%, 50%, 75%, 100%).
+- Tracking de visibilidad de secciones dinámico mediante IntersectionObserver.
+- Tracking de enlaces usando el atributo `data-track="nombre_evento"`.
+- Tracking de comandos ejecutados en Hotkeypad (`command_*`).
 
 ## Comandos basicos
 

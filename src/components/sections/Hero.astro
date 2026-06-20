@@ -67,13 +67,13 @@ const isEn = Astro.currentLocale === 'en'
       <div class="hero-footer">
         <div class="contact-links">
           {email && (
-            <a href={`mailto:${email}`} title={`Enviar un correo electrónico a ${name} al correo ${email}`} target="_blank" rel="noopener noreferrer" class="contact-link">
+            <a href={`mailto:${email}`} title={`Enviar un correo electrónico a ${name} al correo ${email}`} target="_blank" rel="noopener noreferrer" class="contact-link" data-track="contact_email_click">
               <Mail />
               <span class="link-label">Email</span>
             </a>
           )}
           {phone && (
-            <a href={`https://wa.me/${phone.replace(/[^0-9]/g, "")}`} title={isEn ? `Send a WhatsApp message to ${name}` : `Enviar un mensaje de WhatsApp a ${name}`} target="_blank" rel="noopener noreferrer" class="contact-link">
+            <a href={`https://wa.me/${phone.replace(/[^0-9]/g, "")}`} title={isEn ? `Send a WhatsApp message to ${name}` : `Enviar un mensaje de WhatsApp a ${name}`} target="_blank" rel="noopener noreferrer" class="contact-link" data-track="contact_whatsapp_click">
               <WhatsApp />
               <span class="link-label">WhatsApp</span>
             </a>
@@ -81,7 +81,7 @@ const isEn = Astro.currentLocale === 'en'
           {profiles.map(({ network, url }: any) => {
             const Icon = SOCIAL_ICONS[network]
             return (
-              <a href={url} title={`Visitar el perfil de ${name} en ${network}`} target="_blank" rel="noopener noreferrer" class="contact-link">
+              <a href={url} title={`Visitar el perfil de ${name} en ${network}`} target="_blank" rel="noopener noreferrer" class="contact-link" data-track={`${network.toLowerCase()}_click`}>
                 <Icon />
                 <span class="link-label">{network}</span>
               </a>

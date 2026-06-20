@@ -1,5 +1,6 @@
 ---
 import AIContext from "@/components/AIContext.astro"
+import Clarity from "@/components/Clarity.astro"
 
 type LocaleCode = "es_AR" | "en_US" | string
 type AlternateLocale = {
@@ -169,6 +170,10 @@ const safeJsonLd = JSON.stringify(jsonLd).replace(/</g, "\\u003c")
       };
       
       initLang();
+    </script>
+    <Clarity id="x9rpajde8s" />
+    <script>
+      import "@/analytics/tracking";
     </script>
   </head>
   <body>

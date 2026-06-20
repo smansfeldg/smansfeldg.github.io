@@ -73,6 +73,7 @@ const profilesInfo = profiles.map(({ network, url }: any) => {
         hotkey,
         section,
         handler: () => {
+          import("@/analytics/events").then(({ trackEvent }) => trackEvent(`command_${id.toLowerCase()}`))
           window.open(url, "_blank")
         }
       }
@@ -89,6 +90,7 @@ const profilesInfo = profiles.map(({ network, url }: any) => {
       hotkey: "ctrl+P",
       section: isEn ? "Actions" : "Acciones",
       handler: () => {
+        import("@/analytics/events").then(({ trackEvent }) => trackEvent('command_print'))
         window.print()
       }
     },
@@ -99,6 +101,7 @@ const profilesInfo = profiles.map(({ network, url }: any) => {
       section: isEn ? "Preferences" : "Preferencias",
       hotkey: "ctrl+M",
       handler: () => {
+        import("@/analytics/events").then(({ trackEvent }) => trackEvent('command_toggle_theme'))
         const isDark = document.documentElement.classList.contains('dark')
         const newTheme = isDark ? 'light' : 'dark'
         ;(window as any).applyTheme(newTheme)
@@ -112,6 +115,7 @@ const profilesInfo = profiles.map(({ network, url }: any) => {
       section: isEn ? "Preferences" : "Preferencias",
       hotkey: "ctrl+E",
       handler: () => {
+        import("@/analytics/events").then(({ trackEvent }) => trackEvent('command_switch_language'))
         const currentIsEn = window.location.pathname.startsWith('/en')
         const newLang = currentIsEn ? 'es' : 'en'
         localStorage.setItem('lang', newLang)
@@ -125,7 +129,14 @@ const profilesInfo = profiles.map(({ network, url }: any) => {
 
   const footerButton = document.getElementById("footer-button")
   footerButton?.addEventListener("click", () => {
+    import("@/analytics/events").then(({ trackEvent }) => trackEvent('command_palette_open'))
     hotkeypad.open()
+  })
+
+  window.addEventListener('keydown', (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+      import("@/analytics/events").then(({ trackEvent }) => trackEvent('command_palette_open'))
+    }
   })
 </script>
 
