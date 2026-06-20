@@ -169,12 +169,18 @@ const getCategoryId = (category: string) => `skill-category-${category.toLowerCa
   .skill-icon {
     display: flex;
     align-items: center;
+    justify-content: center;
     color: var(--text-secondary);
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
   }
 
+  .skill-icon iconify-icon,
   .skill-icon svg {
     width: 14px;
     height: 14px;
+    display: block;
   }
 
   .skill-name {
