@@ -457,7 +457,7 @@
       "description": "Release management. Full-stack web application for pipeline control, notifications, and distribution.",
       "highlights": [
         "React",
-        "Nodejs",
+        "Node",
         "Docker"
       ],
       "url": "https://easysync.gbsj.com.ar/"

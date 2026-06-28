@@ -3,7 +3,7 @@ import Section from "../Section.astro"
 
 interface Props { cv: any }
 const { cv } = Astro.props
-const { projects } = cv
+const { projects, skills } = cv
 
 const isEn = Astro.currentLocale === 'en';
 const title = isEn ? "Projects" : "Proyectos";
@@ -30,9 +30,19 @@ const title = isEn ? "Projects" : "Proyectos";
           </div>
           <div class="project-footer">
             <div class="stack-tags">
-              {highlights.map((highlight: any) => (
-                <span class="stack-tag">{highlight}</span>
-              ))}
+              {highlights.map((highlight: any) => {
+                const skill = skills.find((s: any) => s.name === highlight);
+                return (
+                  <div class="stack-tag" title={highlight}>
+                    {skill?.icon && (
+                      <div class="skill-icon">
+                        <iconify-icon icon={skill.icon}></iconify-icon>
+                      </div>
+                    )}
+                    <span class="skill-name">{highlight}</span>
+                  </div>
+                );
+              })}
             </div>
             <a href={url} target="_blank" class="project-action" data-track={`project_click_${projectSlug}`}>
               <span>{isEn ? 'ACCESS' : 'ACCEDER'}</span>
@@ -178,13 +188,39 @@ const title = isEn ? "Projects" : "Proyectos";
   }
 
   .stack-tag {
-    font-family: var(--font-mono);
-    font-size: 9px;
-    padding: 3px 8px;
-    background: var(--accent-purple-dim);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px;
+    background: var(--bg-secondary);
     border: 1px solid var(--border-color);
-    color: var(--accent-purple);
-    letter-spacing: 0.05em;
+    transition: all var(--transition-fast);
+  }
+
+  .stack-tag:hover {
+    background: var(--accent-purple-dim);
+  }
+
+  .skill-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    width: 14px;
+    height: 14px;
+  }
+
+  .skill-icon iconify-icon {
+    width: 14px;
+    height: 14px;
+    display: block;
+  }
+
+  .skill-name {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-secondary);
+    letter-spacing: 0.03em;
   }
 
   .project-action {
