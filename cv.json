@@ -104,280 +104,329 @@
     }
   ],
   "awards": [],
-  "certificates": [],
+  "certificates": [
+    {
+      "name": "AWS Certified AI Practitioner",
+      "issuer": "Amazon Web Services",
+      "year": "2026",
+      "status": "Completed",
+      "url": "",
+      "logo": "https://images.credly.com/size/340x340/images/4d4693bb-530e-4bca-9327-de07f3aa2348/image.png"
+    },
+    {
+      "name": "AWS Certified Solutions Architect - Associate",
+      "issuer": "Amazon Web Services",
+      "year": "2026",
+      "status": "Completed",
+      "url": "https://www.credly.com/badges/d19582ab-d265-4755-a3a1-7b08e50a1343/public_url",
+      "logo": "https://images.credly.com/size/340x340/images/0e284c3f-5164-4b21-8660-0d84737941bc/image.png"
+    },
+    {
+      "name": "AWS Certified Solutions Architect - Professional",
+      "issuer": "Amazon Web Services",
+      "year": "2026",
+      "status": "Completed",
+      "url": "",
+      "logo": "https://images.credly.com/size/340x340/images/2d84e428-9078-49b6-a804-13c15383d0de/image.png"
+    },
+    {
+      "name": "AWS Certified DevOps Engineer - Professional",
+      "issuer": "Amazon Web Services",
+      "year": "2026",
+      "status": "Completed",
+      "url": "",
+      "logo": "https://images.credly.com/images/bd31ef42-d460-493e-8503-39592aaf0458/image.png"
+    },
+    {
+      "name": "AWS Certified Machine Learning Engineer - Associate",
+      "issuer": "Amazon Web Services",
+      "year": "2026",
+      "status": "Completed",
+      "url": "",
+      "logo": "https://images.credly.com/size/340x340/images/1a634b4e-3d6b-4a74-b118-c0dcb429e8d2/image.png"
+    },
+    {
+      "name": "Professional Cloud DevOps Engineer",
+      "issuer": "Google Cloud",
+      "year": "2026",
+      "status": "Completed",
+      "url": "",
+      "logo": "https://images.credly.com/size/340x340/images/33f08b7e-fa6a-41cd-810a-21cc1c336f6d/image.png"
+    }
+  ],
   "publications": [],
-"skills": [
-  {
-    "name": "EC2",
-    "level": "Advanced",
-    "category": "AWS",
-    "icon": "logos:aws-ec2"
-  },
-  {
-    "name": "ECS",
-    "level": "Advanced",
-    "category": "AWS",
-    "icon": "logos:aws-ecs"
-  },
-  {
-    "name": "Lambda",
-    "level": "Intermediate",
-    "category": "AWS",
-    "icon": "logos:aws-lambda"
-  },
-  {
-    "name": "IAM",
-    "level": "Advanced",
-    "category": "AWS",
-    "icon": "logos:aws-iam"
-  },
-  {
-    "name": "S3",
-    "level": "Advanced",
-    "category": "AWS",
-    "icon": "logos:aws-s3"
-  },
-  {
-    "name": "Route53",
-    "level": "Intermediate",
-    "category": "AWS",
-    "icon": "logos:aws-route53"
-  },
-  {
-    "name": "API Gateway",
-    "level": "Intermediate",
-    "category": "AWS",
-    "icon": "logos:aws-api-gateway"
-  },
-  {
-    "name": "Secrets Manager",
-    "level": "Intermediate",
-    "category": "AWS",
-    "icon": "logos:aws-secrets-manager"
-  },
-  {
-    "name": "Systems Manager",
-    "level": "Intermediate",
-    "category": "AWS",
-    "icon": "logos:aws-systems-manager"
-  },
-  {
-    "name": "Auto Scaling",
-    "level": "Intermediate",
-    "category": "AWS",
-    "icon": "logos:aws-auto-scaling"
-  },
-  {
-    "name": "GuardDuty",
-    "level": "Intermediate",
-    "category": "AWS",
-    "icon": "simple-icons:awsguardduty"
-  },
-  {
-    "name": "CloudTrail",
-    "level": "Intermediate",
-    "category": "AWS",
-    "icon": "logos:aws-cloudtrail"
-  },
-  {
-    "name": "EKS",
-    "level": "Intermediate",
-    "category": "AWS",
-    "icon": "logos:aws-eks"
-  },
-  {
-    "name": "Kubernetes",
-    "level": "Intermediate",
-    "category": "Containers & Orchestration",
-    "icon": "logos:kubernetes"
-  },
-  {
-    "name": "Docker",
-    "level": "Advanced",
-    "category": "Containers & Orchestration",
-    "icon": "logos:docker-icon"
-  },
-  {
-    "name": "Helm",
-    "level": "Intermediate",
-    "category": "Containers & Orchestration",
-    "icon": "logos:helm"
-  },
-  {
-    "name": "ArgoCD",
-    "level": "Intermediate",
-    "category": "Containers & Orchestration",
-    "icon": "devicon:argocd"
-  },
-  {
-    "name": "Jenkins",
-    "level": "Advanced",
-    "category": "CI/CD",
-    "icon": "logos:jenkins"
-  },
-  {
-    "name": "GitHub Actions",
-    "level": "Intermediate",
-    "category": "CI/CD",
-    "icon": "logos:github-actions"
-  },
-  {
-    "name": "GitLab CI",
-    "level": "Intermediate",
-    "category": "CI/CD",
-    "icon": "material-icon-theme:gitlab"
-  },
-  {
-    "name": "SonarQube",
-    "level": "Intermediate",
-    "category": "CI/CD",
-    "icon": "devicon:sonarqube"
-  },
-  {
-    "name": "Azure DevOps",
-    "level": "Intermediate",
-    "category": "CI/CD",
-    "icon": "logos:azure-icon"
-  },
-  {
-    "name": "Terraform",
-    "level": "Intermediate",
-    "category": "IaC",
-    "icon": "logos:terraform-icon"
-  },
-  {
-    "name": "Ansible",
-    "level": "Intermediate",
-    "category": "IaC",
-    "icon": "logos:ansible"
-  },
-  {
-    "name": "CloudFormation",
-    "level": "Intermediate",
-    "category": "IaC",
-    "icon": "logos:aws-cloudformation"
-  },
-  {
-    "name": "Prometheus",
-    "level": "Intermediate",
-    "category": "Observability",
-    "icon": "logos:prometheus"
-  },
-  {
-    "name": "Grafana",
-    "level": "Intermediate",
-    "category": "Observability",
-    "icon": "logos:grafana"
-  },
-  {
-    "name": "CloudWatch",
-    "level": "Intermediate",
-    "category": "Observability",
-    "icon": "logos:aws-cloudwatch"
-  },
-  {
-    "name": "X-Ray",
-    "level": "Intermediate",
-    "category": "Observability",
-    "icon": "logos:aws-xray"
-  },
-  {
-    "name": "OpenSearch",
-    "level": "Intermediate",
-    "category": "Observability",
-    "icon": "simple-icons:opensearch"
-  },
-  {
-    "name": "Linux",
-    "level": "Advanced",
-    "category": "Infrastructure",
-    "icon": "logos:linux-tux"
-  },
-  {
-    "name": "Windows Server",
-    "level": "Intermediate",
-    "category": "Infrastructure",
-    "icon": "devicon:windows11"
-  },
-  {
-    "name": "Nginx",
-    "level": "Intermediate",
-    "category": "Infrastructure",
-    "icon": "logos:nginx"
-  },
-  {
-    "name": "Git",
-    "level": "Advanced",
-    "category": "Infrastructure",
-    "icon": "logos:git-icon"
-  },
-  {
-    "name": "Bash",
-    "level": "Advanced",
-    "category": "Development",
-    "icon": "logos:bash-icon"
-  },
-  {
-    "name": "Python",
-    "level": "Intermediate",
-    "category": "Development",
-    "icon": "logos:python"
-  },
-  {
-    "name": "TypeScript",
-    "level": "Advanced",
-    "category": "Development",
-    "icon": "logos:typescript-icon"
-  },
-  {
-    "name": "Node",
-    "level": "Advanced",
-    "category": "Development",
-    "icon": "logos:nodejs-icon"
-  },
-  {
-    "name": "NestJS",
-    "level": "Advanced",
-    "category": "Development",
-    "icon": "logos:nestjs"
-  },
-  {
-    "name": "React",
-    "level": "Advanced",
-    "category": "Development",
-    "icon": "logos:react"
-  },
-  {
-    "name": "Next.js",
-    "level": "Intermediate",
-    "category": "Development",
-    "icon": "logos:nextjs-icon"
-  },
-  {
-    "name": "Tailwind CSS",
-    "level": "Intermediate",
-    "category": "Development",
-    "icon": "logos:tailwindcss-icon"
-  },
-  {
-    "name": "Astro",
-    "level": "Intermediate",
-    "category": "Development",
-    "icon": "devicon:astro"
-  },
-  {
-    "name": "PostgreSQL",
-    "level": "Advanced",
-    "category": "Data",
-    "icon": "logos:postgresql"
-  },
-  {
-    "name": "DynamoDB",
-    "level": "Intermediate",
-    "category": "Data",
-    "icon": "logos:aws-dynamodb"
-  }
-],
+  "skills": [
+    {
+      "name": "EC2",
+      "level": "Advanced",
+      "category": "AWS",
+      "icon": "logos:aws-ec2"
+    },
+    {
+      "name": "ECS",
+      "level": "Advanced",
+      "category": "AWS",
+      "icon": "logos:aws-ecs"
+    },
+    {
+      "name": "Lambda",
+      "level": "Intermediate",
+      "category": "AWS",
+      "icon": "logos:aws-lambda"
+    },
+    {
+      "name": "IAM",
+      "level": "Advanced",
+      "category": "AWS",
+      "icon": "logos:aws-iam"
+    },
+    {
+      "name": "S3",
+      "level": "Advanced",
+      "category": "AWS",
+      "icon": "logos:aws-s3"
+    },
+    {
+      "name": "Route53",
+      "level": "Intermediate",
+      "category": "AWS",
+      "icon": "logos:aws-route53"
+    },
+    {
+      "name": "API Gateway",
+      "level": "Intermediate",
+      "category": "AWS",
+      "icon": "logos:aws-api-gateway"
+    },
+    {
+      "name": "Secrets Manager",
+      "level": "Intermediate",
+      "category": "AWS",
+      "icon": "logos:aws-secrets-manager"
+    },
+    {
+      "name": "Systems Manager",
+      "level": "Intermediate",
+      "category": "AWS",
+      "icon": "logos:aws-systems-manager"
+    },
+    {
+      "name": "Auto Scaling",
+      "level": "Intermediate",
+      "category": "AWS",
+      "icon": "logos:aws-auto-scaling"
+    },
+    {
+      "name": "GuardDuty",
+      "level": "Intermediate",
+      "category": "AWS",
+      "icon": "simple-icons:awsguardduty"
+    },
+    {
+      "name": "CloudTrail",
+      "level": "Intermediate",
+      "category": "AWS",
+      "icon": "logos:aws-cloudtrail"
+    },
+    {
+      "name": "EKS",
+      "level": "Intermediate",
+      "category": "AWS",
+      "icon": "logos:aws-eks"
+    },
+    {
+      "name": "Kubernetes",
+      "level": "Intermediate",
+      "category": "Containers & Orchestration",
+      "icon": "logos:kubernetes"
+    },
+    {
+      "name": "Docker",
+      "level": "Advanced",
+      "category": "Containers & Orchestration",
+      "icon": "logos:docker-icon"
+    },
+    {
+      "name": "Helm",
+      "level": "Intermediate",
+      "category": "Containers & Orchestration",
+      "icon": "logos:helm"
+    },
+    {
+      "name": "ArgoCD",
+      "level": "Intermediate",
+      "category": "Containers & Orchestration",
+      "icon": "devicon:argocd"
+    },
+    {
+      "name": "Jenkins",
+      "level": "Advanced",
+      "category": "CI/CD",
+      "icon": "logos:jenkins"
+    },
+    {
+      "name": "GitHub Actions",
+      "level": "Intermediate",
+      "category": "CI/CD",
+      "icon": "logos:github-actions"
+    },
+    {
+      "name": "GitLab CI",
+      "level": "Intermediate",
+      "category": "CI/CD",
+      "icon": "material-icon-theme:gitlab"
+    },
+    {
+      "name": "SonarQube",
+      "level": "Intermediate",
+      "category": "CI/CD",
+      "icon": "devicon:sonarqube"
+    },
+    {
+      "name": "Azure DevOps",
+      "level": "Intermediate",
+      "category": "CI/CD",
+      "icon": "logos:azure-icon"
+    },
+    {
+      "name": "Terraform",
+      "level": "Intermediate",
+      "category": "IaC",
+      "icon": "logos:terraform-icon"
+    },
+    {
+      "name": "Ansible",
+      "level": "Intermediate",
+      "category": "IaC",
+      "icon": "logos:ansible"
+    },
+    {
+      "name": "CloudFormation",
+      "level": "Intermediate",
+      "category": "IaC",
+      "icon": "logos:aws-cloudformation"
+    },
+    {
+      "name": "Prometheus",
+      "level": "Intermediate",
+      "category": "Observability",
+      "icon": "logos:prometheus"
+    },
+    {
+      "name": "Grafana",
+      "level": "Intermediate",
+      "category": "Observability",
+      "icon": "logos:grafana"
+    },
+    {
+      "name": "CloudWatch",
+      "level": "Intermediate",
+      "category": "Observability",
+      "icon": "logos:aws-cloudwatch"
+    },
+    {
+      "name": "X-Ray",
+      "level": "Intermediate",
+      "category": "Observability",
+      "icon": "logos:aws-xray"
+    },
+    {
+      "name": "OpenSearch",
+      "level": "Intermediate",
+      "category": "Observability",
+      "icon": "simple-icons:opensearch"
+    },
+    {
+      "name": "Linux",
+      "level": "Advanced",
+      "category": "Infrastructure",
+      "icon": "logos:linux-tux"
+    },
+    {
+      "name": "Windows Server",
+      "level": "Intermediate",
+      "category": "Infrastructure",
+      "icon": "devicon:windows11"
+    },
+    {
+      "name": "Nginx",
+      "level": "Intermediate",
+      "category": "Infrastructure",
+      "icon": "logos:nginx"
+    },
+    {
+      "name": "Git",
+      "level": "Advanced",
+      "category": "Infrastructure",
+      "icon": "logos:git-icon"
+    },
+    {
+      "name": "Bash",
+      "level": "Advanced",
+      "category": "Development",
+      "icon": "logos:bash-icon"
+    },
+    {
+      "name": "Python",
+      "level": "Intermediate",
+      "category": "Development",
+      "icon": "logos:python"
+    },
+    {
+      "name": "TypeScript",
+      "level": "Advanced",
+      "category": "Development",
+      "icon": "logos:typescript-icon"
+    },
+    {
+      "name": "Node",
+      "level": "Advanced",
+      "category": "Development",
+      "icon": "logos:nodejs-icon"
+    },
+    {
+      "name": "NestJS",
+      "level": "Advanced",
+      "category": "Development",
+      "icon": "logos:nestjs"
+    },
+    {
+      "name": "React",
+      "level": "Advanced",
+      "category": "Development",
+      "icon": "logos:react"
+    },
+    {
+      "name": "Next.js",
+      "level": "Intermediate",
+      "category": "Development",
+      "icon": "logos:nextjs-icon"
+    },
+    {
+      "name": "Tailwind CSS",
+      "level": "Intermediate",
+      "category": "Development",
+      "icon": "logos:tailwindcss-icon"
+    },
+    {
+      "name": "Astro",
+      "level": "Intermediate",
+      "category": "Development",
+      "icon": "devicon:astro"
+    },
+    {
+      "name": "PostgreSQL",
+      "level": "Advanced",
+      "category": "Data",
+      "icon": "logos:postgresql"
+    },
+    {
+      "name": "DynamoDB",
+      "level": "Intermediate",
+      "category": "Data",
+      "icon": "logos:aws-dynamodb"
+    }
+  ],
   "languages": [
     {
       "language": "Español",

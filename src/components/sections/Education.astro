@@ -1,39 +1,114 @@
 ---
-import Section from "../Section.astro"
+import Section from "../Section.astro";
 
-interface Props { cv: any }
-const { cv } = Astro.props
-const { education } = cv
+interface Props {
+  cv: any;
+}
+const { cv } = Astro.props;
+const { education, certificates } = cv;
 
-const isEn = Astro.currentLocale === 'en';
+const isEn = Astro.currentLocale === "en";
 const title = isEn ? "Education" : "Educación";
+const certTitle = isEn ? "Certifications" : "Certificaciones";
 ---
 
 <Section id="education" title={title}>
   <ul class="education-list">
-    {education.map(({ institution, startDate, endDate, area, studyType }: any) => {
-      const startYear = new Date(startDate).getFullYear()
-      const endYear = endDate != null ? new Date(endDate).getFullYear() : (isEn ? "Present" : "Actual")
+    {
+      education.map(
+        ({ institution, startDate, endDate, area, studyType }: any) => {
+          const startYear = new Date(startDate).getFullYear();
+          const endYear =
+            endDate != null
+              ? new Date(endDate).getFullYear()
+              : isEn
+                ? "Present"
+                : "Actual";
 
-      return (
-        <li>
-          <article class="edu-card">
-            <div class="edu-header">
-              <div class="edu-title">
-                <h3>{institution}</h3>
-                <p class="edu-area">{area}{studyType ? ` — ${studyType}` : ''}</p>
-              </div>
-              <div class="edu-period">
-                <span>{startYear}</span>
-                <span class="sep">—</span>
-                <span>{endYear}</span>
-              </div>
-            </div>
-          </article>
-        </li>
+          return (
+            <li>
+              <article class="edu-card">
+                <div class="edu-header">
+                  <div class="edu-title">
+                    <h3>{institution}</h3>
+                    <p class="edu-area">
+                      {area}
+                      {studyType ? ` — ${studyType}` : ""}
+                    </p>
+                  </div>
+                  <div class="edu-period">
+                    <span>{startYear}</span>
+                    <span class="sep">—</span>
+                    <span>{endYear}</span>
+                  </div>
+                </div>
+              </article>
+            </li>
+          );
+        },
       )
-    })}
+    }
   </ul>
+
+  {
+    certificates && certificates.length > 0 && (
+      <div class="certs-block">
+        <div class="certs-header">
+          <span class="certs-label">{certTitle.toUpperCase()}</span>
+          <span class="certs-count">
+            {certificates.length} {isEn ? "credentials" : "credenciales"}
+          </span>
+        </div>
+        <div class="certs-grid">
+          {certificates.map(({ name, issuer, year, url, logo }: any) => {
+            const href = url ? url : "#";
+            const target = href !== "#" ? "_blank" : undefined;
+            const rel = href !== "#" ? "noopener noreferrer" : undefined;
+
+            return (
+              <a class="cert-card" href={href} target={target} rel={rel}>
+                <div class="cert-logo-wrap">
+                  <img
+                    class="cert-logo"
+                    src={logo}
+                    alt={`${issuer} badge`}
+                    width="48"
+                    height="48"
+                    loading="lazy"
+                  />
+                </div>
+                <div class="cert-info">
+                  <span class="cert-name">{name}</span>
+                  <span class="cert-issuer">{issuer}</span>
+                </div>
+                <div class="cert-right">
+                  <span class="cert-year">{year}</span>
+                  <div class="cert-link-icon" aria-hidden="true">
+                    <svg
+                      width="10"
+                      height="10"
+                      viewBox="0 0 10 10"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M1 9L9 1M9 1H3M9 1V7"
+                        stroke="currentColor"
+                        stroke-width="1.5"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                  </div>
+                </div>
+                <div class="cert-glow" aria-hidden="true" />
+              </a>
+            );
+          })}
+        </div>
+      </div>
+    )
+  }
 </Section>
 
 <style>
@@ -41,6 +116,7 @@ const title = isEn ? "Education" : "Educación";
     display: flex;
     flex-direction: column;
     gap: 12px;
+    margin-bottom: 16px;
   }
 
   .edu-card {
@@ -93,6 +169,175 @@ const title = isEn ? "Education" : "Educación";
     opacity: 0.5;
   }
 
+  /* ── Certifications block ── */
+
+  .certs-block {
+    border: 1px solid var(--border-color);
+    background: var(--bg-panel);
+    transition: border-color var(--transition-normal);
+  }
+
+  .certs-block:hover {
+    border-color: var(--border-hover);
+  }
+
+  .certs-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 14px;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .certs-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    color: var(--accent-purple);
+  }
+
+  .certs-count {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--text-secondary);
+    letter-spacing: 0.08em;
+  }
+
+  .certs-grid {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── Individual cert row ── */
+
+  .cert-card {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 20px;
+    border-bottom: 1px solid rgba(120, 80, 180, 0.07);
+    text-decoration: none;
+    color: inherit;
+    background: transparent;
+    transition: background var(--transition-fast);
+    overflow: hidden;
+  }
+
+  .cert-card:last-child {
+    border-bottom: none;
+  }
+
+  a.cert-card:hover {
+    background: var(--accent-purple-dim);
+  }
+
+  a.cert-card:hover .cert-name {
+    color: var(--accent-purple);
+  }
+
+  a.cert-card:hover .cert-link-icon {
+    opacity: 1;
+    transform: translate(0, 0);
+    color: var(--accent-purple);
+  }
+
+  a.cert-card:hover .cert-glow {
+    opacity: 1;
+  }
+
+  /* Logo */
+  .cert-logo-wrap {
+    flex-shrink: 0;
+    width: 54px;
+    height: 54px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .cert-logo {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+
+  /* Info */
+  .cert-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+  }
+
+  .cert-name {
+    font-family: var(--font-heading);
+    font-size: 0.83rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    transition: color var(--transition-fast);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .cert-issuer {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-muted);
+  }
+
+  /* Right-side column: year badge + optional link icon */
+  .cert-right {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+  }
+
+  .cert-year {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-muted);
+    padding: 2px 7px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    white-space: nowrap;
+  }
+
+  /* External link icon */
+  .cert-link-icon {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    color: var(--text-secondary);
+    opacity: 1;
+    transform: translate(-3px, 3px);
+    transition:
+      opacity var(--transition-fast),
+      transform var(--transition-fast);
+  }
+
+  /* Sweep glow on hover */
+  .cert-glow {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(139, 92, 246, 0.04) 50%,
+      transparent 100%
+    );
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--transition-fast);
+  }
+
   @media (width <= 768px) {
     .edu-header {
       flex-direction: column;
@@ -101,6 +346,10 @@ const title = isEn ? "Education" : "Educación";
 
     .edu-period {
       align-self: flex-start;
+    }
+
+    .cert-name {
+      white-space: normal;
     }
   }
 </style>
