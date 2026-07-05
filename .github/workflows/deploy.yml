@@ -16,6 +16,10 @@ jobs:
     steps:
       - name: Checkout your repository
         uses: actions/checkout@v4
+
+      - name: Configure Pages
+        id: pages
+        uses: actions/configure-pages@v5
         
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -31,6 +35,9 @@ jobs:
         run: pnpm install --no-frozen-lockfile
 
       - name: Build with Astro
+        env:
+          GITHUB_PAGES_ORIGIN: ${{ steps.pages.outputs.origin }}
+          GITHUB_PAGES_BASE_PATH: ${{ steps.pages.outputs.base_path }}
         run: pnpm run build
 
       - name: Upload artifact
