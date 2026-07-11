@@ -29,8 +29,9 @@ The two files must stay **structurally identical** — same keys, same array len
 
 Rendering pipeline:
 1. A page (`src/pages/index.astro` or `src/pages/en/index.astro`) imports its JSON file (`@/../cv.json` or `@/../cv_english.json`) and defines per-locale SEO metadata inline.
-2. It passes the whole object as a `cv` prop to `Layout.astro` and to each section component.
-3. Section components in `src/components/sections/` (`Hero`, `About`, `Experience`, `Education`, `Projects`, `Skills`) each destructure what they need from `cv` and render it.
+2. It passes the whole object as a `cv` prop to `Layout.astro`, `Footer.astro`, `KeyboardManager.astro` and each section component.
+3. Section components in `src/components/sections/` render in this order: `Hero`, `About`, `Experience`, `Projects`, `Skills`, `Education` (which includes the certifications grid). `Footer.astro` renders the `#contact` section plus the bottom status bar; `TopBar.astro` is the fixed nav. Each destructures what it needs from `cv`.
+4. Hero computes its stats strip (years of experience, cert count, project count) from the CV data; `KeyboardManager` derives social palette commands from `cv.basics.profiles`.
 
 **To change site content, edit the JSON files, not the components.** Components are the presentation layer; adding a field means updating `cv.d.ts`, both JSON files, and the relevant section.
 
@@ -45,10 +46,11 @@ Rendering pipeline:
 
 ## Theming
 
-- Light/dark theme via a `.dark` class on `<html>`. All colors are CSS custom properties defined in the global `<style>` block of `Layout.astro` (`:root`, `:root.dark`, `:root:not(.dark)`).
-- An inline pre-paint script in `Layout.astro` (`getThemePreference`/`applyTheme`) sets the theme from `localStorage.theme` or `prefers-color-scheme` before first render to avoid a flash.
-- The theme is toggled from the command palette, which writes `localStorage.theme` and calls the global `window.applyTheme`.
-- The visual language is a dark "terminal/dashboard" aesthetic (purple accent, mono fonts, clip-path corners). Component styles are scoped Astro `<style>` blocks that consume the CSS variables — reuse the variables rather than hardcoding colors. `.no-print` / `.print` classes and a `@media print` block control the print/PDF layout.
+- Light/dark theme via a `.dark` class on `<html>`. All colors are CSS custom properties defined in the global `<style>` block of `Layout.astro` (`:root` = dark tokens, `:root:not(.dark)` = light tokens, plus a forced-light token block inside `@media print`).
+- An inline pre-paint script in `Layout.astro` (`getThemePreference`/`applyTheme`) sets the theme from a `?theme=light|dark` query override, then `localStorage.theme`, then `prefers-color-scheme` — before first render to avoid a flash. The same script adds a `js` class to `<html>` that gates the reveal-on-scroll hidden state.
+- The theme is toggled from the TopBar button and the command palette; both write `localStorage.theme` and call the global `window.applyTheme`.
+- The visual language is a dark "terminal/HUD" aesthetic: purple `--accent-purple` + cyan `--accent-cyan`, mono fonts, clip-path corners, scanline/grid/aurora overlays in `Layout.astro`. Component styles are scoped Astro `<style>` blocks that consume the CSS variables — reuse the variables rather than hardcoding colors. `.no-print` / `.print` classes and `@media print` blocks control the print/PDF layout.
+- Motion: elements marked `data-reveal` (optionally with `--reveal-delay`) fade in via an IntersectionObserver in `Layout.astro`; hero uses CSS-only typing/stagger animations. Everything motion-related is wrapped in `prefers-reduced-motion: no-preference` and content stays visible without JS.
 
 ## Analytics (`src/analytics/`)
 
@@ -62,7 +64,7 @@ To add tracking to a new link/button, add `data-track="some_event"` — no JS wi
 
 ## Command palette
 
-`src/components/KeyboardManager.astro` builds a `hotkeypad` command palette (Cmd/Ctrl+K). Commands are assembled client-side and include: print, toggle theme, switch language, and one "open profile" command per entry in `cv.basics.profiles`. Social profile commands and their hotkeys are derived from the CV data, so adding a profile to the JSON automatically adds a palette command.
+`src/components/KeyboardManager.astro` builds a `hotkeypad` command palette (Cmd/Ctrl+K). Commands are assembled client-side and include: print, toggle theme, switch language, go-to-section navigation, and one "open profile" command per entry in `cv.basics.profiles` (so adding a profile to the JSON automatically adds a palette command). It exposes `window.__openPalette()` which the TopBar chip calls; on mobile a fixed FAB opens it. `TopBar.astro` also owns the scrollspy nav, scroll progress bar, and the visible theme/language toggles.
 
 ## Path aliases (`tsconfig.json`)
 

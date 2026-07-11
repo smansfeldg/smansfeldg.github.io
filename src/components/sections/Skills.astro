@@ -3,6 +3,7 @@ import Section from "../Section.astro"
 
 interface Props { cv: any }
 const { cv } = Astro.props
+
 type Skill = {
   name: string;
   level: string;
@@ -18,7 +19,7 @@ type SkillGroup = {
 const skills = cv.skills as Array<Skill>
 
 const isEn = Astro.currentLocale === 'en';
-const title = isEn ? "Skills" : "Habilidades";
+const title = "Skills";
 
 const groupedSkills: Array<SkillGroup> = skills.reduce((groups: Array<SkillGroup>, skill: Skill) => {
   const category = skill.category || (isEn ? "Other" : "Otros");
@@ -33,151 +34,192 @@ const groupedSkills: Array<SkillGroup> = skills.reduce((groups: Array<SkillGroup
   return groups;
 }, [] as Array<SkillGroup>);
 
+const LEVEL_SEGMENTS: Record<string, number> = {
+  Advanced: 3,
+  Intermediate: 2,
+  Beginner: 1,
+}
+
+const levelOf = (level: string) => LEVEL_SEGMENTS[level] ?? 2
+
 const getCategoryId = (category: string) => `skill-category-${category.toLowerCase().replace(/[^a-z0-9-]/g, "-")}`;
 ---
 
-<Section id="skills" title={title}>
-  <div class="skills-panel">
-    <div class="panel-header">
-      <span class="panel-label">{isEn ? 'CAPABILITIES' : 'CAPACIDADES'}</span>
-      <span class="panel-count">{skills.length} {isEn ? 'modules' : 'módulos'}</span>
+<Section id="skills" title={title} command={`grep -r "modules" ./stack`} index="04">
+  <div class="skills-toolbar" data-reveal>
+    <span class="toolbar-count">{skills.length} {isEn ? 'modules loaded' : 'módulos cargados'}</span>
+    <div class="toolbar-legend" aria-hidden="true">
+      <span class="legend-item"><span class="seg-demo s3"></span>{isEn ? 'advanced' : 'avanzado'}</span>
+      <span class="legend-item"><span class="seg-demo s2"></span>{isEn ? 'intermediate' : 'intermedio'}</span>
     </div>
-    <div class="skill-groups">
-      {groupedSkills.map((group: SkillGroup) => (
-        <section class="skill-group" aria-labelledby={getCategoryId(group.category)}>
-          <h3 id={getCategoryId(group.category)} class="skill-category">{group.category}</h3>
-          <div class="skills-grid">
-            {group.skills.map(({ name, icon, level }: Skill) => (
-              <div class="skill-item" data-level={level} title={level}>
-                <div class="skill-icon">
-                  {icon && <iconify-icon icon={icon}></iconify-icon>}
-                </div>
-                <span class="skill-name">{name}</span>
-              </div>
-            ))}
-          </div>
-        </section>
-      ))}
-    </div>
+  </div>
+
+  <div class="skill-groups">
+    {groupedSkills.map((group: SkillGroup, index: number) => (
+      <section class="skill-group" aria-labelledby={getCategoryId(group.category)} data-reveal style={`--reveal-delay: ${index * 60}ms`}>
+        <header class="group-header">
+          <h3 id={getCategoryId(group.category)} class="group-title">
+            <span class="group-bracket" aria-hidden="true">[</span>{group.category}<span class="group-bracket" aria-hidden="true">]</span>
+          </h3>
+          <span class="group-count">{String(group.skills.length).padStart(2, '0')}</span>
+        </header>
+        <div class="skills-grid">
+          {group.skills.map(({ name, icon, level }: Skill) => (
+            <div class="skill-item" title={level}>
+              {icon && (
+                <span class="skill-icon">
+                  <iconify-icon icon={icon}></iconify-icon>
+                </span>
+              )}
+              <span class="skill-name">{name}</span>
+              <span class={`skill-level lv-${levelOf(level)}`} aria-label={level}>
+                <span class="seg"></span>
+                <span class="seg"></span>
+                <span class="seg"></span>
+              </span>
+            </div>
+          ))}
+        </div>
+      </section>
+    ))}
   </div>
 </Section>
 
 <style>
-  .skills-panel {
+  /* ── Toolbar ── */
+  .skills-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 14px;
+    margin-bottom: 14px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    font-family: var(--font-mono);
+  }
+
+  .toolbar-count {
+    font-size: 10.5px;
+    letter-spacing: 0.1em;
+    color: var(--accent-purple);
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .toolbar-legend {
+    display: flex;
+    gap: 14px;
+  }
+
+  .legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 9.5px;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+  }
+
+  .seg-demo {
+    display: inline-block;
+    width: 18px;
+    height: 5px;
+  }
+
+  .seg-demo.s3 {
+    background: linear-gradient(90deg, var(--accent-purple) 0 100%);
+  }
+
+  .seg-demo.s2 {
+    background: linear-gradient(90deg, var(--accent-purple) 0 66%, var(--border-color) 66% 100%);
+  }
+
+  /* ── Groups grid ── */
+  .skill-groups {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+    align-items: start;
+  }
+
+  .skill-group {
     background: var(--bg-panel);
     border: 1px solid var(--border-color);
     transition: border-color var(--transition-normal);
   }
 
-  .skills-panel:hover {
+  .skill-group:hover {
     border-color: var(--border-hover);
   }
 
-  .panel-header {
+  /* AWS category is the largest — let it span the full row */
+  .skill-group:first-child {
+    grid-column: 1 / -1;
+  }
+
+  .group-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 10px 16px;
+    padding: 8px 14px;
     background: var(--bg-secondary);
     border-bottom: 1px solid var(--border-color);
   }
 
-  .panel-label {
+  .group-title {
     font-family: var(--font-mono);
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 600;
-    letter-spacing: 0.15em;
+    letter-spacing: 0.12em;
+    color: var(--text-primary);
+    text-transform: uppercase;
+  }
+
+  .group-bracket {
     color: var(--accent-purple);
   }
 
-  .panel-count {
-    font-family: var(--font-mono);
-    font-size: 9px;
-    color: var(--text-muted);
-    letter-spacing: 0.08em;
-  }
-
-  .skill-groups {
-    display: grid;
-    gap: 16px;
-    padding: 16px;
-  }
-
-  .skill-group {
-    display: grid;
-    gap: 8px;
-  }
-
-  .skill-category {
-    margin: 0;
+  .group-count {
     font-family: var(--font-mono);
     font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.12em;
     color: var(--text-muted);
-    text-transform: uppercase;
   }
 
   .skills-grid {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
+    padding: 14px;
   }
 
+  /* ── Skill chip ── */
   .skill-item {
     display: flex;
     align-items: center;
-    justify-content: center;
-    flex-grow: 1;
     gap: 8px;
-    padding: 4px 8px;
+    padding: 5px 10px;
     background: var(--bg-secondary);
     border: 1px solid var(--border-color);
     transition: all var(--transition-fast);
-    position: relative;
-  }
-
-  .skill-item::after {
-    content: attr(data-level);
-    position: absolute;
-    left: 50%;
-    bottom: calc(100% + 6px);
-    transform: translateX(-50%) translateY(2px);
-    padding: 3px 6px;
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
-    color: var(--text-secondary);
-    font-family: var(--font-mono);
-    font-size: 9px;
-    letter-spacing: 0.04em;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity var(--transition-fast), transform var(--transition-fast);
-    z-index: 1;
-    white-space: nowrap;
-  }
-
-  .skill-item:hover::after {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
   }
 
   .skill-item:hover {
     background: var(--accent-purple-dim);
+    border-color: var(--border-hover);
+    transform: translateY(-1px);
   }
 
-  .skill-icon { 
+  .skill-icon {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--text-secondary);
     width: 14px;
     height: 14px;
     flex-shrink: 0;
   }
 
-  .skill-icon iconify-icon,
-  .skill-icon svg {
+  .skill-icon iconify-icon {
     width: 14px;
     height: 14px;
     display: block;
@@ -188,30 +230,56 @@ const getCategoryId = (category: string) => `skill-category-${category.toLowerCa
     font-size: 11px;
     color: var(--text-secondary);
     letter-spacing: 0.03em;
+    white-space: nowrap;
   }
 
-  .skill-bar {
-    width: 32px;
-    height: 3px;
+  .skill-item:hover .skill-name {
+    color: var(--text-primary);
+  }
+
+  /* ── Level bar ── */
+  .skill-level {
+    display: inline-flex;
+    gap: 2px;
+    margin-left: 2px;
+  }
+
+  .seg {
+    width: 6px;
+    height: 5px;
     background: var(--border-color);
-    margin-left: 4px;
-    overflow: hidden;
+    transition: background var(--transition-fast);
   }
 
-  .skill-fill {
-    height: 100%;
+  .lv-1 .seg:nth-child(-n+1),
+  .lv-2 .seg:nth-child(-n+2),
+  .lv-3 .seg:nth-child(-n+3) {
     background: var(--accent-purple);
-    transition: width var(--transition-normal);
+  }
+
+  .skill-item:hover .lv-1 .seg:nth-child(-n+1),
+  .skill-item:hover .lv-2 .seg:nth-child(-n+2),
+  .skill-item:hover .lv-3 .seg:nth-child(-n+3) {
+    background: var(--accent-purple-bright);
+    box-shadow: 0 0 6px rgba(139, 92, 246, 0.4);
   }
 
   @media (width <= 768px) {
     .skill-groups {
+      grid-template-columns: 1fr;
+    }
+
+    .toolbar-legend {
+      display: none;
+    }
+
+    .skills-grid {
       padding: 12px;
-      gap: 14px;
     }
 
     .skill-item {
-      padding: 6px 10px;
+      flex-grow: 1;
+      justify-content: center;
     }
   }
 </style>

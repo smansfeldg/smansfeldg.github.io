@@ -1,13 +1,16 @@
 ---
 import Layout from "@/layouts/Layout.astro"
 
+import TopBar from "@/components/TopBar.astro"
+import Footer from "@/components/Footer.astro"
+import KeyboardManager from "@/components/KeyboardManager.astro"
+
 import About from "@/components/sections/About.astro"
 import Education from "@/components/sections/Education.astro"
 import Experience from "@/components/sections/Experience.astro"
 import Hero from "@/components/sections/Hero.astro"
 import Projects from "@/components/sections/Projects.astro"
 import Skills from "@/components/sections/Skills.astro"
-import KeyboardManager from "@/components/KeyboardManager.astro"
 
 import cv from "@/../cv.json"
 
@@ -21,27 +24,36 @@ const seo = {
 ---
 
 <Layout cv={cv} {...seo}>
+  <TopBar />
+
   <main>
     <Hero cv={cv} />
     <About cv={cv} />
     <Experience cv={cv} />
-    <Education cv={cv} />
     <Projects cv={cv} />
     <Skills cv={cv} />
+    <Education cv={cv} />
   </main>
 
+  <Footer cv={cv} />
   <KeyboardManager cv={cv} />
 </Layout>
 
 <style>
   main {
-    padding: 48px 0 80px;
+    padding: calc(var(--topbar-h) + 48px) 0 0;
     width: 100%;
   }
 
   @media (width <= 768px) {
     main {
-      padding: 32px 0 64px;
+      padding-top: calc(var(--topbar-h) + 28px);
+    }
+  }
+
+  @media print {
+    main {
+      padding-top: 0;
     }
   }
 </style>

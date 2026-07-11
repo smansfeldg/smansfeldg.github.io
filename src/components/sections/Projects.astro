@@ -9,46 +9,52 @@ const isEn = Astro.currentLocale === 'en';
 const title = isEn ? "Projects" : "Proyectos";
 ---
 
-<Section id="projects" title={title}>
+<Section id="projects" title={title} command="ls ~/deployments" index="03">
   <div class="projects-grid">
-    {projects.map(({ url, description, highlights, name, isActive }: any) => {
+    {projects.map(({ url, description, highlights, name, isActive }: any, index: number) => {
       const projectSlug = name.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/(^_|_$)/g, '');
       return (
-        <article class="project-card">
-          <div class="project-status">
-            <span class={`status-dot ${isActive ? 'active' : ''}`}></span>
-            <span class="status-label">{isActive ? (isEn ? 'ONLINE' : 'ACTIVO') : (isEn ? 'OFFLINE' : 'INACTIVO')}</span>
-          </div>
+        <article class="project-card" data-reveal style={`--reveal-delay: ${index * 70}ms`}>
+          <div class="card-glowline" aria-hidden="true"></div>
+          <header class="project-status">
+            <span class="status-path" aria-hidden="true">~/{projectSlug}</span>
+            <span class="status-right">
+              <span class={`status-dot ${isActive ? 'active' : ''}`} aria-hidden="true"></span>
+              <span class="status-label">{isActive ? (isEn ? 'ONLINE' : 'ACTIVO') : (isEn ? 'OFFLINE' : 'INACTIVO')}</span>
+            </span>
+          </header>
+
           <div class="project-body">
             <h3>
-              <a href={url} target="_blank" title={isEn ? `View project ${name}` : `Ver el proyecto ${name}`} data-track={`project_click_${projectSlug}`}>
+              <a href={url} target="_blank" rel="noopener noreferrer" title={isEn ? `View project ${name}` : `Ver el proyecto ${name}`} data-track={`project_click_${projectSlug}`}>
                 {name}
               </a>
-              <svg class="external-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+              <svg class="external-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
             </h3>
             <p>{description}</p>
           </div>
-          <div class="project-footer">
+
+          <footer class="project-footer">
             <div class="stack-tags">
               {highlights.map((highlight: any) => {
                 const skill = skills.find((s: any) => s.name === highlight);
                 return (
                   <div class="stack-tag" title={highlight}>
                     {skill?.icon && (
-                      <div class="skill-icon">
+                      <span class="skill-icon">
                         <iconify-icon icon={skill.icon}></iconify-icon>
-                      </div>
+                      </span>
                     )}
                     <span class="skill-name">{highlight}</span>
                   </div>
                 );
               })}
             </div>
-            <a href={url} target="_blank" class="project-action" data-track={`project_click_${projectSlug}`}>
+            <a href={url} target="_blank" rel="noopener noreferrer" class="project-action" data-track={`project_click_${projectSlug}`} aria-label={isEn ? `Open ${name}` : `Abrir ${name}`}>
               <span>{isEn ? 'ACCESS' : 'ACCEDER'}</span>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
             </a>
-          </div>
+          </footer>
         </article>
       )
     })}
@@ -72,14 +78,13 @@ const title = isEn ? "Projects" : "Proyectos";
     overflow: hidden;
   }
 
-  .project-card::before {
-    content: '';
+  .card-glowline {
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     height: 1px;
-    background: linear-gradient(90deg, transparent, var(--accent-purple), transparent);
+    background: linear-gradient(90deg, transparent, var(--accent-purple), var(--accent-cyan), transparent);
     opacity: 0;
     transition: opacity var(--transition-normal);
   }
@@ -87,23 +92,44 @@ const title = isEn ? "Projects" : "Proyectos";
   .project-card:hover {
     border-color: var(--border-hover);
     background: var(--bg-panel-hover);
-    box-shadow: var(--glow-border);
+    box-shadow: var(--glow-purple), 0 12px 32px rgba(0, 0, 0, 0.25);
+    transform: translateY(-3px);
   }
 
-  .project-card:hover::before {
-    opacity: 0.6;
+  :root:not(.dark) .project-card:hover {
+    box-shadow: var(--glow-purple), 0 12px 28px rgba(40, 20, 90, 0.08);
   }
 
+  .project-card:hover .card-glowline {
+    opacity: 0.8;
+  }
+
+  /* ── Status bar ── */
   .project-status {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 8px;
-    padding: 8px 12px;
+    padding: 8px 14px;
     background: var(--bg-secondary);
     border-bottom: 1px solid var(--border-color);
     font-family: var(--font-mono);
-    font-size: 9px;
-    letter-spacing: 0.12em;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+  }
+
+  .status-path {
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .status-right {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    flex-shrink: 0;
   }
 
   .status-dot {
@@ -115,8 +141,8 @@ const title = isEn ? "Projects" : "Proyectos";
 
   .status-dot.active {
     background: var(--accent-green);
-    box-shadow: 0 0 6px var(--accent-green);
-    animation: statusPulse 2s ease-in-out infinite;
+    box-shadow: var(--glow-green);
+    animation: statusPulse 2.2s ease-in-out infinite;
   }
 
   @keyframes statusPulse {
@@ -126,14 +152,16 @@ const title = isEn ? "Projects" : "Proyectos";
 
   .status-label {
     color: var(--text-muted);
+    font-size: 9px;
   }
 
   .status-dot.active + .status-label {
     color: var(--accent-green);
   }
 
+  /* ── Body ── */
   .project-body {
-    padding: 16px 12px;
+    padding: 18px 16px;
     flex: 1;
   }
 
@@ -146,39 +174,43 @@ const title = isEn ? "Projects" : "Proyectos";
 
   .project-body h3 a {
     font-family: var(--font-heading);
-    font-size: 1rem;
-    font-weight: 500;
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
     color: var(--text-primary);
     transition: color var(--transition-fast);
   }
 
   .project-card:hover .project-body h3 a {
-    color: var(--accent-purple);
+    color: var(--accent-purple-bright);
   }
 
   .external-icon {
     color: var(--text-muted);
     opacity: 0;
-    transition: opacity var(--transition-fast);
+    transform: translate(-2px, 2px);
+    transition: opacity var(--transition-fast), transform var(--transition-fast);
   }
 
   .project-card:hover .external-icon {
     opacity: 1;
+    transform: translate(0, 0);
   }
 
   .project-body p {
-    font-size: 0.8rem;
-    line-height: 1.6;
+    font-size: 0.85rem;
+    line-height: 1.65;
     color: var(--text-secondary);
   }
 
+  /* ── Footer ── */
   .project-footer {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 12px;
+    padding: 12px 14px;
     border-top: 1px solid var(--border-color);
-    gap: 8px;
+    gap: 10px;
   }
 
   .stack-tags {
@@ -199,20 +231,20 @@ const title = isEn ? "Projects" : "Proyectos";
 
   .stack-tag:hover {
     background: var(--accent-purple-dim);
+    border-color: var(--border-hover);
   }
 
   .skill-icon {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--text-secondary);
-    width: 14px;
-    height: 14px;
+    width: 13px;
+    height: 13px;
   }
 
   .skill-icon iconify-icon {
-    width: 14px;
-    height: 14px;
+    width: 13px;
+    height: 13px;
     display: block;
   }
 
@@ -227,16 +259,31 @@ const title = isEn ? "Projects" : "Proyectos";
     display: flex;
     align-items: center;
     gap: 4px;
+    padding: 5px 10px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-secondary);
     font-family: var(--font-mono);
     font-size: 10px;
+    font-weight: 600;
     color: var(--text-muted);
-    letter-spacing: 0.08em;
-    transition: color var(--transition-fast);
+    letter-spacing: 0.1em;
+    transition: all var(--transition-fast);
     white-space: nowrap;
+    clip-path: polygon(5px 0, 100% 0, calc(100% - 5px) 100%, 0 100%);
   }
 
   .project-action:hover {
-    color: var(--accent-purple);
+    color: var(--accent-purple-bright);
+    border-color: var(--border-hover);
+    background: var(--accent-purple-dim);
+  }
+
+  .project-action svg {
+    transition: transform var(--transition-fast);
+  }
+
+  .project-action:hover svg {
+    transform: translateX(2px);
   }
 
   @media (width <= 768px) {

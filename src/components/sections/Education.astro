@@ -8,15 +8,14 @@ const { cv } = Astro.props;
 const { education, certificates } = cv;
 
 const isEn = Astro.currentLocale === "en";
-const title = isEn ? "Education" : "Educación";
-const certTitle = isEn ? "Certifications" : "Certificaciones";
+const title = isEn ? "Education & Certifications" : "Formación y Certificaciones";
 ---
 
-<Section id="education" title={title}>
+<Section id="education" title={title} command="ls education/ certs/" index="05">
   <ul class="education-list">
     {
       education.map(
-        ({ institution, startDate, endDate, area, studyType }: any) => {
+        ({ institution, url, startDate, endDate, area, studyType }: any) => {
           const startYear = new Date(startDate).getFullYear();
           const endYear =
             endDate != null
@@ -24,23 +23,31 @@ const certTitle = isEn ? "Certifications" : "Certificaciones";
               : isEn
                 ? "Present"
                 : "Actual";
+          const isOngoing = endDate == null;
 
           return (
             <li>
               <article class="edu-card">
-                <div class="edu-header">
-                  <div class="edu-title">
-                    <h3>{institution}</h3>
-                    <p class="edu-area">
-                      {area}
-                      {studyType ? ` — ${studyType}` : ""}
-                    </p>
-                  </div>
-                  <div class="edu-period">
-                    <span>{startYear}</span>
-                    <span class="sep">—</span>
-                    <span>{endYear}</span>
-                  </div>
+                <div class="edu-icon" aria-hidden="true">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="m12 3 10 5-10 5L2 8l10-5Z"/><path d="M6 10.6V16c0 1 2.7 3 6 3s6-2 6-3v-5.4"/><path d="M22 8v6"/></svg>
+                </div>
+                <div class="edu-info">
+                  <h3>
+                    {url ? (
+                      <a href={url} target="_blank" rel="noopener noreferrer">{institution}</a>
+                    ) : (
+                      institution
+                    )}
+                  </h3>
+                  <p class="edu-area">
+                    {area}
+                    {studyType ? ` — ${studyType}` : ""}
+                  </p>
+                </div>
+                <div class="edu-period">
+                  <span>{startYear}</span>
+                  <span class="sep" aria-hidden="true">—</span>
+                  <span class={isOngoing ? "ongoing" : ""}>{endYear}</span>
                 </div>
               </article>
             </li>
@@ -52,57 +59,50 @@ const certTitle = isEn ? "Certifications" : "Certificaciones";
 
   {
     certificates && certificates.length > 0 && (
-      <div class="certs-block">
+      <div class="certs-block" data-reveal>
         <div class="certs-header">
-          <span class="certs-label">{certTitle.toUpperCase()}</span>
+          <span class="certs-label">{isEn ? "CERTIFICATIONS" : "CERTIFICACIONES"}</span>
           <span class="certs-count">
-            {certificates.length} {isEn ? "credentials" : "credenciales"}
+            {String(certificates.length).padStart(2, "0")} {isEn ? "credentials" : "credenciales"}
           </span>
         </div>
         <div class="certs-grid">
-          {certificates.map(({ name, issuer, year, url, logo }: any) => {
-            const href = url ? url : "#";
-            const target = href !== "#" ? "_blank" : undefined;
-            const rel = href !== "#" ? "noopener noreferrer" : undefined;
-
+          {certificates.map(({ name, issuer, year, url, logo }: any, index: number) => {
+            const hasLink = Boolean(url);
+            const Tag = hasLink ? "a" : "div";
             return (
-              <a class="cert-card" href={href} target={target} rel={rel}>
+              <Tag
+                class={`cert-card ${hasLink ? "linked" : ""}`}
+                {...(hasLink ? { href: url, target: "_blank", rel: "noopener noreferrer", "data-track": "cert_click" } : {})}
+                data-reveal
+                style={`--reveal-delay: ${index * 50}ms`}
+              >
                 <div class="cert-logo-wrap">
                   <img
                     class="cert-logo"
                     src={logo}
                     alt={`${issuer} badge`}
-                    width="48"
-                    height="48"
+                    width="52"
+                    height="52"
                     loading="lazy"
                   />
                 </div>
                 <div class="cert-info">
                   <span class="cert-name">{name}</span>
                   <span class="cert-issuer">{issuer}</span>
-                </div>
-                <div class="cert-right">
-                  <span class="cert-year">{year}</span>
-                  <div class="cert-link-icon" aria-hidden="true">
-                    <svg
-                      width="10"
-                      height="10"
-                      viewBox="0 0 10 10"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M1 9L9 1M9 1H3M9 1V7"
-                        stroke="currentColor"
-                        stroke-width="1.5"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                    </svg>
+                  <div class="cert-meta">
+                    <span class="cert-year">{year}</span>
+                    {hasLink && (
+                      <span class="cert-verify">
+                        {isEn ? "VERIFY" : "VERIFICAR"}
+                        <svg width="9" height="9" viewBox="0 0 10 10" fill="none" aria-hidden="true">
+                          <path d="M1 9L9 1M9 1H3M9 1V7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                      </span>
+                    )}
                   </div>
                 </div>
-                <div class="cert-glow" aria-hidden="true" />
-              </a>
+              </Tag>
             );
           })}
         </div>
@@ -120,9 +120,12 @@ const certTitle = isEn ? "Certifications" : "Certificaciones";
   }
 
   .edu-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
     background: var(--bg-panel);
     border: 1px solid var(--border-color);
-    padding: 16px;
+    padding: 16px 18px;
     transition: all var(--transition-normal);
   }
 
@@ -131,25 +134,45 @@ const certTitle = isEn ? "Certifications" : "Certificaciones";
     background: var(--bg-panel-hover);
   }
 
-  .edu-header {
+  .edu-icon {
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 16px;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+    background: var(--accent-purple-dim);
+    border: 1px solid var(--border-color);
+    color: var(--accent-purple-bright);
+    clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
   }
 
-  .edu-title h3 {
+  .edu-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .edu-info h3 {
     font-family: var(--font-heading);
-    font-size: 0.95rem;
-    font-weight: 500;
-    margin-bottom: 4px;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 3px;
     color: var(--text-primary);
+  }
+
+  .edu-info h3 a {
+    color: inherit;
+    transition: color var(--transition-fast);
+  }
+
+  .edu-info h3 a:hover {
+    color: var(--accent-purple-bright);
   }
 
   .edu-area {
     font-family: var(--font-mono);
     font-size: 0.8rem;
-    color: var(--accent-purple);
+    color: var(--accent-purple-bright);
   }
 
   .edu-period {
@@ -160,7 +183,7 @@ const certTitle = isEn ? "Certifications" : "Certificaciones";
     font-size: 11px;
     color: var(--text-muted);
     white-space: nowrap;
-    padding: 4px 8px;
+    padding: 4px 9px;
     background: var(--bg-secondary);
     border: 1px solid var(--border-color);
   }
@@ -169,8 +192,11 @@ const certTitle = isEn ? "Certifications" : "Certificaciones";
     opacity: 0.5;
   }
 
-  /* ── Certifications block ── */
+  .ongoing {
+    color: var(--accent-green);
+  }
 
+  /* ── Certifications ── */
   .certs-block {
     border: 1px solid var(--border-color);
     background: var(--bg-panel);
@@ -185,7 +211,7 @@ const certTitle = isEn ? "Certifications" : "Certificaciones";
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 8px 14px;
+    padding: 9px 16px;
     background: var(--bg-secondary);
     border-bottom: 1px solid var(--border-color);
   }
@@ -200,59 +226,57 @@ const certTitle = isEn ? "Certifications" : "Certificaciones";
 
   .certs-count {
     font-family: var(--font-mono);
-    font-size: 9px;
-    color: var(--text-secondary);
+    font-size: 10px;
+    color: var(--text-muted);
     letter-spacing: 0.08em;
   }
 
   .certs-grid {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    background: var(--border-color);
   }
 
-  /* ── Individual cert row ── */
-
+  /* ── Cert card ── */
   .cert-card {
     position: relative;
     display: flex;
     align-items: center;
     gap: 14px;
-    padding: 14px 20px;
-    border-bottom: 1px solid rgba(120, 80, 180, 0.07);
-    text-decoration: none;
+    padding: 16px 18px;
+    background: var(--bg-panel);
     color: inherit;
-    background: transparent;
-    transition: background var(--transition-fast);
     overflow: hidden;
-  }
-
-  .cert-card:last-child {
-    border-bottom: none;
+    transition: background var(--transition-fast);
   }
 
   a.cert-card:hover {
-    background: var(--accent-purple-dim);
+    background: var(--bg-panel-hover);
+  }
+
+  a.cert-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(105deg, transparent 40%, rgba(139, 92, 246, 0.06) 50%, transparent 60%);
+    transform: translateX(-100%);
+    transition: transform 600ms var(--ease-out-soft);
+    pointer-events: none;
+  }
+
+  a.cert-card:hover::after {
+    transform: translateX(100%);
   }
 
   a.cert-card:hover .cert-name {
-    color: var(--accent-purple);
+    color: var(--accent-purple-bright);
   }
 
-  a.cert-card:hover .cert-link-icon {
-    opacity: 1;
-    transform: translate(0, 0);
-    color: var(--accent-purple);
-  }
-
-  a.cert-card:hover .cert-glow {
-    opacity: 1;
-  }
-
-  /* Logo */
   .cert-logo-wrap {
     flex-shrink: 0;
-    width: 54px;
-    height: 54px;
+    width: 52px;
+    height: 52px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -265,7 +289,6 @@ const certTitle = isEn ? "Certifications" : "Certificaciones";
     display: block;
   }
 
-  /* Info */
   .cert-info {
     flex: 1;
     display: flex;
@@ -276,80 +299,63 @@ const certTitle = isEn ? "Certifications" : "Certificaciones";
 
   .cert-name {
     font-family: var(--font-heading);
-    font-size: 0.83rem;
+    font-size: 0.86rem;
     font-weight: 600;
     color: var(--text-primary);
     transition: color var(--transition-fast);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    line-height: 1.3;
   }
 
   .cert-issuer {
     font-family: var(--font-mono);
     font-size: 10px;
     color: var(--text-muted);
+    letter-spacing: 0.04em;
   }
 
-  /* Right-side column: year badge + optional link icon */
-  .cert-right {
-    flex-shrink: 0;
+  .cert-meta {
     display: flex;
     align-items: center;
-    gap: 8px;
-    margin-left: auto;
+    gap: 10px;
+    margin-top: 4px;
   }
 
   .cert-year {
     font-family: var(--font-mono);
-    font-size: 10px;
+    font-size: 9.5px;
     color: var(--text-muted);
-    padding: 2px 7px;
+    padding: 1px 6px;
     background: var(--bg-secondary);
     border: 1px solid var(--border-color);
-    white-space: nowrap;
   }
 
-  /* External link icon */
-  .cert-link-icon {
-    flex-shrink: 0;
-    display: flex;
+  .cert-verify {
+    display: inline-flex;
     align-items: center;
-    color: var(--text-secondary);
-    opacity: 1;
-    transform: translate(-3px, 3px);
-    transition:
-      opacity var(--transition-fast),
-      transform var(--transition-fast);
-  }
-
-  /* Sweep glow on hover */
-  .cert-glow {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      90deg,
-      transparent 0%,
-      rgba(139, 92, 246, 0.04) 50%,
-      transparent 100%
-    );
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity var(--transition-fast);
+    gap: 4px;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    color: var(--accent-cyan);
   }
 
   @media (width <= 768px) {
-    .edu-header {
-      flex-direction: column;
-      gap: 8px;
+    .edu-card {
+      flex-wrap: wrap;
+      gap: 12px;
     }
 
     .edu-period {
-      align-self: flex-start;
+      margin-left: 54px;
     }
 
-    .cert-name {
-      white-space: normal;
+    .certs-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .cert-card {
+      padding: 14px 16px;
     }
   }
 </style>

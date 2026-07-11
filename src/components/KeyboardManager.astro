@@ -29,21 +29,31 @@ const profilesInfo = profiles.map(({ network, url }: any) => {
     hotkey: `ctrl+${firstLetter}`
   }
 })
+
+const sectionsInfo = [
+  { id: "about", title: isEn ? "Go to About" : "Ir a Perfil" },
+  { id: "experience", title: isEn ? "Go to Experience" : "Ir a Experiencia" },
+  { id: "projects", title: isEn ? "Go to Projects" : "Ir a Proyectos" },
+  { id: "skills", title: isEn ? "Go to Skills" : "Ir a Skills" },
+  { id: "education", title: isEn ? "Go to Education" : "Ir a Formación" },
+  { id: "contact", title: isEn ? "Go to Contact" : "Ir a Contacto" },
+]
 ---
 
-<footer id="normal-footer" class="no-print">
-  <span class="footer-prompt">&gt;</span>
-  <span class="footer-text">{isEn ? "Press" : "Pulsa"} <kbd>Cmd</kbd> + <kbd>K</kbd> {isEn ? "to open command palette" : "para abrir la paleta de comandos"}</span>
-</footer>
-
-<div id="footer-button" class="no-print">
+<button id="footer-button" class="no-print" type="button" aria-label={isEn ? "Open command palette" : "Abrir paleta de comandos"}>
   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
     <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
     <path d="M7 9a2 2 0 1 1 2 -2v10a2 2 0 1 1 -2 -2h10a2 2 0 1 1 -2 2v-10a2 2 0 1 1 2 2h-10"></path>
   </svg>
-</div>
+</button>
 
-<div id="hotkeypad" data-placeholder={isEn ? "Search command" : "Buscar comando"} data-info={JSON.stringify(profilesInfo)} data-is-en={isEn ? "true" : "false"}></div>
+<div
+  id="hotkeypad"
+  data-placeholder={isEn ? "Search command" : "Buscar comando"}
+  data-info={JSON.stringify(profilesInfo)}
+  data-sections={JSON.stringify(sectionsInfo)}
+  data-is-en={isEn ? "true" : "false"}
+></div>
 
 <script>
   interface Info {
@@ -56,13 +66,24 @@ const profilesInfo = profiles.map(({ network, url }: any) => {
     handler?: () => void
   }
 
+  interface SectionInfo {
+    id: string
+    title: string
+  }
+
   import HotKeyPad from "hotkeypad"
 
   const hotkeypad = new HotKeyPad()
   const el = hotkeypad.instance
   const info = el.getAttribute("data-info") ?? "[]"
+  const sections = el.getAttribute("data-sections") ?? "[]"
   const isEn = el.getAttribute("data-is-en") === "true"
   const parsedInfo = JSON.parse(info) as Info[]
+  const parsedSections = JSON.parse(sections) as SectionInfo[]
+
+  const track = (eventName: string) => {
+    import("@/analytics/events").then(({ trackEvent }) => trackEvent(eventName))
+  }
 
   const socialCommands = parsedInfo.map(
     ({ url, hotkey, icon, id, section, title }) => {
@@ -73,24 +94,38 @@ const profilesInfo = profiles.map(({ network, url }: any) => {
         hotkey,
         section,
         handler: () => {
-          import("@/analytics/events").then(({ trackEvent }) => trackEvent(`command_${id.toLowerCase()}`))
+          track(`command_${id.toLowerCase()}`)
           window.open(url, "_blank")
         }
       }
     }
   )
 
+  const navIcon = `<svg style="margin-right: 8px" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="9 18 15 12 9 6"/></svg>`
+
+  const navCommands = parsedSections.map(({ id, title }, index) => ({
+    id: `nav-${id}`,
+    title,
+    icon: navIcon,
+    hotkey: `ctrl+${index + 1}`,
+    section: isEn ? "Navigate" : "Navegar",
+    handler: () => {
+      track(`command_nav_${id}`)
+      document.getElementById(id)?.scrollIntoView({ behavior: "smooth" })
+    }
+  }))
+
   const allCommands = [
     {
       id: "print",
-      title: isEn ? "Print" : "Imprimir",
+      title: isEn ? "Print / Save as PDF" : "Imprimir / Guardar PDF",
       icon: `<svg style="margin-right: 8px" width="16" height="16" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
   <path stroke-linecap="round" stroke-linejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0 1 10.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0 .229 2.523a1.125 1.125 0 0 1-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0 0 21 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 0 0-1.913-.247M6.34 18H5.25A2.25 2.25 0 0 1 3 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.041 48.041 0 0 1 1.913-.247m10.5 0a48.536 48.536 0 0 0-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18 10.5h.008v.008H18V10.5Zm-3 0h.008v.008H15V10.5Z" />
 </svg>`,
       hotkey: "ctrl+P",
       section: isEn ? "Actions" : "Acciones",
       handler: () => {
-        import("@/analytics/events").then(({ trackEvent }) => trackEvent('command_print'))
+        track('command_print')
         window.print()
       }
     },
@@ -101,7 +136,7 @@ const profilesInfo = profiles.map(({ network, url }: any) => {
       section: isEn ? "Preferences" : "Preferencias",
       hotkey: "ctrl+M",
       handler: () => {
-        import("@/analytics/events").then(({ trackEvent }) => trackEvent('command_toggle_theme'))
+        track('command_toggle_theme')
         const isDark = document.documentElement.classList.contains('dark')
         const newTheme = isDark ? 'light' : 'dark'
         ;(window as any).applyTheme(newTheme)
@@ -115,50 +150,47 @@ const profilesInfo = profiles.map(({ network, url }: any) => {
       section: isEn ? "Preferences" : "Preferencias",
       hotkey: "ctrl+E",
       handler: () => {
-        import("@/analytics/events").then(({ trackEvent }) => trackEvent('command_switch_language'))
+        track('command_switch_language')
         const currentIsEn = window.location.pathname.startsWith('/en')
         const newLang = currentIsEn ? 'es' : 'en'
         localStorage.setItem('lang', newLang)
         window.location.href = currentIsEn ? '/' : '/en/'
       }
     },
+    ...navCommands,
     ...socialCommands
   ]
 
   hotkeypad.setCommands(allCommands)
 
+  // Expose a global trigger so the TopBar chip (and any future UI) can open it
+  ;(window as any).__openPalette = () => hotkeypad.open()
+
   const footerButton = document.getElementById("footer-button")
   footerButton?.addEventListener("click", () => {
-    import("@/analytics/events").then(({ trackEvent }) => trackEvent('command_palette_open'))
+    track('command_palette_open')
     hotkeypad.open()
   })
 
   window.addEventListener('keydown', (e) => {
     if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-      import("@/analytics/events").then(({ trackEvent }) => trackEvent('command_palette_open'))
+      track('command_palette_open')
     }
   })
 </script>
 
 <style>
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-
-  @media (min-width: 769px) {
-    #normal-footer { display: block; }
-    #footer-button { display: none; }
+  #footer-button {
+    display: none;
   }
 
   @media (max-width: 768px) {
-    #normal-footer { display: none; }
     #footer-button {
       background: var(--bg-panel);
       position: fixed;
       border: 1px solid var(--border-color);
-      right: 12px;
-      bottom: 12px;
+      right: 14px;
+      bottom: 14px;
       width: 44px;
       height: 44px;
       display: flex;
@@ -167,52 +199,23 @@ const profilesInfo = profiles.map(({ network, url }: any) => {
       cursor: pointer;
       color: var(--text-secondary);
       transition: all var(--transition-fast);
-      z-index: 50;
+      z-index: 90;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+      clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
     }
+
     #footer-button:hover {
       border-color: var(--border-hover);
       color: var(--text-primary);
+      background: var(--accent-purple-dim);
     }
-  }
-
-  footer {
-    background: var(--bg-secondary);
-    border-top: 1px solid var(--border-color);
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: 8px 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    font-family: var(--font-mono);
-    font-size: 11px;
-    color: var(--text-muted);
-    z-index: 50;
-  }
-
-  .footer-prompt {
-    color: var(--accent-purple);
-    font-weight: 600;
-  }
-
-  kbd {
-    background: var(--bg-panel);
-    border: 1px solid var(--border-color);
-    border-radius: 2px;
-    padding: 1px 5px;
-    font-family: var(--font-mono);
-    font-size: 10px;
-    color: var(--text-secondary);
   }
 </style>
 
 <style is:global>
   html #hotkeypad {
     --hotkeypad-bg-kbd: var(--bg-panel);
-    --hotkeypad-bg-backdrop: rgba(5, 5, 5, 0.7);
+    --hotkeypad-bg-backdrop: rgba(5, 5, 8, 0.75);
     --hotkeypad-bg-container: var(--bg-secondary);
     --hotkeypad-bg-item-hover: var(--accent-purple-dim);
     --hotkeypad-border-container: var(--border-color);

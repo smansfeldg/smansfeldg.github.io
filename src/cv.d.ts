@@ -42,7 +42,7 @@ interface Profiles {
 interface Work {
   name: string
   position: string
-  url: string
+  url?: string
   startDate: DateStr
   endDate: DateStr | null
   summary: string
@@ -77,10 +77,12 @@ interface Awards {
 }
 
 interface Certificates {
-  name: string,
-  date: DateStr,
-  issuer: string,
-  url: string
+  name: string
+  issuer: string
+  year: string
+  status?: string
+  url?: string
+  logo?: string
 }
 
 interface Publications {
@@ -97,7 +99,7 @@ interface Education {
   area: string
   studyType: string
   startDate: DateStr
-  endDate: DateStr
+  endDate: DateStr | null
   score: string
   courses: Array<string>
 }

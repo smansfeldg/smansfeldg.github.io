@@ -1,7 +1,4 @@
 ---
-interface Props { cv: any }
-const { cv } = Astro.props
-const { basics } = cv
 import Section from "@/components/Section.astro"
 import Mail from "@/icons/Mail.astro"
 import WhatsApp from "@/icons/WhatsApp.astro"
@@ -11,6 +8,9 @@ import GitHub from "@/icons/GitHub.astro"
 import WorldMap from "@/icons/WorldMap.astro"
 import type { SocialIcon } from "@/types"
 
+interface Props { cv: any }
+const { cv } = Astro.props
+const { basics, work, certificates, projects } = cv
 const { name, label, image, location, profiles, phone, email } = basics
 const { city, region } = location
 
@@ -22,52 +22,89 @@ const SOCIAL_ICONS: SocialIcon = {
 
 const linkedInfo = profiles.find(({ network }: any) => network === "LinkedIn")
 const linkedUrl = linkedInfo?.url
-
 const printInfo = [email, phone, linkedUrl].filter(Boolean).join(" • ")
 
 const isEn = Astro.currentLocale === 'en'
+
+// Stats computed from CV data
+const firstYear = Math.min(...work.map(({ startDate }: any) => new Date(startDate).getFullYear()))
+const yearsExp = new Date().getFullYear() - firstYear
+const pad = (n: number) => String(n).padStart(2, '0')
+
+const stats = [
+  { value: `${pad(yearsExp)}+`, label: isEn ? "years exp" : "años exp" },
+  { value: pad(certificates?.length ?? 0), label: isEn ? "certifications" : "certificaciones" },
+  { value: pad(projects?.length ?? 0), label: isEn ? "projects" : "proyectos" },
+]
 ---
 
 <Section id="hero">
-  <div class="hero-panel">
-    <div class="panel-corner tl"></div>
-    <div class="panel-corner tr"></div>
-    <div class="panel-corner bl"></div>
-    <div class="panel-corner br"></div>
-    
-    <div class="terminal-bar">
-      <span class="terminal-prefix">$</span>
-      <span class="terminal-cmd">whoami</span>
-      <span class="cursor"></span>
+  <div class="hero-terminal">
+    <div class="panel-corner tl" aria-hidden="true"></div>
+    <div class="panel-corner tr" aria-hidden="true"></div>
+    <div class="panel-corner bl" aria-hidden="true"></div>
+    <div class="panel-corner br" aria-hidden="true"></div>
+
+    <div class="terminal-titlebar" aria-hidden="true">
+      <div class="titlebar-dots">
+        <span class="dot dot-r"></span>
+        <span class="dot dot-a"></span>
+        <span class="dot dot-g"></span>
+      </div>
+      <span class="titlebar-label">santiago@mansfeld: ~</span>
+      <span class="titlebar-meta">bash · 80×24</span>
     </div>
 
-    <div class="hero-content">
+    <div class="terminal-body">
+      <p class="terminal-line" aria-hidden="true">
+        <span class="line-prompt">$</span>
+        <span class="typed-cmd">whoami</span>
+        <span class="line-cursor"></span>
+      </p>
+
       <div class="hero-main">
         <div class="identity-block">
-          <h1 class="hero-name">{name}</h1>
-          <h2 class="hero-role">{label}</h2>
-          <div class="hero-location">
-            <WorldMap />
-            <span>{city}, {region}</span>
+          <h1 class="hero-name hs hs-1">{name}</h1>
+          <p class="hero-role hs hs-2"><span class="role-prefix" aria-hidden="true">&gt;_</span> {label}</p>
+
+          <div class="hero-tags hs hs-3">
+            <span class="tag tag-status">
+              <span class="status-dot" aria-hidden="true"></span>
+              {isEn ? 'Available' : 'Disponible'}
+            </span>
+            <span class="tag tag-location">
+              <WorldMap />
+              {city}, {region}
+            </span>
+            <span class="tag tag-coords" aria-hidden="true">-34.6037, -58.3816</span>
+            <span class="tag" aria-hidden="true">UTC-3</span>
           </div>
         </div>
-        
-        <div class="hero-image-wrapper">
+
+        <div class="hero-image-wrapper hs hs-2">
           <div class="image-frame">
-            <img src={image} alt={name} />
-            <div class="image-overlay"></div>
+            <img src={image} alt={name} width="132" height="132" />
+            <div class="image-scanlines" aria-hidden="true"></div>
+            <div class="image-overlay" aria-hidden="true"></div>
           </div>
-          <div class="status-badge">
-            <span class="status-dot"></span>
-            <span class="status-text">{isEn ? 'Available' : 'Disponible'}</span>
-          </div>
+          <div class="frame-label" aria-hidden="true">ID.0x53414D</div>
         </div>
       </div>
 
-      <div class="hero-footer">
+      <div class="hero-stats hs hs-4" role="list">
+        {stats.map(({ value, label: statLabel }) => (
+          <div class="stat" role="listitem">
+            <span class="stat-value">{value}</span>
+            <span class="stat-label">{statLabel}</span>
+          </div>
+        ))}
+        <div class="stats-fill" aria-hidden="true"></div>
+      </div>
+
+      <div class="hero-footer hs hs-5">
         <div class="contact-links">
           {email && (
-            <a href={`mailto:${email}`} title={`Enviar un correo electrónico a ${name} al correo ${email}`} target="_blank" rel="noopener noreferrer" class="contact-link" data-track="contact_email_click">
+            <a href={`mailto:${email}`} title={isEn ? `Send an email to ${name}` : `Enviar un correo electrónico a ${name}`} target="_blank" rel="noopener noreferrer" class="contact-link" data-track="contact_email_click">
               <Mail />
               <span class="link-label">Email</span>
             </a>
@@ -81,40 +118,43 @@ const isEn = Astro.currentLocale === 'en'
           {profiles.map(({ network, url }: any) => {
             const Icon = SOCIAL_ICONS[network]
             return (
-              <a href={url} title={`Visitar el perfil de ${name} en ${network}`} target="_blank" rel="noopener noreferrer" class="contact-link" data-track={`${network.toLowerCase()}_click`}>
+              <a href={url} title={isEn ? `Visit ${name}'s ${network} profile` : `Visitar el perfil de ${name} en ${network}`} target="_blank" rel="noopener noreferrer" class="contact-link" data-track={`${network.toLowerCase()}_click`}>
                 <Icon />
                 <span class="link-label">{network}</span>
               </a>
             )
           })}
         </div>
-        <div class="hero-meta">
-          <span class="meta-item print">{printInfo}</span>
-        </div>
+        <span class="print">{printInfo}</span>
       </div>
     </div>
   </div>
 </Section>
 
 <style>
-  .hero-panel {
+  .hero-terminal {
     position: relative;
     background: var(--bg-panel);
     border: 1px solid var(--border-color);
-    padding: 0;
-    overflow: hidden;
+    box-shadow: var(--glow-purple), 0 24px 64px rgba(0, 0, 0, 0.35);
     transition: border-color var(--transition-normal);
   }
 
-  .hero-panel:hover {
+  .hero-terminal:hover {
     border-color: var(--border-hover);
   }
 
+  :root:not(.dark) .hero-terminal {
+    box-shadow: var(--glow-purple), 0 20px 48px rgba(40, 20, 90, 0.08);
+  }
+
+  /* ── Corner brackets ── */
   .panel-corner {
     position: absolute;
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
     z-index: 2;
+    pointer-events: none;
   }
 
   .panel-corner::before,
@@ -122,46 +162,93 @@ const isEn = Astro.currentLocale === 'en'
     content: '';
     position: absolute;
     background: var(--accent-purple);
-    opacity: 0.4;
+    opacity: 0.65;
   }
 
   .panel-corner.tl { top: -1px; left: -1px; }
-  .panel-corner.tl::before { width: 16px; height: 1px; top: 0; left: 0; }
-  .panel-corner.tl::after { width: 1px; height: 16px; top: 0; left: 0; }
+  .panel-corner.tl::before { width: 18px; height: 1px; top: 0; left: 0; }
+  .panel-corner.tl::after { width: 1px; height: 18px; top: 0; left: 0; }
 
   .panel-corner.tr { top: -1px; right: -1px; }
-  .panel-corner.tr::before { width: 16px; height: 1px; top: 0; right: 0; }
-  .panel-corner.tr::after { width: 1px; height: 16px; top: 0; right: 0; }
+  .panel-corner.tr::before { width: 18px; height: 1px; top: 0; right: 0; }
+  .panel-corner.tr::after { width: 1px; height: 18px; top: 0; right: 0; }
 
   .panel-corner.bl { bottom: -1px; left: -1px; }
-  .panel-corner.bl::before { width: 16px; height: 1px; bottom: 0; left: 0; }
-  .panel-corner.bl::after { width: 1px; height: 16px; bottom: 0; left: 0; }
+  .panel-corner.bl::before { width: 18px; height: 1px; bottom: 0; left: 0; }
+  .panel-corner.bl::after { width: 1px; height: 18px; bottom: 0; left: 0; }
 
   .panel-corner.br { bottom: -1px; right: -1px; }
-  .panel-corner.br::before { width: 16px; height: 1px; bottom: 0; right: 0; }
-  .panel-corner.br::after { width: 1px; height: 16px; bottom: 0; right: 0; }
+  .panel-corner.br::before { width: 18px; height: 1px; bottom: 0; right: 0; }
+  .panel-corner.br::after { width: 1px; height: 18px; bottom: 0; right: 0; }
 
-  .terminal-bar {
+  /* ── Title bar ── */
+  .terminal-titlebar {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 12px 16px;
+    gap: 12px;
+    padding: 10px 16px;
     background: var(--bg-secondary);
     border-bottom: 1px solid var(--border-color);
     font-family: var(--font-mono);
-    font-size: 12px;
+    font-size: 11px;
   }
 
-  .terminal-prefix {
+  .titlebar-dots {
+    display: flex;
+    gap: 6px;
+  }
+
+  .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    opacity: 0.75;
+  }
+
+  .dot-r { background: #F87171; }
+  .dot-a { background: #FBBF24; }
+  .dot-g { background: #4ADE80; }
+
+  .titlebar-label {
+    flex: 1;
+    text-align: center;
+    color: var(--text-muted);
+    letter-spacing: 0.04em;
+  }
+
+  .titlebar-meta {
+    color: var(--text-muted);
+    opacity: 0.7;
+  }
+
+  /* ── Body ── */
+  .terminal-body {
+    padding: 28px 32px 24px;
+  }
+
+  .terminal-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    margin-bottom: 20px;
+  }
+
+  .line-prompt {
     color: var(--accent-purple);
-    font-weight: 600;
+    font-weight: 700;
   }
 
-  .terminal-cmd {
+  .typed-cmd {
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
     color: var(--text-secondary);
+    vertical-align: bottom;
   }
 
-  .cursor {
+  .line-cursor {
     display: inline-block;
     width: 7px;
     height: 14px;
@@ -174,100 +261,110 @@ const isEn = Astro.currentLocale === 'en'
     50% { opacity: 0; }
   }
 
-  .hero-content {
-    padding: 24px;
+  @media (prefers-reduced-motion: no-preference) {
+    .typed-cmd {
+      width: 0;
+      animation: typing 650ms steps(6) 300ms forwards;
+    }
+
+    @keyframes typing {
+      to { width: 6.2ch; }
+    }
+
+    .hs {
+      opacity: 0;
+      animation: heroIn 700ms var(--ease-out-soft) forwards;
+    }
+
+    .hs-1 { animation-delay: 850ms; }
+    .hs-2 { animation-delay: 1000ms; }
+    .hs-3 { animation-delay: 1150ms; }
+    .hs-4 { animation-delay: 1300ms; }
+    .hs-5 { animation-delay: 1450ms; }
+
+    @keyframes heroIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
   }
 
+  /* ── Identity ── */
   .hero-main {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    gap: 24px;
+    gap: 32px;
   }
 
   .identity-block {
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 12px;
+    min-width: 0;
   }
 
   .hero-name {
     font-family: var(--font-heading);
-    font-size: 2rem;
+    font-size: clamp(2.2rem, 5vw, 3.4rem);
     font-weight: 600;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
     color: var(--text-primary);
-    line-height: 1.1;
   }
 
   .hero-role {
     font-family: var(--font-mono);
-    font-size: 0.85rem;
-    font-weight: 400;
-    color: var(--accent-purple);
-    letter-spacing: 0.02em;
+    font-size: clamp(0.85rem, 1.6vw, 1rem);
+    font-weight: 500;
+    color: var(--accent-purple-bright);
+    letter-spacing: 0.01em;
   }
 
-  .hero-location {
+  .role-prefix {
+    color: var(--accent-cyan);
+    font-weight: 700;
+    margin-right: 2px;
+  }
+
+  .hero-tags {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    gap: 6px;
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    color: var(--text-muted);
-    margin-top: 4px;
+    gap: 8px;
+    margin-top: 6px;
   }
 
-  .hero-image-wrapper {
-    position: relative;
-    flex-shrink: 0;
-  }
-
-  .image-frame {
-    position: relative;
-    width: 112px;
-    height: 112px;
-    overflow: hidden;
-    border: 1px solid var(--border-color);
-    clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
-  }
-
-  .image-frame img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    filter: grayscale(20%) contrast(1.05);
-    transition: filter var(--transition-normal);
-  }
-
-  .hero-panel:hover .image-frame img {
-    filter: grayscale(0%) contrast(1);
-  }
-
-  .image-overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, var(--accent-purple-dim), transparent);
-    pointer-events: none;
-  }
-
-  .status-badge {
-    position: absolute;
-    bottom: -8px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
+  .tag {
+    display: inline-flex;
     align-items: center;
     gap: 6px;
     padding: 4px 10px;
     background: var(--bg-secondary);
     border: 1px solid var(--border-color);
     font-family: var(--font-mono);
-    font-size: 9px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+    font-size: 10.5px;
+    letter-spacing: 0.05em;
+    color: var(--text-secondary);
     white-space: nowrap;
+  }
+
+  .tag :global(svg) {
+    width: 12px;
+    height: 12px;
+  }
+
+  .tag-status {
+    color: var(--accent-green);
+    border-color: color-mix(in srgb, var(--accent-green) 30%, transparent);
+    background: var(--accent-green-dim);
+    text-transform: uppercase;
   }
 
   .status-dot {
@@ -275,26 +372,132 @@ const isEn = Astro.currentLocale === 'en'
     height: 6px;
     border-radius: 50%;
     background: var(--accent-green);
-    box-shadow: 0 0 6px var(--accent-green);
-    animation: pulse 2s ease-in-out infinite;
+    box-shadow: var(--glow-green);
+    animation: pulse 2.2s ease-in-out infinite;
   }
 
   @keyframes pulse {
     0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
+    50% { opacity: 0.4; }
   }
 
-  .status-text {
-    color: var(--accent-green);
+  .tag-coords {
+    color: var(--accent-cyan);
+    border-color: color-mix(in srgb, var(--accent-cyan) 25%, transparent);
   }
 
-  .hero-footer {
-    margin-top: 24px;
-    padding-top: 16px;
-    border-top: 1px solid var(--border-color);
+  /* ── Avatar ── */
+  .hero-image-wrapper {
+    position: relative;
+    flex-shrink: 0;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .image-frame {
+    position: relative;
+    width: 132px;
+    height: 132px;
+    overflow: hidden;
+    border: 1px solid var(--border-strong);
+    clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
+  }
+
+  .image-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: grayscale(25%) contrast(1.05);
+    transition: filter var(--transition-normal), transform var(--transition-normal);
+  }
+
+  .hero-terminal:hover .image-frame img {
+    filter: grayscale(0%) contrast(1);
+    transform: scale(1.03);
+  }
+
+  .image-scanlines {
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 2px,
+      rgba(0, 0, 0, 0.12) 2px,
+      rgba(0, 0, 0, 0.12) 3px
+    );
+    pointer-events: none;
+  }
+
+  .image-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--accent-purple-dim), transparent 60%);
+    pointer-events: none;
+  }
+
+  .frame-label {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.14em;
+    color: var(--text-muted);
+  }
+
+  /* ── Stats strip ── */
+  .hero-stats {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    margin-top: 28px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-secondary);
+    overflow: hidden;
+  }
+
+  .stat {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 12px 20px;
+    border-right: 1px solid var(--border-color);
+  }
+
+  .stat-value {
+    font-family: var(--font-mono);
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--accent-purple-bright);
+    line-height: 1.1;
+  }
+
+  .stat-label {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .stats-fill {
+    flex: 1;
+    margin: 14px;
+    background-image: repeating-linear-gradient(
+      -45deg,
+      var(--border-color) 0,
+      var(--border-color) 1px,
+      transparent 1px,
+      transparent 6px
+    );
+    opacity: 0.7;
+  }
+
+  /* ── Footer ── */
+  .hero-footer {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
   }
 
   .contact-links {
@@ -307,23 +510,24 @@ const isEn = Astro.currentLocale === 'en'
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 8px 12px;
+    padding: 9px 14px;
     background: var(--bg-secondary);
     border: 1px solid var(--border-color);
     font-family: var(--font-mono);
-    font-size: 11px;
+    font-size: 11.5px;
     color: var(--text-secondary);
     transition: all var(--transition-fast);
-    clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
+    clip-path: polygon(7px 0, 100% 0, calc(100% - 7px) 100%, 0 100%);
   }
 
   .contact-link:hover {
     color: var(--text-primary);
     border-color: var(--border-hover);
     background: var(--accent-purple-dim);
+    box-shadow: var(--glow-border);
   }
 
-  .contact-link svg {
+  .contact-link :global(svg) {
     width: 14px;
     height: 14px;
   }
@@ -332,46 +536,74 @@ const isEn = Astro.currentLocale === 'en'
     letter-spacing: 0.05em;
   }
 
-  .hero-meta {
-    font-family: var(--font-mono);
-    font-size: 10px;
-    color: var(--text-muted);
-  }
-
+  /* ── Responsive ── */
   @media (width <= 768px) {
+    .terminal-body {
+      padding: 20px 18px 18px;
+    }
+
     .hero-main {
       flex-direction: column-reverse;
       align-items: center;
       text-align: center;
+      gap: 20px;
     }
 
     .identity-block {
       align-items: center;
+      width: 100%;
     }
 
     .hero-name {
-      font-size: 1.6rem;
+      overflow-wrap: anywhere;
     }
 
-    .hero-role {
-      font-size: 0.8rem;
-    }
-
-    .hero-location {
+    .hero-tags {
       justify-content: center;
+    }
+
+    .tag-coords {
+      display: none;
+    }
+
+    .hero-stats {
+      flex-wrap: wrap;
+    }
+
+    .stat {
+      flex: 1;
+      padding: 10px 12px;
+      align-items: center;
+    }
+
+    .stat:last-of-type {
+      border-right: none;
+    }
+
+    .stats-fill {
+      display: none;
     }
 
     .contact-links {
       justify-content: center;
     }
 
-    .hero-content {
-      padding: 16px;
+    .image-frame {
+      width: 108px;
+      height: 108px;
+    }
+  }
+
+  @media print {
+    .hero-terminal {
+      box-shadow: none;
     }
 
-    .image-frame {
-      width: 96px;
-      height: 96px;
+    .terminal-titlebar,
+    .terminal-line,
+    .hero-stats,
+    .frame-label {
+      display: none;
     }
   }
 </style>

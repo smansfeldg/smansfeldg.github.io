@@ -4,46 +4,77 @@ import Section from "../Section.astro"
 interface Props { cv: any }
 const { cv } = Astro.props
 const { summary } = cv.basics
+const languages = cv.languages ?? []
 
 const isEn = Astro.currentLocale === 'en';
-const title = isEn ? "About" : "Acerca de";
+const title = isEn ? "About" : "Perfil";
 ---
 
-<Section id="about" title={title}>
-  <div class="about-panel">
-    <div class="panel-header">
-      <span class="panel-label">{isEn ? 'SYSTEM.INFO' : 'SISTEMA.INFO'}</span>
-      <div class="panel-indicator"></div>
-    </div>
-    <div class="panel-body">
-      <p class="about-text">{summary}</p>
-      <div class="about-meta">
-        <div class="meta-row">
-          <span class="meta-key">{isEn ? 'STATUS' : 'ESTADO'}</span>
-          <span class="meta-val active">{isEn ? 'Active' : 'Activo'}</span>
-        </div>
-        <div class="meta-row">
-          <span class="meta-key">{isEn ? 'FOCUS' : 'ENFOQUE'}</span>
-          <span class="meta-val">DevOps / Infrastructure</span>
-        </div>
-        <div class="meta-row">
-          <span class="meta-key">{isEn ? 'LOCATION' : 'UBICACIÓN'}</span>
-          <span class="meta-val">Buenos Aires, AR</span>
-        </div>
+<Section id="about" title={title} command="cat profile.md" index="01">
+  <div class="about-grid">
+    <div class="about-panel">
+      <div class="panel-header">
+        <span class="panel-label">{isEn ? 'PROFILE.MD' : 'PERFIL.MD'}</span>
+        <span class="panel-decoration" aria-hidden="true">─ ─ ─</span>
+      </div>
+      <div class="panel-body">
+        <p class="about-text"><span class="output-mark" aria-hidden="true">&gt;</span>{summary}</p>
       </div>
     </div>
+
+    <aside class="meta-panel">
+      <div class="panel-header">
+        <span class="panel-label">{isEn ? 'SYS.STATUS' : 'SIS.ESTADO'}</span>
+        <span class="panel-indicator" aria-hidden="true"></span>
+      </div>
+      <div class="panel-body">
+        <dl class="meta-list">
+          <div class="meta-row">
+            <dt>{isEn ? 'STATUS' : 'ESTADO'}</dt>
+            <dd class="val-active">
+              <span class="active-dot" aria-hidden="true"></span>
+              {isEn ? 'Active' : 'Activo'}
+            </dd>
+          </div>
+          <div class="meta-row">
+            <dt>{isEn ? 'FOCUS' : 'ENFOQUE'}</dt>
+            <dd>DevOps / Cloud</dd>
+          </div>
+          <div class="meta-row">
+            <dt>{isEn ? 'LOCATION' : 'UBICACIÓN'}</dt>
+            <dd>Buenos Aires, AR</dd>
+          </div>
+          {languages.map(({ language, fluency }: any) => (
+            <div class="meta-row">
+              <dt class="lang-key">LANG</dt>
+              <dd>{language} <span class="lang-fluency">[{fluency}]</span></dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    </aside>
   </div>
 </Section>
 
 <style>
-  .about-panel {
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1.9fr 1fr;
+    gap: 16px;
+    align-items: stretch;
+  }
+
+  .about-panel,
+  .meta-panel {
     background: var(--bg-panel);
     border: 1px solid var(--border-color);
-    position: relative;
+    display: flex;
+    flex-direction: column;
     transition: border-color var(--transition-normal);
   }
 
-  .about-panel:hover {
+  .about-panel:hover,
+  .meta-panel:hover {
     border-color: var(--border-hover);
   }
 
@@ -51,7 +82,7 @@ const title = isEn ? "About" : "Acerca de";
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 10px 16px;
+    padding: 9px 16px;
     background: var(--bg-secondary);
     border-bottom: 1px solid var(--border-color);
   }
@@ -64,61 +95,106 @@ const title = isEn ? "About" : "Acerca de";
     color: var(--accent-purple);
   }
 
+  .panel-decoration {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-muted);
+    opacity: 0.5;
+  }
+
   .panel-indicator {
-    width: 6px;
-    height: 6px;
+    width: 7px;
+    height: 7px;
     background: var(--accent-purple);
     clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+    animation: indicatorPulse 3s ease-in-out infinite;
+  }
+
+  @keyframes indicatorPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.35; }
   }
 
   .panel-body {
-    padding: 20px 16px;
+    padding: 20px;
+    flex: 1;
   }
 
   .about-text {
-    font-size: 0.9rem;
-    line-height: 1.7;
+    font-size: 0.95rem;
+    line-height: 1.8;
     color: var(--text-secondary);
-    margin-bottom: 20px;
   }
 
-  .about-meta {
+  .output-mark {
+    font-family: var(--font-mono);
+    color: var(--accent-cyan);
+    font-weight: 700;
+    margin-right: 10px;
+  }
+
+  .meta-list {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    padding-top: 16px;
-    border-top: 1px solid var(--border-color);
+    gap: 10px;
   }
 
   .meta-row {
     display: flex;
-    align-items: center;
+    align-items: baseline;
     gap: 12px;
     font-family: var(--font-mono);
-    font-size: 11px;
+    font-size: 11.5px;
   }
 
-  .meta-key {
+  .meta-row dt {
     color: var(--text-muted);
-    letter-spacing: 0.08em;
-    min-width: 80px;
+    letter-spacing: 0.1em;
+    min-width: 82px;
+    flex-shrink: 0;
   }
 
-  .meta-val {
+  .meta-row dd {
     color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 6px;
   }
 
-  .meta-val.active {
-    color: var(--accent-green);
+  .val-active {
+    color: var(--accent-green) !important;
+  }
+
+  .active-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent-green);
+    box-shadow: var(--glow-green);
+    animation: statusPulse 2.2s ease-in-out infinite;
+  }
+
+  @keyframes statusPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  .lang-fluency {
+    color: var(--accent-cyan);
+    font-size: 10px;
   }
 
   @media (width <= 768px) {
+    .about-grid {
+      grid-template-columns: 1fr;
+    }
+
     .panel-body {
       padding: 16px;
     }
 
     .about-text {
-      font-size: 0.85rem;
+      font-size: 0.9rem;
     }
   }
 </style>

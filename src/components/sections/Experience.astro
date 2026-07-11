@@ -7,75 +7,167 @@ const { work } = cv
 
 const isEn = Astro.currentLocale === 'en';
 const title = isEn ? "Experience" : "Experiencia";
+
+const formatDuration = (startDate: string, endDate: string | null) => {
+  const start = new Date(startDate)
+  const end = endDate ? new Date(endDate) : new Date()
+  const months = Math.max(1,
+    (end.getFullYear() - start.getFullYear()) * 12 + (end.getMonth() - start.getMonth())
+  )
+  const y = Math.floor(months / 12)
+  const m = months % 12
+  const yUnit = isEn ? 'y' : 'a'
+  const parts = []
+  if (y > 0) parts.push(`${y}${yUnit}`)
+  if (m > 0) parts.push(`${m}m`)
+  return parts.join(' ')
+}
 ---
 
-<Section id="experience" title={title}>
-  <ul class="experience-list">
-    {work.map(({ name, startDate, endDate, position, summary, url }: any, index: number) => {
+<Section id="experience" title={title} command="git log --work" index="02">
+  <ol class="timeline">
+    {work.map(({ name, startDate, endDate, position, summary, url, highlights }: any, index: number) => {
       const startYear = new Date(startDate).getFullYear()
       const endYear = endDate != null ? new Date(endDate).getFullYear() : (isEn ? "Present" : "Actual")
       const isCurrent = endDate == null
+      const duration = formatDuration(startDate, endDate)
 
       return (
-        <li>
-          <article class="exp-card">
-            <div class="exp-index">{String(index + 1).padStart(2, '0')}</div>
-            <div class="exp-content">
-              <header class="exp-header">
-                <div class="exp-title">
-                  <h3>
-                    <a href={url} title={isEn ? `View ${name}` : `Ver ${name}`} target="_blank">
-                      {name}
-                    </a>
-                  </h3>
-                  <h4>{position}</h4>
+        <li class="timeline-item" data-reveal style={`--reveal-delay: ${index * 70}ms`}>
+          <div class="timeline-rail" aria-hidden="true">
+            <span class={`rail-node ${isCurrent ? 'current' : ''}`}></span>
+          </div>
+
+          <article class={`exp-card ${isCurrent ? 'current' : ''}`}>
+            <header class="exp-header">
+              <div class="exp-title">
+                <h3 class="exp-position">{position}</h3>
+                <div class="exp-company">
+                  <span class="company-at" aria-hidden="true">@</span>
+                  {url ? (
+                    <a href={url} title={isEn ? `View ${name}` : `Ver ${name}`} target="_blank" rel="noopener noreferrer">{name}</a>
+                  ) : (
+                    <span>{name}</span>
+                  )}
                 </div>
-                <div class="exp-period">
-                  <span class="period-start">{startYear}</span>
-                  <span class="period-sep">—</span>
-                  <span class={`period-end ${isCurrent ? 'current' : ''}`}>{endYear}</span>
-                </div>
-              </header>
-              <footer class="exp-footer">
-                <p>{summary}</p>
-              </footer>
-            </div>
+              </div>
+              <div class="exp-meta">
+                {isCurrent && (
+                  <span class="badge-active">
+                    <span class="badge-dot" aria-hidden="true"></span>
+                    {isEn ? 'ACTIVE' : 'ACTIVO'}
+                  </span>
+                )}
+                <span class="exp-period">
+                  {startYear} — <span class={isCurrent ? 'current-label' : ''}>{endYear}</span>
+                  <span class="period-duration" aria-hidden="true">· {duration}</span>
+                </span>
+              </div>
+            </header>
+
+            <p class="exp-summary">{summary}</p>
+
+            {highlights?.length > 0 && (
+              <ul class="exp-highlights">
+                {highlights.map((highlight: string) => (
+                  <li><span class="hl-mark" aria-hidden="true">&gt;</span>{highlight}</li>
+                ))}
+              </ul>
+            )}
           </article>
         </li>
       )
     })}
-  </ul>
+  </ol>
 </Section>
 
 <style>
-  .experience-list {
+  .timeline {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    list-style: none;
   }
 
-  .exp-card {
+  .timeline-item {
+    display: flex;
+    gap: 20px;
+    padding-bottom: 16px;
+  }
+
+  .timeline-item:last-child {
+    padding-bottom: 0;
+  }
+
+  /* ── Rail ── */
+  .timeline-rail {
     position: relative;
+    width: 14px;
+    flex-shrink: 0;
+    display: flex;
+    justify-content: center;
+  }
+
+  .timeline-rail::before {
+    content: '';
+    position: absolute;
+    top: 26px;
+    bottom: -8px;
+    width: 1px;
+    background: linear-gradient(to bottom, var(--border-hover), var(--border-color) 80%);
+  }
+
+  .timeline-item:last-child .timeline-rail::before {
+    background: linear-gradient(to bottom, var(--border-hover), transparent);
+  }
+
+  .rail-node {
+    position: absolute;
+    top: 16px;
+    width: 9px;
+    height: 9px;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-hover);
+    transform: rotate(45deg);
+    transition: all var(--transition-fast);
+  }
+
+  .rail-node.current {
+    background: var(--accent-purple);
+    border-color: var(--accent-purple);
+    box-shadow: 0 0 10px rgba(139, 92, 246, 0.6);
+  }
+
+  .timeline-item:hover .rail-node {
+    border-color: var(--accent-purple);
+    background: var(--accent-purple-dim);
+  }
+
+  .timeline-item:hover .rail-node.current {
+    background: var(--accent-purple);
+  }
+
+  /* ── Card ── */
+  .exp-card {
+    flex: 1;
+    min-width: 0;
     background: var(--bg-panel);
     border: 1px solid var(--border-color);
-    padding: 16px 16px 16px 56px;
+    border-left: 2px solid var(--border-color);
+    padding: 16px 20px;
     transition: all var(--transition-normal);
   }
 
   .exp-card:hover {
     border-color: var(--border-hover);
+    border-left-color: var(--accent-purple);
     background: var(--bg-panel-hover);
+    transform: translateX(2px);
   }
 
-  .exp-index {
-    position: absolute;
-    left: 16px;
-    top: 16px;
-    font-family: var(--font-mono);
-    font-size: 10px;
-    font-weight: 600;
-    color: var(--text-muted);
-    letter-spacing: 0.05em;
+  .exp-card.current {
+    border-left-color: var(--accent-purple);
+    background: linear-gradient(135deg, var(--accent-purple-dim), var(--bg-panel) 40%);
+    box-shadow: var(--glow-border);
   }
 
   .exp-header {
@@ -83,63 +175,143 @@ const title = isEn ? "Experience" : "Experiencia";
     justify-content: space-between;
     align-items: flex-start;
     gap: 16px;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
   }
 
-  .exp-title h3 {
+  .exp-position {
     font-family: var(--font-heading);
-    font-size: 1rem;
-    font-weight: 500;
-    margin-bottom: 2px;
+    font-size: 1.08rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--text-primary);
+    margin-bottom: 3px;
   }
 
-  .exp-title h3 a {
-    color: var(--text-primary);
+  .exp-company {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+  }
+
+  .company-at {
+    color: var(--text-muted);
+  }
+
+  .exp-company a,
+  .exp-company span:not(.company-at) {
+    color: var(--accent-purple-bright);
     transition: color var(--transition-fast);
   }
 
-  .exp-title h3 a:hover {
-    color: var(--accent-purple);
+  .exp-company a:hover {
+    color: var(--accent-cyan);
+    text-decoration: underline;
+    text-underline-offset: 3px;
   }
 
-  .exp-title h4 {
+  .exp-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .badge-active {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 8px;
+    background: var(--accent-green-dim);
+    border: 1px solid color-mix(in srgb, var(--accent-green) 35%, transparent);
+    color: var(--accent-green);
     font-family: var(--font-mono);
-    font-size: 0.8rem;
-    font-weight: 400;
-    color: var(--accent-purple);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+  }
+
+  .badge-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--accent-green);
+    box-shadow: var(--glow-green);
+    animation: badgePulse 2s ease-in-out infinite;
+  }
+
+  @keyframes badgePulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
   }
 
   .exp-period {
-    display: flex;
-    align-items: center;
-    gap: 6px;
     font-family: var(--font-mono);
     font-size: 11px;
     color: var(--text-muted);
     white-space: nowrap;
-    padding: 4px 8px;
+    padding: 4px 9px;
     background: var(--bg-secondary);
     border: 1px solid var(--border-color);
   }
 
-  .period-end.current {
+  .current-label {
     color: var(--accent-green);
   }
 
-  .exp-footer p {
-    font-size: 0.85rem;
-    line-height: 1.6;
+  .period-duration {
+    color: var(--text-muted);
+    opacity: 0.75;
+  }
+
+  .exp-summary {
+    font-size: 0.87rem;
+    line-height: 1.65;
     color: var(--text-secondary);
   }
 
+  /* ── Highlights ── */
+  .exp-highlights {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 12px;
+    list-style: none;
+  }
+
+  .exp-highlights li {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 9px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.02em;
+    color: var(--text-secondary);
+    transition: all var(--transition-fast);
+  }
+
+  .exp-highlights li:hover {
+    border-color: var(--border-hover);
+    color: var(--text-primary);
+  }
+
+  .hl-mark {
+    color: var(--accent-cyan);
+    font-weight: 700;
+  }
+
+  /* ── Responsive ── */
   @media (width <= 768px) {
-    .exp-card {
-      padding: 14px 14px 14px 48px;
+    .timeline-item {
+      gap: 12px;
     }
 
-    .exp-index {
-      left: 12px;
-      top: 14px;
+    .exp-card {
+      padding: 14px 14px;
     }
 
     .exp-header {
@@ -147,8 +319,18 @@ const title = isEn ? "Experience" : "Experiencia";
       gap: 8px;
     }
 
-    .exp-period {
+    .exp-meta {
       align-self: flex-start;
+    }
+  }
+
+  @media print {
+    .timeline-rail {
+      display: none;
+    }
+
+    .exp-card {
+      box-shadow: none;
     }
   }
 </style>

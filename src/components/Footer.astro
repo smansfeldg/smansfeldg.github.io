@@ -1,0 +1,296 @@
+---
+import Mail from "@/icons/Mail.astro"
+import WhatsApp from "@/icons/WhatsApp.astro"
+import LinkedIn from "@/icons/LinkedIn.astro"
+import GitHub from "@/icons/GitHub.astro"
+import X from "@/icons/X.astro"
+import type { SocialIcon } from "@/types"
+
+interface Props { cv: any }
+const { cv } = Astro.props
+const { basics } = cv
+const { name, email, phone, profiles } = basics
+
+const SOCIAL_ICONS: SocialIcon = {
+  GitHub,
+  LinkedIn,
+  X,
+}
+
+const isEn = Astro.currentLocale === 'en'
+const year = new Date().getFullYear()
+---
+
+<section id="contact" class="contact-section" data-reveal>
+  <div class="contact-inner">
+    <p class="contact-cmd" aria-hidden="true">
+      <span class="cmd-prompt">$</span> ./contact --init
+      <span class="cmd-ok">[OK]</span>
+    </p>
+
+    <h2 class="contact-title">
+      {isEn ? "Let's build something." : "¿Construimos algo?"}
+    </h2>
+    <p class="contact-sub">
+      {isEn
+        ? "Open to DevOps & Cloud opportunities, consulting and interesting infrastructure problems."
+        : "Abierto a oportunidades DevOps & Cloud, consultoría y problemas interesantes de infraestructura."}
+    </p>
+
+    <div class="contact-actions">
+      <a href={`mailto:${email}`} class="cta-primary" data-track="footer_email_click">
+        <Mail />
+        <span>{email}</span>
+      </a>
+      {phone && (
+        <a href={`https://wa.me/${phone.replace(/[^0-9]/g, "")}`} target="_blank" rel="noopener noreferrer" class="cta-secondary" data-track="footer_whatsapp_click" title={isEn ? `Send a WhatsApp message to ${name}` : `Enviar un mensaje de WhatsApp a ${name}`}>
+          <WhatsApp />
+          <span>WhatsApp</span>
+        </a>
+      )}
+      {profiles.map(({ network, url }: any) => {
+        const Icon = SOCIAL_ICONS[network]
+        return (
+          <a href={url} target="_blank" rel="noopener noreferrer" class="cta-secondary" data-track={`footer_${network.toLowerCase()}_click`} title={isEn ? `Visit ${name}'s ${network}` : `Visitar el ${network} de ${name}`}>
+            <Icon />
+            <span>{network}</span>
+          </a>
+        )
+      })}
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer no-print">
+  <div class="footer-inner">
+    <span class="footer-item footer-copy">© {year} {name.toUpperCase()}</span>
+    <span class="footer-item footer-status" aria-hidden="true">
+      <span class="status-dot"></span>
+      {isEn ? 'SYSTEM ONLINE' : 'SISTEMA ONLINE'}
+    </span>
+    <span class="footer-item footer-stack" aria-hidden="true">ASTRO · TYPESCRIPT · GITHUB PAGES</span>
+    <a href="#hero" class="footer-item footer-top" data-track="footer_top_click">
+      cd ~<span class="top-arrow" aria-hidden="true">↑</span>
+    </a>
+  </div>
+</footer>
+
+<style>
+  .contact-section {
+    max-width: var(--container-max);
+    margin: 96px auto 0;
+    padding: 0 var(--container-pad);
+    scroll-margin-top: calc(var(--topbar-h) + 32px);
+  }
+
+  .contact-inner {
+    position: relative;
+    text-align: center;
+    padding: 56px 32px;
+    background:
+      linear-gradient(180deg, var(--accent-purple-dim), transparent 55%),
+      var(--bg-panel);
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+    transition: border-color var(--transition-normal);
+  }
+
+  .contact-inner:hover {
+    border-color: var(--border-hover);
+  }
+
+  .contact-inner::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 15%;
+    right: 15%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent-purple), var(--accent-cyan), transparent);
+    opacity: 0.7;
+  }
+
+  .contact-cmd {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 18px;
+    letter-spacing: 0.04em;
+  }
+
+  .cmd-prompt {
+    color: var(--accent-purple);
+    font-weight: 700;
+  }
+
+  .cmd-ok {
+    color: var(--accent-green);
+    margin-left: 8px;
+  }
+
+  .contact-title {
+    font-family: var(--font-heading);
+    font-size: clamp(1.7rem, 4vw, 2.4rem);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    margin-bottom: 10px;
+  }
+
+  .contact-sub {
+    font-size: 0.92rem;
+    color: var(--text-secondary);
+    max-width: 520px;
+    margin: 0 auto 28px;
+  }
+
+  .contact-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .cta-primary,
+  .cta-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    padding: 11px 18px;
+    border: 1px solid var(--border-color);
+    transition: all var(--transition-fast);
+    clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+  }
+
+  .cta-primary {
+    background: var(--accent-purple);
+    border-color: var(--accent-purple);
+    color: #FFFFFF;
+    font-weight: 600;
+    box-shadow: var(--glow-purple);
+  }
+
+  .cta-primary:hover {
+    background: var(--accent-purple-bright);
+    transform: translateY(-2px);
+    box-shadow: 0 0 32px rgba(139, 92, 246, 0.35);
+  }
+
+  .cta-secondary {
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+  }
+
+  .cta-secondary:hover {
+    color: var(--text-primary);
+    border-color: var(--border-hover);
+    background: var(--accent-purple-dim);
+    transform: translateY(-2px);
+  }
+
+  .cta-primary :global(svg),
+  .cta-secondary :global(svg) {
+    width: 14px;
+    height: 14px;
+  }
+
+  /* ── Bottom status bar ── */
+  .site-footer {
+    margin-top: 72px;
+    border-top: 1px solid var(--border-color);
+    background: color-mix(in srgb, var(--bg-secondary) 80%, transparent);
+    backdrop-filter: blur(8px);
+  }
+
+  .footer-inner {
+    max-width: var(--container-max);
+    margin: 0 auto;
+    padding: 12px var(--container-pad);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+  }
+
+  .footer-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+  }
+
+  .footer-status {
+    color: var(--accent-green);
+  }
+
+  .status-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--accent-green);
+    box-shadow: var(--glow-green);
+    animation: footPulse 2.4s ease-in-out infinite;
+  }
+
+  @keyframes footPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  .footer-top {
+    color: var(--accent-purple-bright);
+    transition: color var(--transition-fast);
+  }
+
+  .footer-top:hover {
+    color: var(--accent-cyan);
+  }
+
+  .top-arrow {
+    transition: transform var(--transition-fast);
+  }
+
+  .footer-top:hover .top-arrow {
+    transform: translateY(-2px);
+  }
+
+  @media (width <= 768px) {
+    .contact-section {
+      margin-top: 64px;
+      padding: 0 18px;
+    }
+
+    .contact-inner {
+      padding: 40px 20px;
+    }
+
+    .cta-primary span {
+      max-width: 200px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .footer-stack {
+      display: none;
+    }
+
+    .footer-inner {
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+    }
+  }
+
+  @media print {
+    .contact-section {
+      display: none;
+    }
+  }
+</style>
