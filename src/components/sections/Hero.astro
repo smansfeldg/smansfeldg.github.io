@@ -2,6 +2,8 @@
 interface Props { cv: any }
 const { cv } = Astro.props
 const { basics } = cv
+import { Image } from "astro:assets"
+import profileImage from "@/assets/profile.png"
 import Section from "@/components/Section.astro"
 import Mail from "@/icons/Mail.astro"
 import WhatsApp from "@/icons/WhatsApp.astro"
@@ -11,7 +13,7 @@ import GitHub from "@/icons/GitHub.astro"
 import WorldMap from "@/icons/WorldMap.astro"
 import type { SocialIcon } from "@/types"
 
-const { name, label, image, location, profiles, phone, email } = basics
+const { name, label, location, profiles, phone, email } = basics
 const { city, region } = location
 
 const SOCIAL_ICONS: SocialIcon = {
@@ -54,7 +56,15 @@ const isEn = Astro.currentLocale === 'en'
         
         <div class="hero-image-wrapper">
           <div class="image-frame">
-            <img src={image} alt={name} />
+            <Image
+              src={profileImage}
+              alt={name}
+              width={224}
+              height={224}
+              format="webp"
+              quality={80}
+              loading="eager"
+            />
             <div class="image-overlay"></div>
           </div>
           <div class="status-badge">
@@ -153,7 +163,7 @@ const isEn = Astro.currentLocale === 'en'
   }
 
   .terminal-prefix {
-    color: var(--accent-purple);
+    color: var(--accent-purple-text);
     font-weight: 600;
   }
 
@@ -205,7 +215,7 @@ const isEn = Astro.currentLocale === 'en'
     font-family: var(--font-mono);
     font-size: 0.85rem;
     font-weight: 400;
-    color: var(--accent-purple);
+    color: var(--accent-purple-text);
     letter-spacing: 0.02em;
   }
 
@@ -285,7 +295,7 @@ const isEn = Astro.currentLocale === 'en'
   }
 
   .status-text {
-    color: var(--accent-green);
+    color: var(--accent-green-text);
   }
 
   .hero-footer {

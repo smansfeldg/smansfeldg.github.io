@@ -214,13 +214,13 @@
       "name": "Auto Scaling",
       "level": "Intermediate",
       "category": "AWS",
-      "icon": "logos:aws-auto-scaling"
+      "icon": "logos:aws"
     },
     {
       "name": "GuardDuty",
       "level": "Intermediate",
       "category": "AWS",
-      "icon": "simple-icons:awsguardduty"
+      "icon": "logos:aws"
     },
     {
       "name": "CloudTrail",
