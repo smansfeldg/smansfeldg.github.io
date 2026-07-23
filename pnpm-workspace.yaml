@@ -1,0 +1,6 @@
+# Native build scripts required by the Astro toolchain.
+# sharp powers astro:assets image optimization; esbuild powers Vite.
+# Needed for pnpm >= 10, which blocks build scripts by default.
+allowBuilds:
+  esbuild: true
+  sharp: true

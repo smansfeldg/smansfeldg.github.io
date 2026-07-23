@@ -1,4 +1,5 @@
 ---
+import { Icon } from "astro-icon/components"
 import Section from "../Section.astro"
 
 interface Props { cv: any }
@@ -50,7 +51,7 @@ const getCategoryId = (category: string) => `skill-category-${category.toLowerCa
             {group.skills.map(({ name, icon, level }: Skill) => (
               <div class="skill-item" data-level={level} title={level}>
                 <div class="skill-icon">
-                  {icon && <iconify-icon icon={icon}></iconify-icon>}
+                  {icon && <Icon name={icon} />}
                 </div>
                 <span class="skill-name">{name}</span>
               </div>
@@ -87,7 +88,7 @@ const getCategoryId = (category: string) => `skill-category-${category.toLowerCa
     font-size: 10px;
     font-weight: 600;
     letter-spacing: 0.15em;
-    color: var(--accent-purple);
+    color: var(--accent-purple-text);
   }
 
   .panel-count {
@@ -176,7 +177,6 @@ const getCategoryId = (category: string) => `skill-category-${category.toLowerCa
     flex-shrink: 0;
   }
 
-  .skill-icon iconify-icon,
   .skill-icon svg {
     width: 14px;
     height: 14px;
