@@ -26,10 +26,12 @@ jobs:
         with:
           node-version: 22
 
+      # Must match the pnpm major that generated pnpm-lock.yaml (v9 format)
+      # and that understands the allowBuilds key in pnpm-workspace.yaml.
       - name: Install pnpm
-        uses: pnpm/action-setup@v3
+        uses: pnpm/action-setup@v4
         with:
-          version: 8
+          version: 11
 
       - name: Install dependencies
         run: pnpm install --no-frozen-lockfile

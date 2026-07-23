@@ -1,6 +1,11 @@
 # Native build scripts required by the Astro toolchain.
 # sharp powers astro:assets image optimization; esbuild powers Vite.
-# Needed for pnpm >= 10, which blocks build scripts by default.
+#
+# pnpm >= 10 blocks build scripts unless they are approved here. The key name is
+# version-specific (pnpm 10 uses onlyBuiltDependencies, pnpm 11 uses allowBuilds),
+# and pnpm 8 rejects this file outright for lacking a `packages` field -- so CI is
+# pinned to pnpm 11 in .github/workflows/deploy.yml to match this file and the
+# v9 lockfile.
 allowBuilds:
   esbuild: true
   sharp: true
