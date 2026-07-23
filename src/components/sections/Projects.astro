@@ -45,7 +45,10 @@ const title = isEn ? "Projects" : "Proyectos";
                 );
               })}
             </div>
-            <a href={url} target="_blank" rel="noopener noreferrer" class="project-action" aria-label={isEn ? `Open project ${name}` : `Abrir el proyecto ${name}`} data-track={`project_click_${projectSlug}`}>
+            {/* The accessible name must start with the visible "ACCESS" label so
+                voice-control users can activate it by what they see (WCAG 2.5.3),
+                while the project name keeps the four links distinguishable. */}
+            <a href={url} target="_blank" rel="noopener noreferrer" class="project-action" aria-label={isEn ? `ACCESS ${name}` : `ACCEDER ${name}`} data-track={`project_click_${projectSlug}`}>
               <span>{isEn ? 'ACCESS' : 'ACCEDER'}</span>
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
             </a>
