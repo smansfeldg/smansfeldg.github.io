@@ -1,6 +1,12 @@
 ---
+import { getImage } from "astro:assets"
+import profileImage from "@/assets/profile.png"
 import AIContext from "@/components/AIContext.astro"
 import Clarity from "@/components/Clarity.astro"
+
+import "@fontsource-variable/space-grotesk"
+import "@fontsource-variable/inter"
+import "@fontsource-variable/jetbrains-mono"
 
 type LocaleCode = "es_AR" | "en_US" | string
 type AlternateLocale = {
@@ -36,7 +42,16 @@ const defaultOgImage = "/og-home.png"
 const pageDescription = description ?? summary
 const canonicalUrl = new URL(canonical ?? Astro.url.pathname, site)
 const ogImageUrl = new URL(image || defaultOgImage, site)
-const profileImageUrl = new URL(basics.image, site)
+// Schema.org consumers need an absolute, crawlable URL, so emit a build-time
+// derivative rather than pointing at the 1.4 MB source asset.
+const profileSchemaImage = await getImage({
+  src: profileImage,
+  width: 512,
+  height: 512,
+  format: "webp",
+  quality: 85,
+})
+const profileImageUrl = new URL(profileSchemaImage.src, site)
 const currentOgLocale = locale ?? (Astro.currentLocale === "en" ? "en_US" : "es_AR")
 const defaultAlternateLocales: AlternateLocale[] = [
   { locale: "es_AR", href: "/", hreflang: "es-AR" },
@@ -94,7 +109,7 @@ const safeJsonLd = JSON.stringify(jsonLd).replace(/</g, "\\u003c")
     <meta charset="UTF-8" />
     <title>{title}</title>
     <meta name="description" content={pageDescription} />
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="canonical" href={canonicalUrl.href} />
     {alternateLinks.map(({ href, hreflang }) => (
       <link rel="alternate" hreflang={hreflang} href={href} />
@@ -103,11 +118,6 @@ const safeJsonLd = JSON.stringify(jsonLd).replace(/</g, "\\u003c")
       <link rel="alternate" hreflang="x-default" href={xDefaultAlternate.href} />
     )}
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="preload" as="image" href={basics.image} />
-
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet" />
 
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
@@ -127,7 +137,6 @@ const safeJsonLd = JSON.stringify(jsonLd).replace(/</g, "\\u003c")
     <meta name="twitter:description" content={pageDescription} />
     <meta name="twitter:image" content={ogImageUrl.href} />
     <script type="application/ld+json" set:html={safeJsonLd}></script>
-    <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
     <script is:inline>
       window.getThemePreference = () => {
         if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
@@ -199,7 +208,7 @@ const safeJsonLd = JSON.stringify(jsonLd).replace(/</g, "\\u003c")
     --bg-panel-hover: #111118;
     --text-primary: #E8E6F0;
     --text-secondary: #9890A8;
-    --text-muted: #5A5470;
+    --text-muted: #807A96;
     --border-color: rgba(120, 80, 180, 0.12);
     --border-hover: rgba(140, 100, 200, 0.25);
     --accent-purple: #8B5CF6;
@@ -208,11 +217,16 @@ const safeJsonLd = JSON.stringify(jsonLd).replace(/</g, "\\u003c")
     --accent-cyan: rgba(80, 200, 220, 0.5);
     --accent-orange: rgba(240, 160, 80, 0.5);
     --accent-green: rgba(80, 200, 120, 0.6);
+    /* Text-safe accents: the decorative values above are tuned for borders,
+       dots and glows, and fall below the 4.5:1 contrast floor when used as
+       copy. Use these whenever an accent colours actual text. */
+    --accent-purple-text: #A78BFA;
+    --accent-green-text: #4ADE80;
     --glow-purple: 0 0 20px rgba(139, 92, 246, 0.1);
     --glow-border: 0 0 8px rgba(139, 92, 246, 0.08);
-    --font-heading: 'Space Grotesk', system-ui, sans-serif;
-    --font-body: 'Inter', system-ui, sans-serif;
-    --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+    --font-heading: 'Space Grotesk Variable', 'Space Grotesk', system-ui, sans-serif;
+    --font-body: 'Inter Variable', 'Inter', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono Variable', 'JetBrains Mono', 'Fira Code', monospace;
     --radius-sm: 2px;
     --radius-md: 4px;
     --transition-fast: 150ms ease;
@@ -226,9 +240,11 @@ const safeJsonLd = JSON.stringify(jsonLd).replace(/</g, "\\u003c")
     --bg-panel-hover: #111118;
     --text-primary: #E8E6F0;
     --text-secondary: #9890A8;
-    --text-muted: #5A5470;
+    --text-muted: #807A96;
     --border-color: rgba(120, 80, 180, 0.12);
     --border-hover: rgba(140, 100, 200, 0.25);
+    --accent-purple-text: #A78BFA;
+    --accent-green-text: #4ADE80;
   }
 
   :root:not(.dark) {
@@ -238,10 +254,13 @@ const safeJsonLd = JSON.stringify(jsonLd).replace(/</g, "\\u003c")
     --bg-panel-hover: #F8F6FC;
     --text-primary: #1A1525;
     --text-secondary: #5A5470;
-    --text-muted: #8A82A0;
+    --text-muted: #6F6884;
     --border-color: rgba(120, 80, 180, 0.15);
     --border-hover: rgba(120, 80, 180, 0.3);
     --accent-purple-dim: rgba(139, 92, 246, 0.08);
+    /* Light mode needs darker accents to clear 4.5:1 against white panels. */
+    --accent-purple-text: #6D28D9;
+    --accent-green-text: #15803D;
     --glow-purple: 0 0 20px rgba(139, 92, 246, 0.05);
     --glow-border: 0 0 8px rgba(139, 92, 246, 0.03);
   }
