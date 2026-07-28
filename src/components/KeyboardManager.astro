@@ -32,8 +32,10 @@ const profilesInfo = profiles.map(({ network, url }: any) => {
 ---
 
 <footer id="normal-footer" class="no-print">
-  <span class="footer-prompt">&gt;</span>
-  <span class="footer-text">{isEn ? "Press" : "Pulsa"} <kbd>Cmd</kbd> + <kbd>K</kbd> {isEn ? "to open command palette" : "para abrir la paleta de comandos"}</span>
+  <button id="footer-trigger" type="button" aria-label={isEn ? "Open command palette" : "Abrir la paleta de comandos"}>
+    <span class="footer-prompt">&gt;</span>
+    <span class="footer-text">{isEn ? "Press" : "Pulsa"} <kbd>Cmd</kbd> + <kbd>K</kbd> {isEn ? "to open command palette" : "para abrir la paleta de comandos"}</span>
+  </button>
 </footer>
 
 <div id="footer-button" class="no-print">
@@ -127,11 +129,16 @@ const profilesInfo = profiles.map(({ network, url }: any) => {
 
   hotkeypad.setCommands(allCommands)
 
-  const footerButton = document.getElementById("footer-button")
-  footerButton?.addEventListener("click", () => {
+  const openPalette = () => {
     import("@/analytics/events").then(({ trackEvent }) => trackEvent('command_palette_open'))
     hotkeypad.open()
-  })
+  }
+
+  const footerButton = document.getElementById("footer-button")
+  footerButton?.addEventListener("click", openPalette)
+
+  const footerTrigger = document.getElementById("footer-trigger")
+  footerTrigger?.addEventListener("click", openPalette)
 
   window.addEventListener('keydown', (e) => {
     if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
@@ -147,7 +154,7 @@ const profilesInfo = profiles.map(({ network, url }: any) => {
   }
 
   @media (min-width: 769px) {
-    #normal-footer { display: block; }
+    #normal-footer { display: flex; }
     #footer-button { display: none; }
   }
 
@@ -182,15 +189,40 @@ const profilesInfo = profiles.map(({ network, url }: any) => {
     bottom: 0;
     left: 0;
     right: 0;
+    display: flex;
+    z-index: 50;
+  }
+
+  #footer-trigger {
+    flex: 0 0 auto;
     padding: 8px 16px;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
+    background: none;
+    border: none;
     font-family: var(--font-mono);
     font-size: 11px;
     color: var(--text-muted);
-    z-index: 50;
+    cursor: pointer;
+    transition: color var(--transition-fast);
+  }
+
+  #footer-trigger:hover,
+  #footer-trigger:focus-visible {
+    color: var(--text-secondary);
+  }
+
+  #footer-trigger:focus-visible {
+    outline: 1px solid var(--accent-purple);
+    outline-offset: -2px;
+  }
+
+  #footer-trigger:hover kbd,
+  #footer-trigger:focus-visible kbd {
+    border-color: var(--border-hover);
+    color: var(--text-primary);
   }
 
   .footer-prompt {
