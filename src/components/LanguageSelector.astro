@@ -41,11 +41,16 @@ const languages = getAvailableLanguages()
 
 <script>
   import { setLanguage, subscribeLanguage } from "@/i18n"
+  import { withGlitch } from "@/lib/glitch"
 
   const select = document.getElementById("language-select") as HTMLSelectElement | null
 
   if (select) {
-    select.addEventListener("change", () => setLanguage(select.value))
+    // El cambio se aplica a mitad de la ráfaga de glitch, no antes.
+    select.addEventListener("change", () => {
+      const language = select.value
+      withGlitch(() => setLanguage(language))
+    })
     // Dispara al suscribirse, así el <select> refleja el idioma guardado
     // aunque el HTML se haya renderizado en otro.
     subscribeLanguage((language) => {

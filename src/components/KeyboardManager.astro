@@ -45,6 +45,7 @@ const profilesInfo = profiles.map(({ network, url }) => ({
 <script>
   import HotKeyPad from "hotkeypad"
   import { getAvailableLanguages, getTranslations, setLanguage, subscribeLanguage } from "@/i18n"
+  import { withGlitch } from "@/lib/glitch"
 
   interface ProfileInfo {
     id: string
@@ -136,10 +137,14 @@ const profilesInfo = profiles.map(({ network, url }) => ({
         section: sections.preferences,
         handler: runOnce("toggle-theme", () => {
           track("command_toggle_theme")
-          const isDark = document.documentElement.classList.contains("dark")
-          const newTheme = isDark ? "light" : "dark"
-          ;(window as any).applyTheme(newTheme)
-          localStorage.setItem("theme", newTheme)
+          // El estado se lee dentro del callback: para cuando corra, la ráfaga
+          // ya arrancó y el tema podría haber cambiado por otra vía.
+          withGlitch(() => {
+            const isDark = document.documentElement.classList.contains("dark")
+            const newTheme = isDark ? "light" : "dark"
+            ;(window as any).applyTheme(newTheme)
+            localStorage.setItem("theme", newTheme)
+          })
         }),
       },
       ...languageCommands.map(({ code, name, hotkey }) => ({
@@ -150,7 +155,7 @@ const profilesInfo = profiles.map(({ network, url }) => ({
         section: sections.language,
         handler: runOnce(`language-${code}`, () => {
           track(`command_language_${code}`)
-          setLanguage(code)
+          withGlitch(() => setLanguage(code))
         }),
       })),
       ...profiles.map(({ id, url, icon, hotkey }) => ({

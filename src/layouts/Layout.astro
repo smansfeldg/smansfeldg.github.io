@@ -106,21 +106,10 @@ const safeJsonLd = JSON.stringify(jsonLd).replace(/</g, "\\u003c")
       };
 
       window.applyTheme = (theme) => {
-        const root = document.documentElement;
-        const previous = root.classList.contains('dark') ? 'dark' : 'light';
-
         if (theme === 'dark') {
-          root.classList.add('dark');
+          document.documentElement.classList.add('dark');
         } else {
-          root.classList.remove('dark');
-        }
-
-        // Punto único de notificación: cualquier cosa que quiera reaccionar al
-        // tema (hoy, la ráfaga de glitch) escucha esto en vez de acoplarse al
-        // botón que lo disparó. Solo se emite en un cambio real, así que la
-        // aplicación inicial pre-paint queda fuera.
-        if (theme !== previous) {
-          window.dispatchEvent(new CustomEvent('themechange', { detail: { theme } }));
+          document.documentElement.classList.remove('dark');
         }
       };
 

@@ -23,6 +23,8 @@ interface Props {
   firstDelay?: number
   /** Duración de la ráfaga que acompaña un cambio de tema o idioma, en ms. */
   transitionDuration?: number
+  /** Punto de la ráfaga donde se aplica el cambio (0-1). 0.45 = casi al medio. */
+  transitionCut?: number
 }
 
 const {
@@ -34,7 +36,10 @@ const {
   maxDuration = 500,
   intensity = 1,
   firstDelay = 3000,
-  transitionDuration = 450,
+  // Más larga que una ráfaga espontánea: tiene que leerse en tres tiempos
+  // (arranca, tapa el cambio, se va), no como un parpadeo.
+  transitionDuration = 560,
+  transitionCut = 0.45,
 } = Astro.props
 
 // Pools fijos de nodos: durante la ráfaga solo se reescriben estilos, nunca se
@@ -50,6 +55,7 @@ const settings = JSON.stringify({
   intensity,
   firstDelay,
   transitionDuration,
+  transitionCut,
 })
 ---
 
@@ -62,8 +68,6 @@ const settings = JSON.stringify({
 <div id="gfx-flash" class="no-print" aria-hidden="true"></div>
 
 <script>
-  import { subscribeLanguage } from "@/i18n"
-
   interface Settings {
     minDelay: number
     maxDelay: number
@@ -72,6 +76,7 @@ const settings = JSON.stringify({
     intensity: number
     firstDelay: number
     transitionDuration: number
+    transitionCut: number
   }
 
   interface Phase {
@@ -105,7 +110,8 @@ const settings = JSON.stringify({
       maxDuration: 500,
       intensity: 1,
       firstDelay: 3000,
-      transitionDuration: 450,
+      transitionDuration: 560,
+      transitionCut: 0.45,
       ...JSON.parse(stage.dataset.settings || "{}"),
     }
 
@@ -387,14 +393,18 @@ const settings = JSON.stringify({
       if (!stopped) schedule()
     }
 
-    /** `duration` se usa desde las ráfagas de transición y desde la API manual. */
-    const startBurst = (duration?: number) => {
-      if (active || stopped || reduceMotion.matches || document.hidden) return
+    /**
+     * `duration` se usa desde las ráfagas de transición y desde la API manual.
+     * Devuelve si la ráfaga efectivamente arrancó, para que quien la pidió sepa
+     * si puede apoyarse en ella o tiene que resolver por su cuenta.
+     */
+    const startBurst = (duration?: number): boolean => {
+      if (active || stopped || reduceMotion.matches || document.hidden) return false
 
       targets = collectTargets()
       if (targets.length === 0) {
         schedule()
-        return
+        return false
       }
 
       active = true
@@ -413,6 +423,7 @@ const settings = JSON.stringify({
       root.classList.add("gfx-on")
       nextPhase(burstStart, 0)
       rafId = requestAnimationFrame(frame)
+      return true
     }
 
     const schedule = (delay?: number) => {
@@ -468,34 +479,28 @@ const settings = JSON.stringify({
     })
 
     /**
-     * Ráfaga deliberada al cambiar tema o idioma: tapa el repintado y hace que
-     * la transición se lea como un evento y no como un parpadeo.
+     * Ejecuta `mutate` EN MEDIO de la ráfaga, no antes: arranca el efecto, deja
+     * que se instale, aplica el cambio tapado por la distorsión y termina. Sin
+     * esto el usuario ve primero el cambio y después una animación encima, que
+     * es justo lo contrario de disimularlo.
      *
-     * No hay que reprogramar el temporizador a mano — `endBurst` vuelve a llamar
-     * a `schedule()`, así que la próxima ráfaga aleatoria arranca su ventana
-     * completa desde acá. Los guards de `startBurst` (ráfaga en curso, pestaña
-     * oculta, `prefers-reduced-motion`) siguen valiendo.
+     * Contrato: devuelve `true` solo si se hizo cargo de `mutate`. Si devuelve
+     * `false` no lo ejecutó, y quien llamó tiene que aplicarlo por su cuenta —
+     * un cambio de tema o idioma nunca puede perderse porque el efecto no esté
+     * disponible (reduced-motion, pestaña oculta, ráfaga ya en curso).
      */
-    const glitchTransition = () => startBurst(settings.transitionDuration)
+    const transition = (mutate: () => void): boolean => {
+      if (!startBurst(settings.transitionDuration)) return false
 
-    // `window.applyTheme` emite este evento solo cuando el tema cambia de verdad,
-    // así que el pre-paint inicial no dispara nada.
-    window.addEventListener("themechange", glitchTransition)
-
-    // `subscribeLanguage` dispara al suscribirse: la primera invocación es el
-    // idioma inicial, no un cambio.
-    let languageSettled = false
-    subscribeLanguage(() => {
-      if (!languageSettled) {
-        languageSettled = true
-        return
-      }
-      glitchTransition()
-    })
+      const cut = Math.min(Math.max(settings.transitionCut, 0), 1)
+      window.setTimeout(mutate, Math.round(settings.transitionDuration * cut))
+      return true
+    }
 
     Object.assign(window, {
       glitchFX: {
         trigger: (duration?: number) => startBurst(duration),
+        transition,
         stop,
         start,
       },
