@@ -69,6 +69,31 @@ const profilesInfo = profiles.map(({ network, url }) => ({
     import("@/analytics/events").then(({ trackEvent }) => trackEvent(event))
 
   /**
+   * hotkeypad vuelve a registrar sus listeners en cada `setCommands()` y nunca
+   * da de baja los anteriores: su `close()` llama a `removeEventListener` con una
+   * arrow nueva, que no coincide con la registrada y no quita nada.
+   *
+   * Como reconstruimos la paleta en cada cambio de idioma, un mismo gesto termina
+   * ejecutando el handler una vez por reconstrucción. Con un número par el toggle
+   * de tema vuelve al punto de partida y parece que el botón no anda; `print`
+   * abriría dos diálogos y un perfil, dos pestañas.
+   *
+   * Las invocaciones duplicadas llegan todas en el mismo lote de timers — salen
+   * del mismo `setTimeout(handler, 200)` disparado por un único gesto — y repetir
+   * un comando a propósito obliga a reabrir la paleta, porque hotkeypad la cierra
+   * al ejecutar. Así que colapsarlas por tiempo no puede tragarse una acción real.
+   */
+  const RUN_DEDUPE_MS = 400
+  let lastRun = { id: "", at: 0 }
+
+  const runOnce = (id: string, action: () => void) => () => {
+    const now = performance.now()
+    if (id === lastRun.id && now - lastRun.at < RUN_DEDUPE_MS) return
+    lastRun = { id, at: now }
+    action()
+  }
+
+  /**
    * hotkeypad exige un hotkey válido y único por comando. Como la lista de
    * idiomas se descubre sola, las teclas también: `alt+<letra>` tomando la
    * primera libre del código y cayendo al abecedario si ya está tomada.
@@ -98,10 +123,10 @@ const profilesInfo = profiles.map(({ network, url }) => ({
         icon: ICONS.print,
         hotkey: "ctrl+P",
         section: sections.actions,
-        handler: () => {
+        handler: runOnce("print", () => {
           track("command_print")
           window.print()
-        },
+        }),
       },
       {
         id: "toggle-theme",
@@ -109,13 +134,13 @@ const profilesInfo = profiles.map(({ network, url }) => ({
         icon: ICONS.theme,
         hotkey: "ctrl+M",
         section: sections.preferences,
-        handler: () => {
+        handler: runOnce("toggle-theme", () => {
           track("command_toggle_theme")
           const isDark = document.documentElement.classList.contains("dark")
           const newTheme = isDark ? "light" : "dark"
           ;(window as any).applyTheme(newTheme)
           localStorage.setItem("theme", newTheme)
-        },
+        }),
       },
       ...languageCommands.map(({ code, name, hotkey }) => ({
         id: `language-${code}`,
@@ -123,10 +148,10 @@ const profilesInfo = profiles.map(({ network, url }) => ({
         icon: ICONS.language,
         hotkey,
         section: sections.language,
-        handler: () => {
+        handler: runOnce(`language-${code}`, () => {
           track(`command_language_${code}`)
           setLanguage(code)
-        },
+        }),
       })),
       ...profiles.map(({ id, url, icon, hotkey }) => ({
         id,
@@ -134,10 +159,10 @@ const profilesInfo = profiles.map(({ network, url }) => ({
         icon,
         hotkey,
         section: sections.social,
-        handler: () => {
+        handler: runOnce(id, () => {
           track(`command_${id.toLowerCase()}`)
           window.open(url, "_blank")
-        },
+        }),
       })),
     ]
   }

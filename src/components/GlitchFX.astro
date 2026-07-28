@@ -11,7 +11,7 @@
  * dentro de un wrapper con z-index las dejaría mezclando contra la nada.
  */
 interface Props {
-  /** Ventana aleatoria entre ráfagas, en ms. (14000-33000 = 14-33s) */
+  /** Ventana aleatoria entre ráfagas, en ms. (60000-120000 = 1-2 min) */
   minDelay?: number
   maxDelay?: number
   /** Duración de cada ráfaga, en ms. */
@@ -21,15 +21,20 @@ interface Props {
   intensity?: number
   /** Retraso de la primera ráfaga después de cargar, en ms. */
   firstDelay?: number
+  /** Duración de la ráfaga que acompaña un cambio de tema o idioma, en ms. */
+  transitionDuration?: number
 }
 
 const {
-  minDelay = 14000,
-  maxDelay = 33000,
+  // Espaciado largo a propósito: el efecto vale por raro. Con ráfagas cada 20s
+  // se vuelve decorado de fondo; cada minuto y medio se lee como un evento.
+  minDelay = 60000,
+  maxDelay = 120000,
   minDuration = 260,
   maxDuration = 500,
   intensity = 1,
   firstDelay = 3000,
+  transitionDuration = 450,
 } = Astro.props
 
 // Pools fijos de nodos: durante la ráfaga solo se reescriben estilos, nunca se
@@ -44,6 +49,7 @@ const settings = JSON.stringify({
   maxDuration,
   intensity,
   firstDelay,
+  transitionDuration,
 })
 ---
 
@@ -56,6 +62,8 @@ const settings = JSON.stringify({
 <div id="gfx-flash" class="no-print" aria-hidden="true"></div>
 
 <script>
+  import { subscribeLanguage } from "@/i18n"
+
   interface Settings {
     minDelay: number
     maxDelay: number
@@ -63,6 +71,7 @@ const settings = JSON.stringify({
     maxDuration: number
     intensity: number
     firstDelay: number
+    transitionDuration: number
   }
 
   interface Phase {
@@ -90,12 +99,13 @@ const settings = JSON.stringify({
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)")
 
     const settings: Settings = {
-      minDelay: 4000,
-      maxDelay: 10000,
+      minDelay: 60000,
+      maxDelay: 120000,
       minDuration: 260,
       maxDuration: 500,
       intensity: 1,
-      firstDelay: 2400,
+      firstDelay: 3000,
+      transitionDuration: 450,
       ...JSON.parse(stage.dataset.settings || "{}"),
     }
 
@@ -377,7 +387,7 @@ const settings = JSON.stringify({
       if (!stopped) schedule()
     }
 
-    /** `duration` solo se usa desde la API manual (depuración / demos). */
+    /** `duration` se usa desde las ráfagas de transición y desde la API manual. */
     const startBurst = (duration?: number) => {
       if (active || stopped || reduceMotion.matches || document.hidden) return
 
@@ -455,6 +465,32 @@ const settings = JSON.stringify({
     reduceMotion.addEventListener("change", () => {
       if (reduceMotion.matches) stop()
       else start()
+    })
+
+    /**
+     * Ráfaga deliberada al cambiar tema o idioma: tapa el repintado y hace que
+     * la transición se lea como un evento y no como un parpadeo.
+     *
+     * No hay que reprogramar el temporizador a mano — `endBurst` vuelve a llamar
+     * a `schedule()`, así que la próxima ráfaga aleatoria arranca su ventana
+     * completa desde acá. Los guards de `startBurst` (ráfaga en curso, pestaña
+     * oculta, `prefers-reduced-motion`) siguen valiendo.
+     */
+    const glitchTransition = () => startBurst(settings.transitionDuration)
+
+    // `window.applyTheme` emite este evento solo cuando el tema cambia de verdad,
+    // así que el pre-paint inicial no dispara nada.
+    window.addEventListener("themechange", glitchTransition)
+
+    // `subscribeLanguage` dispara al suscribirse: la primera invocación es el
+    // idioma inicial, no un cambio.
+    let languageSettled = false
+    subscribeLanguage(() => {
+      if (!languageSettled) {
+        languageSettled = true
+        return
+      }
+      glitchTransition()
     })
 
     Object.assign(window, {
