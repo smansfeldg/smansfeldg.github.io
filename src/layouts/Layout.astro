@@ -3,6 +3,7 @@ import { getImage } from "astro:assets"
 import profileImage from "@/assets/profile.png"
 import AIContext from "@/components/AIContext.astro"
 import Clarity from "@/components/Clarity.astro"
+import GlitchFX from "@/components/GlitchFX.astro"
 
 import "@fontsource-variable/space-grotesk"
 import "@fontsource-variable/inter"
@@ -197,6 +198,8 @@ const safeJsonLd = JSON.stringify(jsonLd).replace(/</g, "\\u003c")
     <div class="app-layout">
       <slot />
     </div>
+
+    <GlitchFX />
   </body>
 </html>
 

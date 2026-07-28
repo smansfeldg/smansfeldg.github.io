@@ -1,0 +1,569 @@
+---
+/**
+ * Ráfagas de glitch a pantalla completa.
+ *
+ * No captura el DOM ni usa APIs experimentales: el efecto se compone con
+ * primitivas estables (transform, filter, backdrop-filter, mix-blend-mode)
+ * aplicadas al contenido real y a un overlay fijo.
+ *
+ * Las capas de overlay son hijas directas de <body> a propósito: `mix-blend-mode`
+ * solo mezcla dentro del contexto de apilamiento del padre, así que anidarlas
+ * dentro de un wrapper con z-index las dejaría mezclando contra la nada.
+ */
+interface Props {
+  /** Ventana aleatoria entre ráfagas, en ms. (14000-33000 = 14-33s) */
+  minDelay?: number
+  maxDelay?: number
+  /** Duración de cada ráfaga, en ms. */
+  minDuration?: number
+  maxDuration?: number
+  /** Escala global de amplitud (1 = tal cual está calibrado). */
+  intensity?: number
+  /** Retraso de la primera ráfaga después de cargar, en ms. */
+  firstDelay?: number
+}
+
+const {
+  minDelay = 14000,
+  maxDelay = 33000,
+  minDuration = 260,
+  maxDuration = 500,
+  intensity = 1,
+  firstDelay = 3000,
+} = Astro.props
+
+// Pools fijos de nodos: durante la ráfaga solo se reescriben estilos, nunca se
+// crea ni se destruye DOM.
+const SLICE_POOL = 6
+const BLOCK_POOL = 14
+
+const settings = JSON.stringify({
+  minDelay,
+  maxDelay,
+  minDuration,
+  maxDuration,
+  intensity,
+  firstDelay,
+})
+---
+
+<div id="gfx-stage" class="no-print" aria-hidden="true" data-settings={settings}>
+  <div class="gfx-scan"></div>
+  {Array.from({ length: SLICE_POOL }, () => <i class="gfx-slice"></i>)}
+  {Array.from({ length: BLOCK_POOL }, () => <i class="gfx-block"></i>)}
+</div>
+<div id="gfx-noise" class="no-print" aria-hidden="true"><i></i></div>
+<div id="gfx-flash" class="no-print" aria-hidden="true"></div>
+
+<script>
+  interface Settings {
+    minDelay: number
+    maxDelay: number
+    minDuration: number
+    maxDuration: number
+    intensity: number
+    firstDelay: number
+  }
+
+  interface Phase {
+    end: number
+    gap: boolean
+    x: number
+    y: number
+    bgX: number
+    bgY: number
+    skew: number
+    jitter: number
+  }
+
+  const stage = document.getElementById("gfx-stage")
+  const noiseLayer = document.getElementById("gfx-noise")
+  const flashLayer = document.getElementById("gfx-flash")
+
+  if (stage && noiseLayer && flashLayer) {
+    const root = document.documentElement
+    const bgEffects = document.querySelector<HTMLElement>(".bg-effects")
+    const scanLayer = stage.querySelector<HTMLElement>(".gfx-scan")
+    const noiseInner = noiseLayer.querySelector<HTMLElement>("i")
+    const slices = Array.from(stage.querySelectorAll<HTMLElement>(".gfx-slice"))
+    const blocks = Array.from(stage.querySelectorAll<HTMLElement>(".gfx-block"))
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)")
+
+    const settings: Settings = {
+      minDelay: 4000,
+      maxDelay: 10000,
+      minDuration: 260,
+      maxDuration: 500,
+      intensity: 1,
+      firstDelay: 2400,
+      ...JSON.parse(stage.dataset.settings || "{}"),
+    }
+
+    const rand = (min: number, max: number) => min + Math.random() * (max - min)
+    const randInt = (min: number, max: number) => Math.floor(rand(min, max + 1))
+    function pick<T>(items: readonly T[]): T {
+      return items[Math.floor(Math.random() * items.length)] as T
+    }
+
+    // Filtros de franja: cada uno reinterpreta los píxeles que ya están pintados
+    // detrás, así que el "corte" es sobre el contenido real, no sobre una copia.
+    const SLICE_FILTERS = [
+      "invert(1) hue-rotate(160deg)",
+      "hue-rotate(95deg) saturate(2.6)",
+      "brightness(1.75) contrast(1.35)",
+      "brightness(0.3) saturate(0.25)",
+      "blur(2px) saturate(2.2)",
+      "contrast(2.4) hue-rotate(-45deg)",
+      "invert(1) brightness(1.2)",
+    ]
+
+    const BLOCK_FILTERS = [
+      "invert(1)",
+      "invert(1) hue-rotate(90deg)",
+      "brightness(2.4) saturate(0)",
+      "contrast(3) hue-rotate(180deg)",
+    ]
+
+    const BLOCK_TINTS = [
+      "rgba(139, 92, 246, 0.55)",
+      "rgba(0, 234, 255, 0.45)",
+      "rgba(255, 32, 96, 0.4)",
+      "rgba(232, 230, 240, 0.5)",
+      "rgba(5, 5, 5, 0.75)",
+      "rgba(74, 222, 128, 0.35)",
+    ]
+
+    const FLASH_TINTS = ["#ffffff", "#8b5cf6", "#22d3ee", "#ff2060"]
+    const FLASH_BLENDS = ["screen", "overlay", "difference", "color-dodge"]
+
+    let scheduleTimer = 0
+    let rafId = 0
+    let active = false
+    let stopped = false
+    let burstStart = 0
+    let burstDuration = 0
+    let frameCount = 0
+    // Degradación adaptativa: si una ráfaga no sostiene ~60fps, la siguiente
+    // usa menos regiones con backdrop-filter (que es lo caro).
+    let quality = 1
+
+    let targets: HTMLElement[] = []
+    let offsets: number[] = []
+    let phase: Phase = {
+      end: 0,
+      gap: false,
+      x: 0,
+      y: 0,
+      bgX: 0,
+      bgY: 0,
+      skew: 0,
+      jitter: 0,
+    }
+
+    /**
+     * Solo se distorsiona lo que está en pantalla. Filtrar seis secciones de un
+     * documento de varios miles de píxeles no se vería más, y sí costaría
+     * frames.
+     */
+    const collectTargets = () => {
+      const nodes = document.querySelectorAll<HTMLElement>(".app-layout main > *")
+      const viewport = window.innerHeight
+      const visible: HTMLElement[] = []
+
+      nodes.forEach((node) => {
+        const rect = node.getBoundingClientRect()
+        if (rect.bottom > -60 && rect.top < viewport + 60) visible.push(node)
+      })
+
+      return visible
+    }
+
+    const resetLayers = () => {
+      slices.forEach((slice) => {
+        slice.style.cssText = ""
+      })
+      blocks.forEach((block) => {
+        block.style.cssText = ""
+      })
+      flashLayer.style.opacity = "0"
+      noiseLayer.style.opacity = "0"
+    }
+
+    const paintSlices = (power: number) => {
+      const viewport = window.innerHeight
+      const count = power <= 0 ? 0 : Math.round(randInt(2, 5) * quality)
+
+      for (let i = 0; i < slices.length; i++) {
+        const slice = slices[i] as HTMLElement
+
+        if (i >= count) {
+          slice.style.cssText = ""
+          continue
+        }
+
+        // Mezcla de franjas gruesas y líneas finas: una banda sola se lee como
+        // una barra de color, varias escalas se leen como una imagen rota.
+        const thin = Math.random() < 0.4
+        const height = thin ? rand(2, 6) : rand(viewport * 0.02, viewport * 0.09)
+        const top = rand(-height, viewport)
+        const filter = pick(SLICE_FILTERS)
+        const tint = Math.random() < 0.5 ? "rgba(139, 92, 246, 0.07)" : "transparent"
+
+        slice.style.cssText =
+          `display:block;top:${top.toFixed(1)}px;height:${height.toFixed(1)}px;` +
+          `background:${tint};` +
+          `-webkit-backdrop-filter:${filter};backdrop-filter:${filter};` +
+          `opacity:${(0.55 + 0.45 * Math.min(power, 1)).toFixed(2)};`
+      }
+    }
+
+    const paintBlocks = (power: number) => {
+      const count = power <= 0 ? 0 : Math.round(randInt(4, 12) * quality)
+      // Solo los primeros bloques leen el backdrop; el resto son rectángulos
+      // planos, que cuestan una fracción y a esta velocidad se leen igual.
+      const filtered = Math.min(count, Math.round(4 * quality))
+
+      for (let i = 0; i < blocks.length; i++) {
+        const block = blocks[i] as HTMLElement
+
+        if (i >= count) {
+          block.style.cssText = ""
+          continue
+        }
+
+        const width = rand(24, 240)
+        const height = rand(4, 28)
+        const left = rand(-40, window.innerWidth - 20)
+        const top = rand(-10, window.innerHeight - 10)
+        // El filtro se elige una sola vez: dos `pick` darían valores distintos
+        // al prefijo -webkit- y al estándar, y Safari vería otro efecto.
+        const filter = pick(BLOCK_FILTERS)
+        const skin =
+          i < filtered
+            ? `-webkit-backdrop-filter:${filter};backdrop-filter:${filter};`
+            : `background:${pick(BLOCK_TINTS)};`
+
+        block.style.cssText =
+          `display:block;left:${left.toFixed(0)}px;top:${top.toFixed(0)}px;` +
+          `width:${width.toFixed(0)}px;height:${height.toFixed(0)}px;${skin}`
+      }
+    }
+
+    const nextPhase = (now: number, progress: number) => {
+      // Un glitch real no es continuo: alterna golpes con microcortes limpios.
+      const gap = Math.random() < 0.3
+      const decay = 0.45 + 0.55 * (1 - progress)
+      const power = gap ? 0 : settings.intensity * decay * rand(0.55, 1)
+
+      phase = {
+        end: now + (gap ? rand(18, 55) : rand(34, 92)),
+        gap,
+        x: gap ? rand(-1.5, 1.5) : rand(-1, 1) * 26 * power,
+        y: gap ? 0 : rand(-1, 1) * 5 * power,
+        bgX: gap ? 0 : rand(-1, 1) * 14 * power,
+        bgY: gap ? 0 : rand(-1, 1) * 4 * power,
+        skew: gap ? 0 : rand(-1, 1) * 1.3 * power,
+        jitter: gap ? 0.3 : 1.6 * power,
+      }
+
+      // Aberración cromática + flicker digital, aplicados al contenido real.
+      const aberration = gap ? 0 : rand(1.5, 7) * power
+      const alpha = gap ? 0 : (0.3 + 0.35 * Math.min(power, 1)).toFixed(2)
+      const brightness = gap ? 1 : 1 + rand(-0.22, 0.34) * power
+      const contrast = gap ? 1 : 1 + rand(-0.08, 0.42) * power
+      const saturate = gap ? 1 : 1 + rand(-0.55, 1.1) * power
+      const filter = gap
+        ? "none"
+        : `drop-shadow(${aberration.toFixed(1)}px 0 0 rgba(255, 32, 96, ${alpha}))` +
+          ` drop-shadow(${(-aberration).toFixed(1)}px 0 0 rgba(0, 234, 255, ${alpha}))` +
+          ` brightness(${brightness.toFixed(3)}) contrast(${contrast.toFixed(3)})` +
+          ` saturate(${saturate.toFixed(3)})`
+
+      offsets = targets.map(() =>
+        gap || Math.random() < 0.4 ? 0 : rand(-1, 1) * 18 * power
+      )
+
+      targets.forEach((target) => {
+        target.style.filter = filter
+      })
+
+      paintSlices(power)
+      paintBlocks(power)
+
+      if (gap || Math.random() > 0.45) {
+        flashLayer.style.opacity = "0"
+      } else {
+        flashLayer.style.backgroundColor = pick(FLASH_TINTS)
+        flashLayer.style.mixBlendMode = pick(FLASH_BLENDS)
+        flashLayer.style.opacity = rand(0.03, 0.14).toFixed(3)
+      }
+
+      noiseLayer.style.opacity = gap
+        ? rand(0, 0.04).toFixed(3)
+        : rand(0.06, 0.17).toFixed(3)
+    }
+
+    const frame = () => {
+      const now = performance.now()
+      const progress = (now - burstStart) / burstDuration
+
+      if (progress >= 1) {
+        endBurst()
+        return
+      }
+
+      if (now >= phase.end) nextPhase(now, progress)
+
+      const j = phase.jitter
+      const x = phase.x + rand(-j, j)
+      const y = phase.y + rand(-j * 0.4, j * 0.4)
+      const skew = phase.skew.toFixed(2)
+
+      for (let i = 0; i < targets.length; i++) {
+        const target = targets[i] as HTMLElement
+        const dx = (x + (offsets[i] ?? 0)).toFixed(2)
+        target.style.transform = `translate3d(${dx}px, ${y.toFixed(2)}px, 0) skewX(${skew}deg)`
+      }
+
+      if (bgEffects) {
+        const bx = (phase.bgX + rand(-j, j) * 0.5).toFixed(2)
+        bgEffects.style.transform = `translate3d(${bx}px, ${phase.bgY.toFixed(2)}px, 0)`
+      }
+
+      if (noiseInner) {
+        // Mover una capa sobredimensionada es una animación de compositor: el
+        // grano se renueva cada frame sin repintar la textura.
+        noiseInner.style.transform = `translate3d(${rand(-90, 90).toFixed(0)}px, ${rand(-90, 90).toFixed(0)}px, 0)`
+      }
+
+      if (scanLayer) {
+        scanLayer.style.transform = `translate3d(0, ${rand(-7, 7).toFixed(1)}px, 0)`
+      }
+
+      frameCount++
+      rafId = requestAnimationFrame(frame)
+    }
+
+    const endBurst = () => {
+      cancelAnimationFrame(rafId)
+      rafId = 0
+
+      targets.forEach((target) => {
+        target.style.transform = ""
+        target.style.filter = ""
+        target.style.willChange = ""
+      })
+      targets = []
+      offsets = []
+
+      if (bgEffects) {
+        bgEffects.style.transform = ""
+        bgEffects.style.willChange = ""
+      }
+      if (scanLayer) scanLayer.style.transform = ""
+      if (noiseInner) noiseInner.style.transform = ""
+
+      resetLayers()
+      root.classList.remove("gfx-on")
+
+      if (active) {
+        const elapsed = performance.now() - burstStart
+        const fps = elapsed > 0 ? (frameCount / elapsed) * 1000 : 60
+        if (fps < 45 && quality > 0.3) quality = Math.max(0.3, quality - 0.35)
+        else if (fps > 56 && quality < 1) quality = Math.min(1, quality + 0.2)
+      }
+
+      active = false
+      if (!stopped) schedule()
+    }
+
+    /** `duration` solo se usa desde la API manual (depuración / demos). */
+    const startBurst = (duration?: number) => {
+      if (active || stopped || reduceMotion.matches || document.hidden) return
+
+      targets = collectTargets()
+      if (targets.length === 0) {
+        schedule()
+        return
+      }
+
+      active = true
+      frameCount = 0
+      burstStart = performance.now()
+      burstDuration =
+        typeof duration === "number" && duration > 0
+          ? duration
+          : rand(settings.minDuration, settings.maxDuration)
+
+      targets.forEach((target) => {
+        target.style.willChange = "transform, filter"
+      })
+      if (bgEffects) bgEffects.style.willChange = "transform"
+
+      root.classList.add("gfx-on")
+      nextPhase(burstStart, 0)
+      rafId = requestAnimationFrame(frame)
+    }
+
+    const schedule = (delay?: number) => {
+      window.clearTimeout(scheduleTimer)
+      if (stopped || reduceMotion.matches) return
+
+      scheduleTimer = window.setTimeout(
+        () => {
+          if (document.hidden) {
+            schedule()
+            return
+          }
+          startBurst()
+        },
+        delay ?? rand(settings.minDelay, settings.maxDelay)
+      )
+    }
+
+    const stop = () => {
+      stopped = true
+      window.clearTimeout(scheduleTimer)
+      if (active) endBurst()
+      else resetLayers()
+    }
+
+    const start = () => {
+      if (!stopped) return
+      stopped = false
+      schedule()
+    }
+
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) {
+        window.clearTimeout(scheduleTimer)
+        if (active) endBurst()
+      } else if (!stopped) {
+        schedule()
+      }
+    })
+
+    // Imprimir con el contenido desplazado y teñido arruinaría el PDF.
+    window.addEventListener("beforeprint", () => {
+      window.clearTimeout(scheduleTimer)
+      if (active) endBurst()
+    })
+    window.addEventListener("afterprint", () => {
+      if (!stopped) schedule()
+    })
+
+    reduceMotion.addEventListener("change", () => {
+      if (reduceMotion.matches) stop()
+      else start()
+    })
+
+    Object.assign(window, {
+      glitchFX: {
+        trigger: (duration?: number) => startBurst(duration),
+        stop,
+        start,
+      },
+    })
+
+    if (!reduceMotion.matches) schedule(settings.firstDelay)
+  }
+</script>
+
+<style is:global>
+  #gfx-stage,
+  #gfx-noise,
+  #gfx-flash {
+    position: fixed;
+    inset: 0;
+    display: none;
+    pointer-events: none;
+    /* Sin `contain: paint` ni `opacity < 1`: ambos crearían un backdrop root y
+       dejarían a las franjas leyendo un fondo vacío en lugar de la página. */
+    overflow: hidden;
+  }
+
+  html.gfx-on #gfx-stage,
+  html.gfx-on #gfx-noise,
+  html.gfx-on #gfx-flash {
+    display: block;
+  }
+
+  #gfx-stage {
+    z-index: 9998;
+  }
+
+  #gfx-noise {
+    z-index: 9999;
+    opacity: 0;
+    mix-blend-mode: overlay;
+  }
+
+  #gfx-flash {
+    z-index: 10000;
+    opacity: 0;
+    mix-blend-mode: screen;
+  }
+
+  .gfx-slice,
+  .gfx-block {
+    position: absolute;
+    display: none;
+  }
+
+  .gfx-slice {
+    left: -4%;
+    width: 108%;
+  }
+
+  .gfx-scan {
+    position: absolute;
+    inset: -12% 0;
+    background: repeating-linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.32) 0,
+      rgba(0, 0, 0, 0.32) 1px,
+      rgba(255, 255, 255, 0.025) 1px,
+      rgba(255, 255, 255, 0.025) 3px
+    );
+    opacity: 0.5;
+    will-change: transform;
+  }
+
+  :root:not(.dark) .gfx-scan {
+    background: repeating-linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.16) 0,
+      rgba(0, 0, 0, 0.16) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+    opacity: 0.6;
+  }
+
+  #gfx-noise > i {
+    position: absolute;
+    /* El margen tiene que cubrir el desplazamiento por frame (±90px) incluso en
+       viewports angostos, o asomaría el borde de la textura. */
+    inset: -40%;
+    display: block;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 180px 180px;
+    will-change: transform;
+  }
+
+  @media print {
+    #gfx-stage,
+    #gfx-noise,
+    #gfx-flash {
+      display: none !important;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #gfx-stage,
+    #gfx-noise,
+    #gfx-flash {
+      display: none !important;
+    }
+  }
+</style>
