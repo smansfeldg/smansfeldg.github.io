@@ -21,27 +21,41 @@ There is no test suite or linter. `pnpm build` runs `astro check` first, so a ty
 
 ## Data flow (the core architecture)
 
-Content lives in two JSON files at the repo root following the **JSON Resume schema**:
-- `cv.json` — Spanish (default locale)
-- `cv_english.json` — English
+Content is split by **nature**, not by language:
 
-The two files must stay **structurally identical** — same keys, same array lengths/order — because the same components render both. Only the human-readable strings differ. `src/cv.d.ts` defines the `CV` interface for this shape (`basics`, `work`, `education`, `skills`, `projects`, etc.).
+- `src/data/content.json` — everything language-neutral: dates, URLs, icons, skill names, certificate names/logos, contact details. Entries carry stable `id`s (`"cvc"`, `"cicd-system"`, `"kubernetes"`).
+- `src/i18n/<code>.json` — one file per language, **only translatable text**, keyed by those same `id`s.
 
-Rendering pipeline:
-1. A page (`src/pages/index.astro` or `src/pages/en/index.astro`) imports its JSON file (`@/../cv.json` or `@/../cv_english.json`) and defines per-locale SEO metadata inline.
-2. It passes the whole object as a `cv` prop to `Layout.astro` and to each section component.
-3. Section components in `src/components/sections/` (`Hero`, `About`, `Experience`, `Education`, `Projects`, `Skills`) each destructure what they need from `cv` and render it.
+There is a single page (`src/pages/index.astro`) and a single component tree. Section components in `src/components/sections/` import `content.json` directly for structure and emit text through `<T>` / `t()`; nothing takes a `cv` prop.
 
-**To change site content, edit the JSON files, not the components.** Components are the presentation layer; adding a field means updating `cv.d.ts`, both JSON files, and the relevant section.
+**To change content:** edit `content.json` for structural facts, the language files for wording. Adding a work entry means an entry in `content.json` plus its text block under `experience.jobs.<id>` in **every** language file — the build fails otherwise (see below).
 
-## Internationalization
+## Internationalization (`src/i18n/`)
 
-- Configured in `astro.config.mjs`: `defaultLocale: "es"`, locales `["es", "en"]`, `trailingSlash: 'always'`.
-- There is **no shared translation dictionary**. Two mechanisms provide translations:
-  1. Data strings come from the two separate JSON files (see above).
-  2. UI chrome strings inside components use inline `const isEn = Astro.currentLocale === 'en'` ternaries (e.g. `isEn ? "Skills" : "Habilidades"`). When adding UI text, follow this pattern.
-- The ES site lives at `/`, the EN site at `/en/`. Adding a page means creating it under both `src/pages/` and `src/pages/en/`.
-- An inline script in `Layout.astro` handles client-side language routing: it reads `localStorage.lang`, falls back to `navigator.language`, and redirects between `/` and `/en/` on load.
+One landing page, no per-language routes. Switching language patches the DOM in place — no navigation, no reload.
+
+- `catalog.ts` — the only file that knows translations are JSON. `import.meta.glob("./*.json", { eager: true })` discovers every language file; codes come from the filenames. Language names come from `Intl.DisplayNames` (override with `meta.name`), so the selector needs no hardcoded list.
+- `store.ts` — the current language: a ~20-line observable, no dependency. Resolution order is `localStorage.lang` → `navigator.languages` → `DEFAULT_LANGUAGE`.
+- `dom.ts` — `t()`/`tAttr()` for the static render; `register()`/`apply()` for the client. The DOM is scanned **once** to build a binding registry; each language change iterates that flat array.
+- `validate.ts` — compares every language against `en.json` and throws during build, naming the file and the exact missing/extra key. Array indices count as path segments, so length mismatches fail too.
+- `index.ts` — the public API. **Components import from `@/i18n` only**, never a JSON or a submodule directly.
+
+`DEFAULT_LANGUAGE` (in `catalog.ts`) is both the fallback and the language baked into the static HTML.
+
+### Adding a language
+
+Drop `src/i18n/<code>.json` in. Nothing else — not routes, components, layouts, the selector, or any array.
+
+### Writing translatable markup
+
+- Text node → `<T k="about.title" as="h2" class="section-title" />`. `<T>` is the only place `data-i18n` is written, so the key lives in exactly one spot.
+- Attribute (`title`, `aria-label`, `content`, `data-level`) → `{...tAttr({ title: "projects.viewTitle" })}` — a child element cannot express an attribute.
+- Interpolation → `params={{ name }}`. A param starting with `@` is a **reference to another key** (`{ project: "@projects.items.easysync.name" }`) and is re-resolved on every switch; a literal would stay frozen in the render language.
+- Text containing inline markup → `data-i18n-html` + `set:html` (see the palette hint). Splitting a sentence across keys breaks word order in other languages.
+
+Because the binder swaps text and never adds or removes nodes, **the DOM structure must be identical across languages** — same number of jobs, projects, highlights. `validate.ts` enforces it.
+
+Debugging: in dev, `window.__i18n` exposes `bindings`, `keys()`, `missing(lang)` and `apply(lang)`. Unresolved keys log a warning.
 
 ## Theming
 
@@ -62,12 +76,13 @@ To add tracking to a new link/button, add `data-track="some_event"` — no JS wi
 
 ## Command palette
 
-`src/components/KeyboardManager.astro` builds a `hotkeypad` command palette (Cmd/Ctrl+K). Commands are assembled client-side and include: print, toggle theme, switch language, and one "open profile" command per entry in `cv.basics.profiles`. Social profile commands and their hotkeys are derived from the CV data, so adding a profile to the JSON automatically adds a palette command.
+`src/components/KeyboardManager.astro` builds a `hotkeypad` command palette (Cmd/Ctrl+K). Commands are assembled client-side: print, toggle theme, one command per available language, and one "open profile" command per entry in `content.profiles`. Both lists are derived from data, so adding a profile or a language file adds its command automatically.
+
+The palette builds its DOM in JS from strings, so the i18n binder does not reach it: it subscribes to the language store and calls `setCommands()` again on every change. `hotkeypad` requires a valid unique hotkey per command, so language commands get `alt+<letter>` allocated from the first free letter.
 
 ## Path aliases (`tsconfig.json`)
 
 - `@/*` → `src/*`
-- `@cv` → `./cv.json`
 
 ## Deployment
 

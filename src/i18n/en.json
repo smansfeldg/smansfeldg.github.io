@@ -1,0 +1,173 @@
+{
+  "meta": {
+    "name": "English",
+    "dir": "ltr",
+    "ogLocale": "en_US",
+    "title": "Santiago Ariel Mansfeld | DevOps Engineer",
+    "description": "DevOps Engineer specializing in Kubernetes, AWS and CI/CD, focused on automation, cloud and reliable infrastructure."
+  },
+  "hero": {
+    "label": "DevOps Engineer & Full Stack Developer",
+    "location": "Buenos Aires, Argentina",
+    "status": "Available",
+    "emailTitle": "Send an email to {name} at {email}",
+    "whatsappTitle": "Send a WhatsApp message to {name}",
+    "profileTitle": "Visit the {network} profile of {name}"
+  },
+  "about": {
+    "title": "About",
+    "panelLabel": "SYSTEM.INFO",
+    "summary": "DevOps & Infrastructure Engineer with experience in automation, CI/CD, cloud, and scalable infrastructure. Focused on optimization, reliability, and continuous improvement of platforms and processes.",
+    "keys": {
+      "status": "STATUS",
+      "focus": "FOCUS",
+      "location": "LOCATION"
+    },
+    "values": {
+      "status": "Active",
+      "focus": "DevOps / Infrastructure",
+      "location": "Buenos Aires, AR"
+    }
+  },
+  "experience": {
+    "title": "Experience",
+    "present": "Present",
+    "viewTitle": "View {company}",
+    "jobs": {
+      "cvc": {
+        "name": "CVC Corp Argentina",
+        "position": "Senior DevOps Engineer",
+        "summary": "As a Senior DevOps Engineer, I lead the design and evolution of scalable, high-availability Cloud architectures. I am responsible for defining automation standards using Infrastructure as Code (IaC), optimizing continuous deployment (CI/CD) pipelines for multiple development teams, and improving observability strategies for the company's critical systems.",
+        "highlights": [
+          "Technical leadership in Cloud infrastructure design",
+          "Advanced implementation of Infrastructure as Code",
+          "Evolution of SRE practices, observability, and DevOps culture"
+        ]
+      },
+      "accusys": {
+        "name": "Accusys Technology",
+        "position": "Semi-Senior DevOps Engineer",
+        "summary": "As a Mid-level (SSR) DevOps Engineer, I managed Continuous Integration (CI) and Continuous Delivery (CD) processes, optimizing infrastructure and automating deployments. Developed internal tools for artifact management using React and NodeJS. Key technologies: Jenkins, Ansible, SonarQube, React, NodeJS.",
+        "highlights": [
+          "CI/CD pipeline management",
+          "Automation tool development",
+          "Infrastructure optimization"
+        ]
+      },
+      "rdigital": {
+        "name": "RDigital",
+        "position": "Full Stack Developer / DevOps",
+        "summary": "End-to-end development of B2B and B2C e-commerce platforms from conception to deployment. Built scalable architectures with NodeJS, React, NestJS, and PostgreSQL. Infrastructure managed with Docker-Compose, PM2, and CI/CD via GitHub Actions. Deployments on AWS and Hostinger.",
+        "highlights": [
+          "Full-stack development",
+          "CI/CD implementation",
+          "Infrastructure management"
+        ]
+      },
+      "lomas": {
+        "name": "Lomas de Zamora Municipality",
+        "position": "IT Administrator",
+        "summary": "Comprehensive administration of municipal IT infrastructure. Management of Windows/Linux servers, implementation of corporate VPNs, administration of VMware virtualization, and perimeter security systems.",
+        "highlights": [
+          "Server administration",
+          "Network management"
+        ]
+      },
+      "gidsa": {
+        "name": "National University of La Matanza - GIDSA",
+        "position": "Research Student",
+        "summary": "Development of telemetry and control systems for aerospace applications. Integration with Satnogs and NASA OPENMCT APIs for satellite monitoring and implementation of space communication protocols.",
+        "highlights": [
+          "Real-time integration",
+          "Stress tests completed"
+        ]
+      }
+    }
+  },
+  "education": {
+    "title": "Education",
+    "present": "Present",
+    "certificatesTitle": "Certifications",
+    "certificatesCount": "{count} credentials",
+    "schools": {
+      "unlam": {
+        "institution": "Universidad Nacional de La Matanza (UNLaM)",
+        "area": "Computer Engineering",
+        "studyType": "Bachelor's Degree"
+      }
+    }
+  },
+  "projects": {
+    "title": "Projects",
+    "online": "ONLINE",
+    "offline": "OFFLINE",
+    "action": "ACCESS",
+    "viewTitle": "View project {project}",
+    "accessLabel": "ACCESS {project}",
+    "items": {
+      "cicd-system": {
+        "name": "Automated CI/CD System",
+        "description": "Complete CI/CD pipeline implementation with Jenkins, Ansible, and SonarQube for private infrastructure."
+      },
+      "easysync": {
+        "name": "EasySync",
+        "description": "Release management. Full-stack web application for pipeline control, notifications, and distribution."
+      },
+      "dealshop": {
+        "name": "Dealshop",
+        "description": "Full B2C / B2B e-commerce developed end-to-end and deployed in production."
+      },
+      "marketfull": {
+        "name": "MarketFull",
+        "description": "E-commerce marketplace featuring microservices architecture, inventory system, and payment gateway."
+      }
+    }
+  },
+  "skills": {
+    "title": "Skills",
+    "panelLabel": "CAPABILITIES",
+    "panelCount": "{count} modules",
+    "categories": {
+      "aws": "AWS",
+      "containers": "Containers & Orchestration",
+      "cicd": "CI/CD",
+      "iac": "IaC",
+      "observability": "Observability",
+      "infrastructure": "Infrastructure",
+      "development": "Development",
+      "data": "Data"
+    },
+    "levels": {
+      "advanced": "Advanced",
+      "intermediate": "Intermediate"
+    }
+  },
+  "languages": [
+    { "language": "Spanish", "fluency": "Native" },
+    { "language": "English", "fluency": "B2" }
+  ],
+  "palette": {
+    "hint": "Press <kbd>Cmd</kbd> + <kbd>K</kbd> to open the command palette",
+    "openLabel": "Open command palette",
+    "placeholder": "Search command",
+    "sections": {
+      "actions": "Actions",
+      "preferences": "Preferences",
+      "language": "Language",
+      "social": "Social"
+    },
+    "commands": {
+      "print": "Print",
+      "theme": "Toggle Dark Mode",
+      "visit": "Visit {network}",
+      "switchTo": "Switch to {language}"
+    }
+  },
+  "backToTop": {
+    "label": "TOP",
+    "ariaLabel": "Back to top"
+  },
+  "languageSelector": {
+    "label": "Change language"
+  }
+}

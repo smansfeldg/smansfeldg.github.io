@@ -1,5 +1,6 @@
 ---
-const isEn = Astro.currentLocale === 'en';
+import T from "@/components/T.astro"
+import { tAttr } from "@/i18n"
 ---
 
 <div id="page-end-sentinel" aria-hidden="true"></div>
@@ -8,14 +9,14 @@ const isEn = Astro.currentLocale === 'en';
   id="back-to-top"
   class="no-print"
   type="button"
-  aria-label={isEn ? "Back to top" : "Volver al inicio"}
+  {...tAttr({ "aria-label": "backToTop.ariaLabel" })}
   data-track="back_to_top"
 >
   <svg class="btt-arrow" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
     <path d="M12 19V5"></path>
     <path d="m5 12 7-7 7 7"></path>
   </svg>
-  <span class="btt-label">{isEn ? "TOP" : "INICIO"}</span>
+  <T k="backToTop.label" class="btt-label" />
 </button>
 
 <script>

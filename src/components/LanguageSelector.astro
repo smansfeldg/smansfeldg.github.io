@@ -1,0 +1,111 @@
+---
+/**
+ * Se arma solo desde los archivos de `src/i18n/`. Agregar `fr.json` agrega la
+ * opción "Français" sin tocar este archivo.
+ *
+ * Es un <select> y no una fila de botones a propósito: escala a cualquier
+ * cantidad de idiomas sin romper el layout en móvil, muestra el nombre nativo
+ * completo y es navegable por teclado sin código extra.
+ */
+import { DEFAULT_LANGUAGE, getAvailableLanguages, tAttr } from "@/i18n"
+
+const languages = getAvailableLanguages()
+---
+
+<div class="lang-switch no-print">
+  <svg
+    class="lang-icon"
+    aria-hidden="true"
+    width="13"
+    height="13"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="1.5">
+    <circle cx="12" cy="12" r="10"></circle>
+    <path d="M2 12h20"></path>
+    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"
+    ></path>
+  </svg>
+
+  <select id="language-select" data-track="language_select" {...tAttr({ "aria-label": "languageSelector.label" })}>
+    {
+      languages.map(({ code, name }) => (
+        <option value={code} selected={code === DEFAULT_LANGUAGE}>
+          {name}
+        </option>
+      ))
+    }
+  </select>
+</div>
+
+<script>
+  import { setLanguage, subscribeLanguage } from "@/i18n"
+
+  const select = document.getElementById("language-select") as HTMLSelectElement | null
+
+  if (select) {
+    select.addEventListener("change", () => setLanguage(select.value))
+    // Dispara al suscribirse, así el <select> refleja el idioma guardado
+    // aunque el HTML se haya renderizado en otro.
+    subscribeLanguage((language) => {
+      if (select.value !== language) select.value = language
+    })
+  }
+</script>
+
+<style>
+  .lang-switch {
+    position: fixed;
+    right: 16px;
+    bottom: 5px;
+    z-index: 51;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-muted);
+    transition: color var(--transition-fast);
+  }
+
+  .lang-switch:hover,
+  .lang-switch:focus-within {
+    color: var(--text-secondary);
+  }
+
+  .lang-icon {
+    flex-shrink: 0;
+    pointer-events: none;
+  }
+
+  select {
+    appearance: none;
+    background: transparent;
+    border: none;
+    padding: 2px 4px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: inherit;
+    cursor: pointer;
+  }
+
+  select:focus-visible {
+    outline: 1px solid var(--accent-purple);
+    outline-offset: 2px;
+  }
+
+  /* El desplegable se pinta con los colores del sistema operativo, no con los
+     del documento: hay que darle un fondo opaco o queda ilegible en dark. */
+  option {
+    background: var(--bg-panel);
+    color: var(--text-primary);
+  }
+
+  /* En móvil el footer desaparece y la esquina inferior ya la ocupan el botón
+     de la paleta y el de volver arriba. El cambio de idioma sigue disponible
+     desde la paleta de comandos, que genera un comando por idioma. */
+  @media (width <= 768px) {
+    .lang-switch {
+      display: none;
+    }
+  }
+</style>

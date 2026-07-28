@@ -1,0 +1,179 @@
+{
+  "meta": {
+    "name": "Español",
+    "dir": "ltr",
+    "ogLocale": "es_AR",
+    "title": "Santiago Ariel Mansfeld | DevOps Engineer",
+    "description": "Ingeniero DevOps especializado en Kubernetes, AWS y CI/CD, con foco en automatización, cloud e infraestructura confiable."
+  },
+  "hero": {
+    "label": "DevOps Engineer & Full Stack Developer",
+    "location": "Buenos Aires, Argentina",
+    "status": "Disponible",
+    "emailTitle": "Enviar un correo electrónico a {name} al correo {email}",
+    "whatsappTitle": "Enviar un mensaje de WhatsApp a {name}",
+    "profileTitle": "Visitar el perfil de {name} en {network}"
+  },
+  "about": {
+    "title": "Acerca de",
+    "panelLabel": "SISTEMA.INFO",
+    "summary": "DevOps & Infrastructure Engineer con experiencia en automatización, CI/CD, cloud e infraestructura escalable. Enfocado en optimización, confiabilidad y mejora continua de plataformas y procesos.",
+    "keys": {
+      "status": "ESTADO",
+      "focus": "ENFOQUE",
+      "location": "UBICACIÓN"
+    },
+    "values": {
+      "status": "Activo",
+      "focus": "DevOps / Infraestructura",
+      "location": "Buenos Aires, AR"
+    }
+  },
+  "experience": {
+    "title": "Experiencia",
+    "present": "Actual",
+    "viewTitle": "Ver {company}",
+    "jobs": {
+      "cvc": {
+        "name": "CVC Corp Argentina",
+        "position": "Senior DevOps Engineer",
+        "summary": "Como Senior DevOps Engineer lidero el diseño y evolución de arquitecturas Cloud escalables y de alta disponibilidad. Soy responsable de definir los estándares de automatización empleando Infraestructura como Código (IaC), optimizando pipelines de despliegue continuo (CI/CD) para múltiples equipos de desarrollo, y mejorando las estrategias de observabilidad de los sistemas críticos de la compañía.",
+        "highlights": [
+          "Liderazgo técnico en diseño de infraestructura Cloud",
+          "Implementación avanzada de Infraestructura como Código",
+          "Evolución de prácticas SRE, observabilidad y cultura DevOps"
+        ]
+      },
+      "accusys": {
+        "name": "Accusys Technology",
+        "position": "DevOps Engineer Semi-Senior",
+        "summary": "Como DevOps SSR gestiono procesos de Integración Continua (CI) y entrega continua (CD), optimizando infraestructura y automatizando despliegues. Desarrollo herramientas para gestión de artefactos usando React y NodeJS. Tecnologías principales: Jenkins, Ansible, SonarQube, React, NodeJS.",
+        "highlights": [
+          "Gestión de pipeline CI/CD",
+          "Desarrollo de herramientas de automatización",
+          "Optimización de infraestructura"
+        ]
+      },
+      "rdigital": {
+        "name": "RDigital",
+        "position": "Full Stack Developer / DevOps",
+        "summary": "Desarrollo completo de e-commerces B2B y B2C desde la concepción hasta el despliegue. Arquitecturas escalables con NodeJS, React, NestJS y PostgreSQL. Infraestructura con Docker-Compose, PM2 y CI/CD con GitHub Actions. Despliegues en AWS y Hostinger.",
+        "highlights": [
+          "Desarrollo full-stack",
+          "Implementación CI/CD",
+          "Gestión de infraestructura"
+        ]
+      },
+      "lomas": {
+        "name": "Municipalidad de Lomas de Zamora",
+        "position": "Administrador de IT",
+        "summary": "Administración integral de la infraestructura IT municipal. Gestión de servidores Windows/Linux, implementación de VPN corporativas, administración de virtualizadores VMware y sistemas de seguridad perimetral.",
+        "highlights": [
+          "Administración de servidores",
+          "Gestión de redes"
+        ]
+      },
+      "gidsa": {
+        "name": "Universidad Nacional de La Matanza - GIDSA",
+        "position": "Estudiante de investigación",
+        "summary": "Desarrollo de sistemas de telemetría y control para aplicaciones aeroespaciales. Integración con APIs de Satnogs y NASA OPENMCT para monitoreo de satélites e implementación de protocolos de comunicación espacial.",
+        "highlights": [
+          "Integración en tiempo real",
+          "Pruebas de estrés completadas"
+        ]
+      }
+    }
+  },
+  "education": {
+    "title": "Educación",
+    "present": "Actual",
+    "certificatesTitle": "Certificaciones",
+    "certificatesCount": "{count} credenciales",
+    "schools": {
+      "unlam": {
+        "institution": "Universidad Nacional de La Matanza (UNLaM)",
+        "area": "Ingeniería en Informática",
+        "studyType": "Universitario"
+      }
+    }
+  },
+  "projects": {
+    "title": "Proyectos",
+    "online": "ACTIVO",
+    "offline": "INACTIVO",
+    "action": "ACCEDER",
+    "viewTitle": "Ver el proyecto {project}",
+    "accessLabel": "ACCEDER {project}",
+    "items": {
+      "cicd-system": {
+        "name": "Sistema CI/CD automatizado",
+        "description": "Implementación completa de pipeline CI/CD con Jenkins, Ansible y SonarQube para infraestructura privada."
+      },
+      "easysync": {
+        "name": "EasySync",
+        "description": "Gestión de releases. Web fullstack para control de pipelines, notificaciones y distribución."
+      },
+      "dealshop": {
+        "name": "Dealshop",
+        "description": "E-commerce completo B2C / B2B desarrollado de forma integral y desplegado en producción."
+      },
+      "marketfull": {
+        "name": "MarketFull",
+        "description": "E-commerce marketplace con arquitectura de microservicios, sistema de stock y pasarela de pago."
+      }
+    }
+  },
+  "skills": {
+    "title": "Habilidades",
+    "panelLabel": "CAPACIDADES",
+    "panelCount": "{count} módulos",
+    "categories": {
+      "aws": "AWS",
+      "containers": "Contenedores y orquestación",
+      "cicd": "CI/CD",
+      "iac": "IaC",
+      "observability": "Observabilidad",
+      "infrastructure": "Infraestructura",
+      "development": "Desarrollo",
+      "data": "Datos"
+    },
+    "levels": {
+      "advanced": "Avanzado",
+      "intermediate": "Intermedio"
+    }
+  },
+  "languages": [
+    {
+      "language": "Español",
+      "fluency": "Nativo"
+    },
+    {
+      "language": "Inglés",
+      "fluency": "B2"
+    }
+  ],
+  "palette": {
+    "hint": "Pulsa <kbd>Cmd</kbd> + <kbd>K</kbd> para abrir la paleta de comandos",
+    "openLabel": "Abrir la paleta de comandos",
+    "placeholder": "Buscar comando",
+    "sections": {
+      "actions": "Acciones",
+      "preferences": "Preferencias",
+      "language": "Idioma",
+      "social": "Social"
+    },
+    "commands": {
+      "print": "Imprimir",
+      "theme": "Alternar modo oscuro",
+      "visit": "Visitar {network}",
+      "switchTo": "Cambiar a {language}"
+    }
+  },
+  "backToTop": {
+    "label": "INICIO",
+    "ariaLabel": "Volver al inicio"
+  },
+  "languageSelector": {
+    "label": "Cambiar idioma"
+  }
+}

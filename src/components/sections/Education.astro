@@ -1,52 +1,41 @@
 ---
 import Section from "../Section.astro";
+import T from "@/components/T.astro";
+import content from "@/data/content.json";
 
-interface Props {
-  cv: any;
-}
-const { cv } = Astro.props;
-const { education, certificates } = cv;
-
-const isEn = Astro.currentLocale === "en";
-const title = isEn ? "Education" : "Educación";
-const certTitle = isEn ? "Certifications" : "Certificaciones";
+const { education, certificates } = content;
 ---
 
-<Section id="education" title={title}>
+<Section id="education" titleKey="education.title">
   <ul class="education-list">
     {
-      education.map(
-        ({ institution, startDate, endDate, area, studyType }: any) => {
-          const startYear = new Date(startDate).getFullYear();
-          const endYear =
-            endDate != null
-              ? new Date(endDate).getFullYear()
-              : isEn
-                ? "Present"
-                : "Actual";
+      education.map(({ id, startDate, endDate }) => {
+        const startYear = new Date(startDate).getFullYear();
 
-          return (
-            <li>
-              <article class="edu-card">
-                <div class="edu-header">
-                  <div class="edu-title">
-                    <h3>{institution}</h3>
-                    <p class="edu-area">
-                      {area}
-                      {studyType ? ` — ${studyType}` : ""}
-                    </p>
-                  </div>
-                  <div class="edu-period">
-                    <span>{startYear}</span>
-                    <span class="sep">—</span>
-                    <span>{endYear}</span>
-                  </div>
+        return (
+          <li>
+            <article class="edu-card">
+              <div class="edu-header">
+                <div class="edu-title">
+                  <T k={`education.schools.${id}.institution`} as="h3" />
+                  <p class="edu-area">
+                    <T k={`education.schools.${id}.area`} />
+                    <span> — </span>
+                    <T k={`education.schools.${id}.studyType`} />
+                  </p>
                 </div>
-              </article>
-            </li>
-          );
-        },
-      )
+                <div class="edu-period">
+                  <span>{startYear}</span>
+                  <span class="sep">—</span>
+                  <span>
+                    {endDate != null ? new Date(endDate).getFullYear() : <T k="education.present" />}
+                  </span>
+                </div>
+              </div>
+            </article>
+          </li>
+        );
+      })
     }
   </ul>
 
@@ -54,13 +43,15 @@ const certTitle = isEn ? "Certifications" : "Certificaciones";
     certificates && certificates.length > 0 && (
       <div class="certs-block">
         <div class="certs-header">
-          <span class="certs-label">{certTitle.toUpperCase()}</span>
-          <span class="certs-count">
-            {certificates.length} {isEn ? "credentials" : "credenciales"}
-          </span>
+          <T k="education.certificatesTitle" class="certs-label" />
+          <T
+            k="education.certificatesCount"
+            class="certs-count"
+            params={{ count: certificates.length }}
+          />
         </div>
         <div class="certs-grid">
-          {certificates.map(({ name, issuer, year, url, logo }: any) => {
+          {certificates.map(({ name, issuer, year, url, logo }) => {
             const href = url ? url : "#";
             const target = href !== "#" ? "_blank" : undefined;
             const rel = href !== "#" ? "noopener noreferrer" : undefined;
@@ -195,6 +186,9 @@ const certTitle = isEn ? "Certifications" : "Certificaciones";
     font-size: 10px;
     font-weight: 600;
     letter-spacing: 0.15em;
+    /* Antes se hacía con .toUpperCase() en JS; en CSS el binder puede escribir
+       el texto tal cual viene del diccionario. */
+    text-transform: uppercase;
     color: var(--accent-purple-text);
   }
 

@@ -1,46 +1,51 @@
 ---
 import { Icon } from "astro-icon/components"
 import Section from "../Section.astro"
+import T from "@/components/T.astro"
+import { tAttr } from "@/i18n"
+import content from "@/data/content.json"
 
-interface Props { cv: any }
-const { cv } = Astro.props
-const { projects, skills } = cv
-
-const isEn = Astro.currentLocale === 'en';
-const title = isEn ? "Projects" : "Proyectos";
+const { projects, skills } = content
 ---
 
-<Section id="projects" title={title}>
+<Section id="projects" titleKey="projects.title">
   <div class="projects-grid">
-    {projects.map(({ url, description, highlights, name, isActive }: any) => {
-      const projectSlug = name.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/(^_|_$)/g, '');
+    {projects.map(({ id, url, stack, isActive }) => {
+      const projectSlug = id.replace(/-/g, '_');
+      const name = `projects.items.${id}.name`;
       return (
         <article class="project-card">
           <div class="project-status">
             <span class={`status-dot ${isActive ? 'active' : ''}`}></span>
-            <span class="status-label">{isActive ? (isEn ? 'ONLINE' : 'ACTIVO') : (isEn ? 'OFFLINE' : 'INACTIVO')}</span>
+            <T k={isActive ? 'projects.online' : 'projects.offline'} class="status-label" />
           </div>
           <div class="project-body">
             <h3>
-              <a href={url} target="_blank" rel="noopener noreferrer" title={isEn ? `View project ${name}` : `Ver el proyecto ${name}`} data-track={`project_click_${projectSlug}`}>
-                {name}
+              <a
+                href={url}
+                target="_blank"
+                rel="noopener noreferrer"
+                {...tAttr({ title: "projects.viewTitle" }, { project: `@${name}` })}
+                data-track={`project_click_${projectSlug}`}
+              >
+                <T k={name} />
               </a>
               <svg class="external-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
             </h3>
-            <p>{description}</p>
+            <T k={`projects.items.${id}.description`} as="p" />
           </div>
           <div class="project-footer">
             <div class="stack-tags">
-              {highlights.map((highlight: any) => {
-                const skill = skills.find((s: any) => s.name === highlight);
+              {stack.map((skillId) => {
+                const skill = skills.find((item) => item.id === skillId);
                 return (
-                  <div class="stack-tag" title={highlight}>
+                  <div class="stack-tag" title={skill?.name ?? skillId}>
                     {skill?.icon && (
                       <div class="skill-icon">
                         <Icon name={skill.icon} />
                       </div>
                     )}
-                    <span class="skill-name">{highlight}</span>
+                    <span class="skill-name">{skill?.name ?? skillId}</span>
                   </div>
                 );
               })}
@@ -48,8 +53,15 @@ const title = isEn ? "Projects" : "Proyectos";
             {/* The accessible name must start with the visible "ACCESS" label so
                 voice-control users can activate it by what they see (WCAG 2.5.3),
                 while the project name keeps the four links distinguishable. */}
-            <a href={url} target="_blank" rel="noopener noreferrer" class="project-action" aria-label={isEn ? `ACCESS ${name}` : `ACCEDER ${name}`} data-track={`project_click_${projectSlug}`}>
-              <span>{isEn ? 'ACCESS' : 'ACCEDER'}</span>
+            <a
+              href={url}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="project-action"
+              {...tAttr({ "aria-label": "projects.accessLabel" }, { project: `@${name}` })}
+              data-track={`project_click_${projectSlug}`}
+            >
+              <T k="projects.action" />
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
             </a>
           </div>

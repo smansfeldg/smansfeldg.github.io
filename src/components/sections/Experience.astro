@@ -1,20 +1,18 @@
 ---
 import Section from "../Section.astro"
+import T from "@/components/T.astro"
+import { tAttr } from "@/i18n"
+import content from "@/data/content.json"
 
-interface Props { cv: any }
-const { cv } = Astro.props
-const { work } = cv
-
-const isEn = Astro.currentLocale === 'en';
-const title = isEn ? "Experience" : "Experiencia";
+const { work } = content
 ---
 
-<Section id="experience" title={title}>
+<Section id="experience" titleKey="experience.title">
   <ul class="experience-list">
-    {work.map(({ name, startDate, endDate, position, summary, url }: any, index: number) => {
+    {work.map(({ id, startDate, endDate, url }, index) => {
       const startYear = new Date(startDate).getFullYear()
-      const endYear = endDate != null ? new Date(endDate).getFullYear() : (isEn ? "Present" : "Actual")
       const isCurrent = endDate == null
+      const name = `experience.jobs.${id}.name`
 
       return (
         <li>
@@ -25,21 +23,28 @@ const title = isEn ? "Experience" : "Experiencia";
                 <div class="exp-title">
                   <h3>
                     {url ? (
-                      <a href={url} title={isEn ? `View ${name}` : `Ver ${name}`} target="_blank" rel="noopener noreferrer">
-                        {name}
+                      <a
+                        href={url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        {...tAttr({ title: "experience.viewTitle" }, { company: `@${name}` })}
+                      >
+                        <T k={name} />
                       </a>
-                    ) : name}
+                    ) : <T k={name} />}
                   </h3>
-                  <h4>{position}</h4>
+                  <T k={`experience.jobs.${id}.position`} as="h4" />
                 </div>
                 <div class="exp-period">
                   <span class="period-start">{startYear}</span>
                   <span class="period-sep">—</span>
-                  <span class={`period-end ${isCurrent ? 'current' : ''}`}>{endYear}</span>
+                  <span class={`period-end ${isCurrent ? 'current' : ''}`}>
+                    {isCurrent ? <T k="experience.present" /> : new Date(endDate).getFullYear()}
+                  </span>
                 </div>
               </header>
               <footer class="exp-footer">
-                <p>{summary}</p>
+                <T k={`experience.jobs.${id}.summary`} as="p" />
               </footer>
             </div>
           </article>

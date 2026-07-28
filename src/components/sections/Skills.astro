@@ -1,55 +1,52 @@
 ---
 import { Icon } from "astro-icon/components"
 import Section from "../Section.astro"
+import T from "@/components/T.astro"
+import { tAttr } from "@/i18n"
+import content from "@/data/content.json"
 
-interface Props { cv: any }
-const { cv } = Astro.props
-type Skill = {
-  name: string;
-  level: string;
-  category?: string;
-  icon?: string;
-};
+const { skills } = content
 
-type SkillGroup = {
-  category: string;
-  skills: Array<Skill>;
-};
+type Skill = (typeof skills)[number]
+type SkillGroup = { category: string; skills: Array<Skill> }
 
-const skills = cv.skills as Array<Skill>
+// Agrupa por id de categoría preservando el orden de aparición; la etiqueta
+// visible sale del diccionario, no de los datos.
+const groupedSkills = skills.reduce<Array<SkillGroup>>((groups, skill) => {
+  const group = groups.find((item) => item.category === skill.category);
 
-const isEn = Astro.currentLocale === 'en';
-const title = isEn ? "Skills" : "Habilidades";
-
-const groupedSkills: Array<SkillGroup> = skills.reduce((groups: Array<SkillGroup>, skill: Skill) => {
-  const category = skill.category || (isEn ? "Other" : "Otros");
-  const group = groups.find((item: SkillGroup) => item.category === category);
-
-  if (group) {
-    group.skills.push(skill);
-  } else {
-    groups.push({ category, skills: [skill] });
-  }
+  if (group) groups[groups.indexOf(group)].skills.push(skill);
+  else groups.push({ category: skill.category, skills: [skill] });
 
   return groups;
-}, [] as Array<SkillGroup>);
+}, []);
 
-const getCategoryId = (category: string) => `skill-category-${category.toLowerCase().replace(/[^a-z0-9-]/g, "-")}`;
+const categoryDomId = (category: string) => `skill-category-${category}`;
 ---
 
-<Section id="skills" title={title}>
+<Section id="skills" titleKey="skills.title">
   <div class="skills-panel">
     <div class="panel-header">
-      <span class="panel-label">{isEn ? 'CAPABILITIES' : 'CAPACIDADES'}</span>
-      <span class="panel-count">{skills.length} {isEn ? 'modules' : 'módulos'}</span>
+      <T k="skills.panelLabel" class="panel-label" />
+      <T k="skills.panelCount" class="panel-count" params={{ count: skills.length }} />
     </div>
     <div class="skill-groups">
       {groupedSkills.map((group: SkillGroup) => (
-        <section class="skill-group" aria-labelledby={getCategoryId(group.category)}>
-          <h3 id={getCategoryId(group.category)} class="skill-category">{group.category}</h3>
+        <section class="skill-group" aria-labelledby={categoryDomId(group.category)}>
+          <T
+            k={`skills.categories.${group.category}`}
+            as="h3"
+            id={categoryDomId(group.category)}
+            class="skill-category"
+          />
           <div class="skills-grid">
             {group.skills.map(({ name, icon, level }: Skill) => (
-              <div class="skill-item" data-level={level} title={level}>
+              // data-level alimenta el tooltip por CSS (content: attr(data-level)),
+              // así que tiene que llevar la etiqueta traducida, no el id.
+              <div
+                class="skill-item"
+                {...tAttr({ "data-level": `skills.levels.${level}`, title: `skills.levels.${level}` })}
+              >
                 <div class="skill-icon">
                   {icon && <Icon name={icon} />}
                 </div>

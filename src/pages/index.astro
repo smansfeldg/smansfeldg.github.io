@@ -9,29 +9,19 @@ import Projects from "@/components/sections/Projects.astro"
 import Skills from "@/components/sections/Skills.astro"
 import BackToTop from "@/components/BackToTop.astro"
 import KeyboardManager from "@/components/KeyboardManager.astro"
-
-import cv from "@/../cv.json"
-
-const seo = {
-  title: "Santiago Ariel Mansfeld | DevOps Engineer",
-  description: "Ingeniero DevOps especializado en Kubernetes, AWS y CI/CD, con foco en automatización, cloud e infraestructura confiable.",
-  image: "/og-home.png",
-  canonical: "https://smansfeldg.github.io/",
-  locale: "es_AR",
-}
 ---
 
-<Layout cv={cv} {...seo}>
+<Layout>
   <main>
-    <Hero cv={cv} />
-    <About cv={cv} />
-    <Experience cv={cv} />
-    <Education cv={cv} />
-    <Projects cv={cv} />
-    <Skills cv={cv} />
+    <Hero />
+    <About />
+    <Experience />
+    <Education />
+    <Projects />
+    <Skills />
   </main>
 
-  <KeyboardManager cv={cv} />
+  <KeyboardManager />
   <BackToTop />
 </Layout>
 

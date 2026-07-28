@@ -4,45 +4,29 @@ import profileImage from "@/assets/profile.png"
 import AIContext from "@/components/AIContext.astro"
 import Clarity from "@/components/Clarity.astro"
 import GlitchFX from "@/components/GlitchFX.astro"
+import LanguageSelector from "@/components/LanguageSelector.astro"
+import { DEFAULT_LANGUAGE, t } from "@/i18n"
+import content from "@/data/content.json"
 
 import "@fontsource-variable/space-grotesk"
 import "@fontsource-variable/inter"
 import "@fontsource-variable/jetbrains-mono"
 
-type LocaleCode = "es_AR" | "en_US" | string
-type AlternateLocale = {
-  locale: LocaleCode
-  href: string
-  hreflang?: string
-}
-
 interface Props {
-  title: string
-  cv: any
-  description?: string
   image?: string
-  canonical?: string
-  locale?: LocaleCode
-  alternateLocales?: AlternateLocale[]
 }
 
-const {
-  title,
-  cv,
-  description,
-  image,
-  canonical,
-  locale,
-  alternateLocales,
-} = Astro.props
+const { image } = Astro.props
 
-const { basics, education } = cv
-const { name, label, email, phone, summary, url, profiles } = basics
+const { profile, profiles, education, work, knowsAbout } = content
+const { name, email, phone, url } = profile
+
 const site = Astro.site ?? new URL(Astro.url.origin)
-const defaultOgImage = "/og-home.png"
-const pageDescription = description ?? summary
-const canonicalUrl = new URL(canonical ?? Astro.url.pathname, site)
-const ogImageUrl = new URL(image || defaultOgImage, site)
+// Desde el pathname y no desde "/", para que respete el base path que el
+// workflow inyecta con GITHUB_PAGES_BASE_PATH.
+const canonicalUrl = new URL(Astro.url.pathname, site)
+const ogImageUrl = new URL(image || "/og-home.png", site)
+
 // Schema.org consumers need an absolute, crawlable URL, so emit a build-time
 // derivative rather than pointing at the 1.4 MB source asset.
 const profileSchemaImage = await getImage({
@@ -53,91 +37,66 @@ const profileSchemaImage = await getImage({
   quality: 85,
 })
 const profileImageUrl = new URL(profileSchemaImage.src, site)
-const currentOgLocale = locale ?? (Astro.currentLocale === "en" ? "en_US" : "es_AR")
-const defaultAlternateLocales: AlternateLocale[] = [
-  { locale: "es_AR", href: "/", hreflang: "es-AR" },
-  { locale: "en_US", href: "/en/", hreflang: "en-US" },
-]
-const localeAlternates = alternateLocales ?? defaultAlternateLocales
-const toHreflang = (value: string) => value.replace("_", "-")
-const alternateLinks = localeAlternates.map((alternate) => ({
-  ...alternate,
-  href: new URL(alternate.href, site).href,
-  hreflang: alternate.hreflang ?? toHreflang(alternate.locale),
-}))
-const xDefaultAlternate = alternateLinks.find(({ locale }) => locale === "es_AR") ?? alternateLinks[0]
-const ogLocaleAlternates = [...new Set(
-  localeAlternates
-    .map(({ locale }) => locale)
-    .filter((alternateLocale) => alternateLocale !== currentOgLocale)
-)]
-const sameAs = profiles?.map(({ url }: { url: string }) => url).filter(Boolean) ?? []
-const currentWork = cv.work?.find(({ endDate }: { endDate: string | null }) => endDate === null) ?? cv.work?.[0]
+
+const sameAs = profiles.map((entry) => entry.url).filter(Boolean)
+const currentWork = work.find(({ endDate }) => endDate === null) ?? work[0]
+
+// El JSON-LD sale en el idioma renderizado y no se actualiza al cambiar de
+// idioma: lo consumen crawlers, que ven el HTML estático.
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "Person",
   name,
-  jobTitle: label,
+  jobTitle: t("hero.label"),
   url: new URL(url, site).href,
   image: profileImageUrl.href,
   email: `mailto:${email}`,
   telephone: phone,
   sameAs,
-  worksFor: currentWork?.name ? {
+  worksFor: {
     "@type": "Organization",
-    name: currentWork.name,
+    name: t(`experience.jobs.${currentWork.id}.name`),
     ...(currentWork.url ? { url: currentWork.url } : {}),
-  } : undefined,
-  alumniOf: education?.[0]?.institution ? {
+  },
+  alumniOf: {
     "@type": "CollegeOrUniversity",
-    name: education[0].institution,
+    name: t(`education.schools.${education[0].id}.institution`),
     ...(education[0].url ? { url: education[0].url } : {}),
-  } : undefined,
-  knowsAbout: [
-    "Kubernetes",
-    "AWS",
-    "CI/CD",
-    "DevOps",
-    "Cloud Infrastructure",
-  ],
+  },
+  knowsAbout,
 }
 const safeJsonLd = JSON.stringify(jsonLd).replace(/</g, "\\u003c")
 ---
 
 <!doctype html>
-<html lang={Astro.currentLocale || "es"}>
+<html lang={DEFAULT_LANGUAGE}>
   <head>
     <meta charset="UTF-8" />
-    <title>{title}</title>
-    <meta name="description" content={pageDescription} />
+    <title data-i18n="meta.title">{t("meta.title")}</title>
+    <meta name="description" data-i18n-attr="content:meta.description" content={t("meta.description")} />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="canonical" href={canonicalUrl.href} />
-    {alternateLinks.map(({ href, hreflang }) => (
-      <link rel="alternate" hreflang={hreflang} href={href} />
-    ))}
-    {xDefaultAlternate && (
-      <link rel="alternate" hreflang="x-default" href={xDefaultAlternate.href} />
-    )}
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
+    {/* Open Graph y Twitter los leen crawlers que no ejecutan JS: se quedan en
+        el idioma renderizado a propósito, sin marcas para el binder. */}
     <meta property="og:type" content="website" />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={pageDescription} />
+    <meta property="og:title" content={t("meta.title")} />
+    <meta property="og:description" content={t("meta.description")} />
     <meta property="og:url" content={canonicalUrl.href} />
     <meta property="og:image" content={ogImageUrl.href} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:locale" content={currentOgLocale} />
-    {ogLocaleAlternates.map((alternateLocale) => (
-      <meta property="og:locale:alternate" content={alternateLocale} />
-    ))}
-    <meta property="og:site_name" content="Santiago Ariel Mansfeld" />
+    <meta property="og:locale" content={t("meta.ogLocale")} />
+    <meta property="og:site_name" content={name} />
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content={pageDescription} />
+    <meta name="twitter:title" content={t("meta.title")} />
+    <meta name="twitter:description" content={t("meta.description")} />
     <meta name="twitter:image" content={ogImageUrl.href} />
+
     <script type="application/ld+json" set:html={safeJsonLd}></script>
+
     <script is:inline>
       window.getThemePreference = () => {
         if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
@@ -145,7 +104,7 @@ const safeJsonLd = JSON.stringify(jsonLd).replace(/</g, "\\u003c")
         }
         return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
       };
-      
+
       window.applyTheme = (theme) => {
         if (theme === 'dark') {
           document.documentElement.classList.add('dark');
@@ -154,32 +113,15 @@ const safeJsonLd = JSON.stringify(jsonLd).replace(/</g, "\\u003c")
         }
       };
 
-      const initTheme = () => {
-        const theme = window.getThemePreference();
-        window.applyTheme(theme);
-      };
-      
-      initTheme();
+      window.applyTheme(window.getThemePreference());
 
-      const initLang = () => {
-        const storedLang = localStorage.getItem('lang');
-        const currentIsEn = window.location.pathname.startsWith('/en');
-        
-        if (storedLang === 'en' && !currentIsEn) {
-          window.location.replace('/en/');
-        } else if (storedLang === 'es' && currentIsEn) {
-          window.location.replace('/');
-        } else if (!storedLang) {
-          const browserIsEn = navigator.language.startsWith('en');
-          if (browserIsEn && !currentIsEn) {
-            window.location.replace('/en/');
-          } else if (!browserIsEn && currentIsEn) {
-            window.location.replace('/');
-          }
-        }
-      };
-      
-      initLang();
+      // Solo el atributo lang, antes del primer pintado: sin impacto visual,
+      // pero lectores de pantalla y la heurística del navegador ya leen el
+      // idioma correcto aunque el texto todavía no se haya intercambiado.
+      const storedLang = localStorage.getItem('lang');
+      if (storedLang && /^[a-z]{2}$/.test(storedLang)) {
+        document.documentElement.lang = storedLang;
+      }
     </script>
     <Clarity id="x9rpajde8s" />
     <script>
@@ -199,7 +141,16 @@ const safeJsonLd = JSON.stringify(jsonLd).replace(/</g, "\\u003c")
       <slot />
     </div>
 
+    <LanguageSelector />
     <GlitchFX />
+
+    <script>
+      import { apply, subscribeLanguage } from "@/i18n"
+
+      // Única línea de cableado del i18n: `apply` se auto-registra en su primera
+      // ejecución y `subscribeLanguage` dispara al suscribirse.
+      subscribeLanguage(apply)
+    </script>
   </body>
 </html>
 
@@ -235,7 +186,7 @@ const safeJsonLd = JSON.stringify(jsonLd).replace(/</g, "\\u003c")
     --transition-fast: 150ms ease;
     --transition-normal: 250ms ease;
   }
-  
+
   :root.dark {
     --bg-primary: #050505;
     --bg-secondary: #0A0A0F;

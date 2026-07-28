@@ -1,15 +1,24 @@
 ---
-const { title, id } = Astro.props
+import T from "@/components/T.astro"
+
+interface Props {
+  id: string
+  titleKey?: string
+}
+
+const { titleKey, id } = Astro.props
 ---
 
 <section id={id} class="dashboard-section">
-  {title && (
-    <div class="section-header">
-      <div class="header-line"></div>
-      <h2 class="section-title">{title}</h2>
-      <div class="header-line"></div>
-    </div>
-  )}
+  {
+    titleKey && (
+      <div class="section-header">
+        <div class="header-line" />
+        <T k={titleKey} as="h2" class="section-title" />
+        <div class="header-line" />
+      </div>
+    )
+  }
   <div class="section-content">
     <slot />
   </div>

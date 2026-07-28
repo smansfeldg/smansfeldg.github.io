@@ -1,34 +1,28 @@
 ---
 import Section from "../Section.astro"
-
-interface Props { cv: any }
-const { cv } = Astro.props
-const { summary } = cv.basics
-
-const isEn = Astro.currentLocale === 'en';
-const title = isEn ? "About" : "Acerca de";
+import T from "@/components/T.astro"
 ---
 
-<Section id="about" title={title}>
+<Section id="about" titleKey="about.title">
   <div class="about-panel">
     <div class="panel-header">
-      <span class="panel-label">{isEn ? 'SYSTEM.INFO' : 'SISTEMA.INFO'}</span>
+      <T k="about.panelLabel" class="panel-label" />
       <div class="panel-indicator"></div>
     </div>
     <div class="panel-body">
-      <p class="about-text">{summary}</p>
+      <T k="about.summary" as="p" class="about-text" />
       <div class="about-meta">
         <div class="meta-row">
-          <span class="meta-key">{isEn ? 'STATUS' : 'ESTADO'}</span>
-          <span class="meta-val active">{isEn ? 'Active' : 'Activo'}</span>
+          <T k="about.keys.status" class="meta-key" />
+          <T k="about.values.status" class="meta-val active" />
         </div>
         <div class="meta-row">
-          <span class="meta-key">{isEn ? 'FOCUS' : 'ENFOQUE'}</span>
-          <span class="meta-val">DevOps / Infrastructure</span>
+          <T k="about.keys.focus" class="meta-key" />
+          <T k="about.values.focus" class="meta-val" />
         </div>
         <div class="meta-row">
-          <span class="meta-key">{isEn ? 'LOCATION' : 'UBICACIÓN'}</span>
-          <span class="meta-val">Buenos Aires, AR</span>
+          <T k="about.keys.location" class="meta-key" />
+          <T k="about.values.location" class="meta-val" />
         </div>
       </div>
     </div>

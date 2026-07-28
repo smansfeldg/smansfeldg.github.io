@@ -1,10 +1,10 @@
 ---
-interface Props { cv: any }
-const { cv } = Astro.props
-const { basics } = cv
 import { Image } from "astro:assets"
 import profileImage from "@/assets/profile.png"
 import Section from "@/components/Section.astro"
+import T from "@/components/T.astro"
+import { tAttr } from "@/i18n"
+import content from "@/data/content.json"
 import Mail from "@/icons/Mail.astro"
 import WhatsApp from "@/icons/WhatsApp.astro"
 import X from "@/icons/X.astro"
@@ -13,8 +13,8 @@ import GitHub from "@/icons/GitHub.astro"
 import WorldMap from "@/icons/WorldMap.astro"
 import type { SocialIcon } from "@/types"
 
-const { name, label, location, profiles, phone, email } = basics
-const { city, region } = location
+const { profile, profiles } = content
+const { name, phone, email } = profile
 
 const SOCIAL_ICONS: SocialIcon = {
   GitHub,
@@ -22,12 +22,9 @@ const SOCIAL_ICONS: SocialIcon = {
   X,
 }
 
-const linkedInfo = profiles.find(({ network }: any) => network === "LinkedIn")
-const linkedUrl = linkedInfo?.url
+const linkedUrl = profiles.find(({ network }) => network === "LinkedIn")?.url
 
 const printInfo = [email, phone, linkedUrl].filter(Boolean).join(" • ")
-
-const isEn = Astro.currentLocale === 'en'
 ---
 
 <Section id="hero">
@@ -47,10 +44,10 @@ const isEn = Astro.currentLocale === 'en'
       <div class="hero-main">
         <div class="identity-block">
           <h1 class="hero-name">{name}</h1>
-          <h2 class="hero-role">{label}</h2>
+          <T k="hero.label" as="h2" class="hero-role" />
           <div class="hero-location">
             <WorldMap />
-            <span>{city}, {region}</span>
+            <T k="hero.location" />
           </div>
         </div>
         
@@ -69,7 +66,7 @@ const isEn = Astro.currentLocale === 'en'
           </div>
           <div class="status-badge">
             <span class="status-dot"></span>
-            <span class="status-text">{isEn ? 'Available' : 'Disponible'}</span>
+            <T k="hero.status" class="status-text" />
           </div>
         </div>
       </div>
@@ -77,21 +74,21 @@ const isEn = Astro.currentLocale === 'en'
       <div class="hero-footer">
         <div class="contact-links">
           {email && (
-            <a href={`mailto:${email}`} title={`Enviar un correo electrónico a ${name} al correo ${email}`} target="_blank" rel="noopener noreferrer" class="contact-link" data-track="contact_email_click">
+            <a href={`mailto:${email}`} {...tAttr({ title: "hero.emailTitle" }, { name, email })} target="_blank" rel="noopener noreferrer" class="contact-link" data-track="contact_email_click">
               <Mail />
               <span class="link-label">Email</span>
             </a>
           )}
           {phone && (
-            <a href={`https://wa.me/${phone.replace(/[^0-9]/g, "")}`} title={isEn ? `Send a WhatsApp message to ${name}` : `Enviar un mensaje de WhatsApp a ${name}`} target="_blank" rel="noopener noreferrer" class="contact-link" data-track="contact_whatsapp_click">
+            <a href={`https://wa.me/${phone.replace(/[^0-9]/g, "")}`} {...tAttr({ title: "hero.whatsappTitle" }, { name })} target="_blank" rel="noopener noreferrer" class="contact-link" data-track="contact_whatsapp_click">
               <WhatsApp />
               <span class="link-label">WhatsApp</span>
             </a>
           )}
-          {profiles.map(({ network, url }: any) => {
+          {profiles.map(({ network, url }) => {
             const Icon = SOCIAL_ICONS[network]
             return (
-              <a href={url} title={`Visitar el perfil de ${name} en ${network}`} target="_blank" rel="noopener noreferrer" class="contact-link" data-track={`${network.toLowerCase()}_click`}>
+              <a href={url} {...tAttr({ title: "hero.profileTitle" }, { name, network })} target="_blank" rel="noopener noreferrer" class="contact-link" data-track={`${network.toLowerCase()}_click`}>
                 <Icon />
                 <span class="link-label">{network}</span>
               </a>

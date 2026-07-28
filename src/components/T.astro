@@ -1,0 +1,32 @@
+---
+/**
+ * Único lugar del proyecto donde se escribe `data-i18n`.
+ *
+ * La clave se escribe UNA vez y de ahí salen el texto del render estático y la
+ * marca que usa el binder. Esa es toda la razón de que sea un componente y no
+ * una función: `t("hero.status")` devuelve un string y pierde la clave, así que
+ * habría que repetirla a mano en el atributo — y nada detectaría la divergencia.
+ *
+ *   <T k="hero.status" class="status-text" />
+ *   <T k="experience.jobs.cvc.position" as="h4" />
+ *   <T k="hero.whatsappTitle" params={{ name }} />
+ *
+ * Para atributos (`title`, `aria-label`, `content`) usar `tAttr`, que un
+ * elemento hijo no puede expresar.
+ */
+import { t } from "@/i18n"
+
+interface Props {
+  k: string
+  as?: string
+  params?: Record<string, string | number>
+  [attribute: string]: any
+}
+
+const { k, as: Tag = "span", params, ...rest } = Astro.props
+---
+
+<Tag
+  data-i18n={k}
+  data-i18n-params={params ? JSON.stringify(params) : undefined}
+  {...rest}>{t(k, params)}</Tag>

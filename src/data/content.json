@@ -1,0 +1,190 @@
+{
+  "profile": {
+    "name": "Santiago Ariel Mansfeld",
+    "email": "santimansfeld@proton.me",
+    "phone": "+5491125415924",
+    "url": "https://smansfeldg.github.io"
+  },
+  "profiles": [
+    {
+      "network": "LinkedIn",
+      "username": "santiago-mansfeld",
+      "url": "https://www.linkedin.com/in/santiago-mansfeld/"
+    },
+    {
+      "network": "GitHub",
+      "username": "smansfeldg",
+      "url": "https://github.com/smansfeldg"
+    }
+  ],
+  "work": [
+    {
+      "id": "cvc",
+      "url": "",
+      "startDate": "2026-03-01",
+      "endDate": null
+    },
+    {
+      "id": "accusys",
+      "url": "https://accusystechnology.com/",
+      "startDate": "2024-05-01",
+      "endDate": "2026-03-01"
+    },
+    {
+      "id": "rdigital",
+      "url": "https://www.dealshop.com.ar/",
+      "startDate": "2023-09-01",
+      "endDate": "2024-05-01"
+    },
+    {
+      "id": "lomas",
+      "url": "",
+      "startDate": "2022-08-01",
+      "endDate": "2023-09-01"
+    },
+    {
+      "id": "gidsa",
+      "url": "",
+      "startDate": "2022-03-01",
+      "endDate": "2024-03-01"
+    }
+  ],
+  "education": [
+    {
+      "id": "unlam",
+      "url": "https://www.unlam.edu.ar/",
+      "startDate": "2020-01-01",
+      "endDate": null
+    }
+  ],
+  "certificates": [
+    {
+      "id": "aws-ai-practitioner",
+      "name": "AWS Certified AI Practitioner",
+      "issuer": "Amazon Web Services",
+      "year": "2026",
+      "url": "",
+      "logo": "https://images.credly.com/size/340x340/images/4d4693bb-530e-4bca-9327-de07f3aa2348/image.png"
+    },
+    {
+      "id": "aws-saa",
+      "name": "AWS Certified Solutions Architect - Associate",
+      "issuer": "Amazon Web Services",
+      "year": "2026",
+      "url": "https://www.credly.com/badges/d19582ab-d265-4755-a3a1-7b08e50a1343/public_url",
+      "logo": "https://images.credly.com/size/340x340/images/0e284c3f-5164-4b21-8660-0d84737941bc/image.png"
+    },
+    {
+      "id": "aws-sap",
+      "name": "AWS Certified Solutions Architect - Professional",
+      "issuer": "Amazon Web Services",
+      "year": "2026",
+      "url": "",
+      "logo": "https://images.credly.com/size/340x340/images/2d84e428-9078-49b6-a804-13c15383d0de/image.png"
+    },
+    {
+      "id": "aws-devops-pro",
+      "name": "AWS Certified DevOps Engineer - Professional",
+      "issuer": "Amazon Web Services",
+      "year": "2026",
+      "url": "",
+      "logo": "https://images.credly.com/images/bd31ef42-d460-493e-8503-39592aaf0458/image.png"
+    },
+    {
+      "id": "aws-mla",
+      "name": "AWS Certified Machine Learning Engineer - Associate",
+      "issuer": "Amazon Web Services",
+      "year": "2026",
+      "url": "",
+      "logo": "https://images.credly.com/size/340x340/images/1a634b4e-3d6b-4a74-b118-c0dcb429e8d2/image.png"
+    },
+    {
+      "id": "gcp-devops",
+      "name": "Professional Cloud DevOps Engineer",
+      "issuer": "Google Cloud",
+      "year": "2026",
+      "url": "",
+      "logo": "https://images.credly.com/size/340x340/images/33f08b7e-fa6a-41cd-810a-21cc1c336f6d/image.png"
+    }
+  ],
+  "skills": [
+    { "id": "ec2", "name": "EC2", "level": "advanced", "category": "aws", "icon": "logos:aws-ec2" },
+    { "id": "ecs", "name": "ECS", "level": "advanced", "category": "aws", "icon": "logos:aws-ecs" },
+    { "id": "lambda", "name": "Lambda", "level": "intermediate", "category": "aws", "icon": "logos:aws-lambda" },
+    { "id": "iam", "name": "IAM", "level": "advanced", "category": "aws", "icon": "logos:aws-iam" },
+    { "id": "s3", "name": "S3", "level": "advanced", "category": "aws", "icon": "logos:aws-s3" },
+    { "id": "route53", "name": "Route53", "level": "intermediate", "category": "aws", "icon": "logos:aws-route53" },
+    { "id": "api-gateway", "name": "API Gateway", "level": "intermediate", "category": "aws", "icon": "logos:aws-api-gateway" },
+    { "id": "secrets-manager", "name": "Secrets Manager", "level": "intermediate", "category": "aws", "icon": "logos:aws-secrets-manager" },
+    { "id": "systems-manager", "name": "Systems Manager", "level": "intermediate", "category": "aws", "icon": "logos:aws-systems-manager" },
+    { "id": "auto-scaling", "name": "Auto Scaling", "level": "intermediate", "category": "aws", "icon": "logos:aws" },
+    { "id": "guardduty", "name": "GuardDuty", "level": "intermediate", "category": "aws", "icon": "logos:aws" },
+    { "id": "cloudtrail", "name": "CloudTrail", "level": "intermediate", "category": "aws", "icon": "logos:aws-cloudtrail" },
+    { "id": "eks", "name": "EKS", "level": "intermediate", "category": "aws", "icon": "logos:aws-eks" },
+    { "id": "kubernetes", "name": "Kubernetes", "level": "intermediate", "category": "containers", "icon": "logos:kubernetes" },
+    { "id": "docker", "name": "Docker", "level": "advanced", "category": "containers", "icon": "logos:docker-icon" },
+    { "id": "helm", "name": "Helm", "level": "intermediate", "category": "containers", "icon": "logos:helm" },
+    { "id": "argocd", "name": "ArgoCD", "level": "intermediate", "category": "containers", "icon": "devicon:argocd" },
+    { "id": "jenkins", "name": "Jenkins", "level": "advanced", "category": "cicd", "icon": "logos:jenkins" },
+    { "id": "github-actions", "name": "GitHub Actions", "level": "intermediate", "category": "cicd", "icon": "logos:github-actions" },
+    { "id": "gitlab-ci", "name": "GitLab CI", "level": "intermediate", "category": "cicd", "icon": "material-icon-theme:gitlab" },
+    { "id": "sonarqube", "name": "SonarQube", "level": "intermediate", "category": "cicd", "icon": "devicon:sonarqube" },
+    { "id": "azure-devops", "name": "Azure DevOps", "level": "intermediate", "category": "cicd", "icon": "logos:azure-icon" },
+    { "id": "terraform", "name": "Terraform", "level": "intermediate", "category": "iac", "icon": "logos:terraform-icon" },
+    { "id": "ansible", "name": "Ansible", "level": "intermediate", "category": "iac", "icon": "logos:ansible" },
+    { "id": "cloudformation", "name": "CloudFormation", "level": "intermediate", "category": "iac", "icon": "logos:aws-cloudformation" },
+    { "id": "prometheus", "name": "Prometheus", "level": "intermediate", "category": "observability", "icon": "logos:prometheus" },
+    { "id": "grafana", "name": "Grafana", "level": "intermediate", "category": "observability", "icon": "logos:grafana" },
+    { "id": "cloudwatch", "name": "CloudWatch", "level": "intermediate", "category": "observability", "icon": "logos:aws-cloudwatch" },
+    { "id": "x-ray", "name": "X-Ray", "level": "intermediate", "category": "observability", "icon": "logos:aws-xray" },
+    { "id": "opensearch", "name": "OpenSearch", "level": "intermediate", "category": "observability", "icon": "simple-icons:opensearch" },
+    { "id": "linux", "name": "Linux", "level": "advanced", "category": "infrastructure", "icon": "logos:linux-tux" },
+    { "id": "windows-server", "name": "Windows Server", "level": "intermediate", "category": "infrastructure", "icon": "devicon:windows11" },
+    { "id": "nginx", "name": "Nginx", "level": "intermediate", "category": "infrastructure", "icon": "logos:nginx" },
+    { "id": "git", "name": "Git", "level": "advanced", "category": "infrastructure", "icon": "logos:git-icon" },
+    { "id": "bash", "name": "Bash", "level": "advanced", "category": "development", "icon": "logos:bash-icon" },
+    { "id": "python", "name": "Python", "level": "intermediate", "category": "development", "icon": "logos:python" },
+    { "id": "typescript", "name": "TypeScript", "level": "advanced", "category": "development", "icon": "logos:typescript-icon" },
+    { "id": "node", "name": "Node", "level": "advanced", "category": "development", "icon": "logos:nodejs-icon" },
+    { "id": "nestjs", "name": "NestJS", "level": "advanced", "category": "development", "icon": "logos:nestjs" },
+    { "id": "react", "name": "React", "level": "advanced", "category": "development", "icon": "logos:react" },
+    { "id": "nextjs", "name": "Next.js", "level": "intermediate", "category": "development", "icon": "logos:nextjs-icon" },
+    { "id": "tailwind-css", "name": "Tailwind CSS", "level": "intermediate", "category": "development", "icon": "logos:tailwindcss-icon" },
+    { "id": "astro", "name": "Astro", "level": "intermediate", "category": "development", "icon": "devicon:astro" },
+    { "id": "postgresql", "name": "PostgreSQL", "level": "advanced", "category": "data", "icon": "logos:postgresql" },
+    { "id": "dynamodb", "name": "DynamoDB", "level": "intermediate", "category": "data", "icon": "logos:aws-dynamodb" }
+  ],
+  "projects": [
+    {
+      "id": "cicd-system",
+      "isActive": true,
+      "url": "https://github.com/smansfeldg",
+      "stack": ["jenkins", "ansible", "sonarqube"]
+    },
+    {
+      "id": "easysync",
+      "isActive": true,
+      "url": "https://easysync.gbsj.com.ar/",
+      "stack": ["react", "node", "docker"]
+    },
+    {
+      "id": "dealshop",
+      "isActive": true,
+      "url": "https://www.dealshop.com.ar/",
+      "stack": ["react", "nestjs", "postgresql"]
+    },
+    {
+      "id": "marketfull",
+      "isActive": true,
+      "url": "https://marketfull.com.ar/",
+      "stack": ["react", "nestjs", "postgresql"]
+    }
+  ],
+  "knowsAbout": [
+    "Kubernetes",
+    "AWS",
+    "CI/CD",
+    "DevOps",
+    "Cloud Infrastructure"
+  ]
+}
