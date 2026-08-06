@@ -97,6 +97,15 @@ const profilesInfo = profiles.map(({ network, url }) => ({
   }
 
   /**
+   * Letras que ya tienen dueño. hotkeypad resuelve el atajo mirando SÓLO la
+   * última letra (ignora alt y shift), así que un `alt+J` de un idioma futuro
+   * dispararía también la descarga del CV. El allocator arranca con estas
+   * reservadas: J (CV), M (tema), K (abrir la paleta) y la inicial de cada
+   * perfil, que es como se arma su `ctrl+<letra>` más arriba.
+   */
+  const RESERVED_HOTKEY_LETTERS = ["J", "M", "K", ...profiles.map(({ id }) => id[0].toUpperCase())]
+
+  /**
    * hotkeypad exige un hotkey válido y único por comando. Como la lista de
    * idiomas se descubre sola, las teclas también: `alt+<letra>` tomando la
    * primera libre del código y cayendo al abecedario si ya está tomada.
@@ -130,7 +139,7 @@ const profilesInfo = profiles.map(({ network, url }) => ({
 
   const buildCommands = (language: string) => {
     const { commands, sections } = getTranslations(language).palette
-    const allocate = hotkeyAllocator(new Set<string>())
+    const allocate = hotkeyAllocator(new Set(RESERVED_HOTKEY_LETTERS))
 
     const languageCommands = getAvailableLanguages()
       .filter(({ code }) => code !== language)
@@ -142,7 +151,12 @@ const profilesInfo = profiles.map(({ network, url }) => ({
         id: "download-cv",
         title: commands.downloadCv,
         icon: ICONS.resume,
-        hotkey: "ctrl+P",
+        // Ctrl+J y no Ctrl+P: imprimir ya es Ctrl+P en todos los navegadores.
+        // hotkeypad compara sólo la última letra y exige Ctrl/Cmd, así que la
+        // letra tiene que ser única entre TODOS los comandos, cualquiera sea
+        // el modificador que se muestre — E, M, L y G ya están tomadas por los
+        // idiomas, el tema y los perfiles, y K abre la paleta.
+        hotkey: "ctrl+J",
         section: sections.actions,
         handler: runOnce("download-cv", () => {
           track("command_download_cv")

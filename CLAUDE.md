@@ -78,7 +78,9 @@ To add tracking to a new link/button, add `data-track="some_event"` — no JS wi
 
 `src/components/KeyboardManager.astro` builds a `hotkeypad` command palette (Cmd/Ctrl+K). Commands are assembled client-side: download CV, toggle theme, one command per available language, and one "open profile" command per entry in `content.profiles`. Both lists are derived from data, so adding a profile or a language file adds its command automatically.
 
-The "Download CV" command (Ctrl+P) does **not** call `window.print()` — it downloads the generated PDF for the language currently on screen (see below). The `@media print` rules in `Layout.astro` still govern the browser's own print of the web page.
+The "Download CV" command (Ctrl+J) does **not** call `window.print()` — it downloads the generated PDF for the language currently on screen (see below). The `@media print` rules in `Layout.astro` still govern the browser's own print of the web page, which stays on Ctrl+P.
+
+`hotkeypad` resolves a shortcut by its **last letter plus Ctrl/Cmd only** — it ignores `alt` and `shift`, and its listener sits on the palette container, so hotkeys fire only while the palette is open. Two consequences: displayed modifiers are cosmetic, and every command's letter must be globally unique. `RESERVED_HOTKEY_LETTERS` seeds the language allocator so a future `src/i18n/ja.json` can't grab a letter that already belongs to another command.
 
 The palette builds its DOM in JS from strings, so the i18n binder does not reach it: it subscribes to the language store and calls `setCommands()` again on every change. `hotkeypad` requires a valid unique hotkey per command, so language commands get `alt+<letter>` allocated from the first free letter.
 
