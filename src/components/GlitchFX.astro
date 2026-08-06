@@ -9,17 +9,20 @@
  * Las capas de overlay son hijas directas de <body> a propósito: `mix-blend-mode`
  * solo mezcla dentro del contexto de apilamiento del padre, así que anidarlas
  * dentro de un wrapper con z-index las dejaría mezclando contra la nada.
+ *
+ * El efecto NO corre solo. Hay exactamente tres disparadores, todos ligados a
+ * algo que pasó: la entrada a la página (`firstDelay` después de `load`), el
+ * cambio de tema y el cambio de idioma. Los dos últimos entran por
+ * `window.glitchFX.transition` (ver `src/lib/glitch.ts`). Sin eventos, no hay
+ * ráfagas: no queda ningún timer armado.
  */
 interface Props {
-  /** Ventana aleatoria entre ráfagas, en ms. (60000-120000 = 1-2 min) */
-  minDelay?: number
-  maxDelay?: number
-  /** Duración de cada ráfaga, en ms. */
+  /** Duración de la ráfaga de entrada, en ms. */
   minDuration?: number
   maxDuration?: number
   /** Escala global de amplitud (1 = tal cual está calibrado). */
   intensity?: number
-  /** Retraso de la primera ráfaga después de cargar, en ms. */
+  /** Retraso de la ráfaga de entrada, contado desde `load`, en ms. */
   firstDelay?: number
   /** Duración de la ráfaga que acompaña un cambio de tema o idioma, en ms. */
   transitionDuration?: number
@@ -28,10 +31,6 @@ interface Props {
 }
 
 const {
-  // Espaciado largo a propósito: el efecto vale por raro. Con ráfagas cada 20s
-  // se vuelve decorado de fondo; cada minuto y medio se lee como un evento.
-  minDelay = 60000,
-  maxDelay = 120000,
   minDuration = 260,
   maxDuration = 500,
   intensity = 1,
@@ -48,8 +47,6 @@ const SLICE_POOL = 6
 const BLOCK_POOL = 14
 
 const settings = JSON.stringify({
-  minDelay,
-  maxDelay,
   minDuration,
   maxDuration,
   intensity,
@@ -69,8 +66,6 @@ const settings = JSON.stringify({
 
 <script>
   interface Settings {
-    minDelay: number
-    maxDelay: number
     minDuration: number
     maxDuration: number
     intensity: number
@@ -104,8 +99,6 @@ const settings = JSON.stringify({
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)")
 
     const settings: Settings = {
-      minDelay: 60000,
-      maxDelay: 120000,
       minDuration: 260,
       maxDuration: 500,
       intensity: 1,
@@ -152,7 +145,10 @@ const settings = JSON.stringify({
     const FLASH_TINTS = ["#ffffff", "#8b5cf6", "#22d3ee", "#ff2060"]
     const FLASH_BLENDS = ["screen", "overlay", "difference", "color-dodge"]
 
-    let scheduleTimer = 0
+    let introTimer = 0
+    // La ráfaga de entrada quedó pendiente porque la pestaña estaba oculta
+    // cuando le tocaba. Se cobra al volver, una sola vez.
+    let introPending = false
     let rafId = 0
     let active = false
     let stopped = false
@@ -390,7 +386,6 @@ const settings = JSON.stringify({
       }
 
       active = false
-      if (!stopped) schedule()
     }
 
     /**
@@ -402,10 +397,7 @@ const settings = JSON.stringify({
       if (active || stopped || reduceMotion.matches || document.hidden) return false
 
       targets = collectTargets()
-      if (targets.length === 0) {
-        schedule()
-        return false
-      }
+      if (targets.length === 0) return false
 
       active = true
       frameCount = 0
@@ -426,51 +418,61 @@ const settings = JSON.stringify({
       return true
     }
 
-    const schedule = (delay?: number) => {
-      window.clearTimeout(scheduleTimer)
+    /**
+     * La única ráfaga que no nace de un gesto del usuario. Se cuenta desde
+     * `load` y no desde que corre este módulo: a los 3 s de "terminar de
+     * cargar", con la página ya quieta, el efecto se lee como una presentación;
+     * durante la carga competiría con las fuentes y las imágenes entrando.
+     */
+    const scheduleIntro = () => {
       if (stopped || reduceMotion.matches) return
 
-      scheduleTimer = window.setTimeout(
-        () => {
-          if (document.hidden) {
-            schedule()
-            return
-          }
-          startBurst()
-        },
-        delay ?? rand(settings.minDelay, settings.maxDelay)
-      )
+      introTimer = window.setTimeout(() => {
+        introTimer = 0
+        // En una pestaña de fondo la ráfaga se gastaría sin que nadie la vea:
+        // se guarda y se cobra en el `visibilitychange`.
+        if (document.hidden) introPending = true
+        else startBurst()
+      }, settings.firstDelay)
+    }
+
+    const cancelIntro = () => {
+      window.clearTimeout(introTimer)
+      introTimer = 0
+      introPending = false
     }
 
     const stop = () => {
       stopped = true
-      window.clearTimeout(scheduleTimer)
+      cancelIntro()
       if (active) endBurst()
       else resetLayers()
     }
 
+    /**
+     * Vuelve a habilitar las ráfagas por evento. No re-arma la de entrada: esa
+     * pertenece a la carga de la página y ese momento ya pasó.
+     */
     const start = () => {
-      if (!stopped) return
       stopped = false
-      schedule()
     }
 
     document.addEventListener("visibilitychange", () => {
       if (document.hidden) {
-        window.clearTimeout(scheduleTimer)
         if (active) endBurst()
-      } else if (!stopped) {
-        schedule()
+        return
+      }
+
+      if (introPending && !stopped && !reduceMotion.matches) {
+        introPending = false
+        startBurst()
       }
     })
 
     // Imprimir con el contenido desplazado y teñido arruinaría el PDF.
     window.addEventListener("beforeprint", () => {
-      window.clearTimeout(scheduleTimer)
+      cancelIntro()
       if (active) endBurst()
-    })
-    window.addEventListener("afterprint", () => {
-      if (!stopped) schedule()
     })
 
     reduceMotion.addEventListener("change", () => {
@@ -506,7 +508,11 @@ const settings = JSON.stringify({
       },
     })
 
-    if (!reduceMotion.matches) schedule(settings.firstDelay)
+    // `load` y no la ejecución del módulo: los <script> de Astro son módulos
+    // diferidos, así que corren antes de que terminen de bajar fuentes e
+    // imágenes. Si la página ya cargó, el contador arranca ahora.
+    if (document.readyState === "complete") scheduleIntro()
+    else window.addEventListener("load", scheduleIntro, { once: true })
   }
 </script>
 

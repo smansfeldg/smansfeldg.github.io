@@ -64,6 +64,18 @@ Debugging: in dev, `window.__i18n` exposes `bindings`, `keys()`, `missing(lang)`
 - The theme is toggled from the command palette, which writes `localStorage.theme` and calls the global `window.applyTheme`.
 - The visual language is a dark "terminal/dashboard" aesthetic (purple accent, mono fonts, clip-path corners). Component styles are scoped Astro `<style>` blocks that consume the CSS variables — reuse the variables rather than hardcoding colors. `.no-print` / `.print` classes and a `@media print` block control the print/PDF layout.
 
+## Glitch effect (`src/components/GlitchFX.astro`)
+
+Full-screen distortion bursts. The effect is **event-driven only** — there is no ambient loop and no recurring timer. It runs on exactly three occasions:
+
+1. Once, `firstDelay` (3s) after the `load` event. If the tab is hidden at that moment the burst is held and spent on the next `visibilitychange`, once.
+2. Every theme toggle.
+3. Every language change.
+
+The last two reach it through `withGlitch()` (`src/lib/glitch.ts`) → `window.glitchFX.transition()`, which starts the burst and applies the mutation **mid-burst** (`transitionCut`) so the effect hides the change instead of decorating it. `transition()` returns `true` only if it took charge of the mutation; on `false` — reduced motion, hidden tab, burst already running — the caller applies it directly, so a theme or language change can never be lost to the effect being unavailable.
+
+`window.glitchFX` also exposes `trigger`/`stop`/`start`. `start()` re-enables event bursts but deliberately does not re-arm the intro: that one belongs to page load.
+
 ## Analytics (`src/analytics/`)
 
 A small modular tracking system, wired in via `import "@/analytics/tracking"` in `Layout.astro`'s head.
