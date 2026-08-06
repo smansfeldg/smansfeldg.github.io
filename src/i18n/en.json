@@ -146,6 +146,21 @@
     { "language": "Spanish", "fluency": "Native" },
     { "language": "English", "fluency": "B2" }
   ],
+  "resume": {
+    "sections": {
+      "summary": "Professional Summary",
+      "experience": "Professional Experience",
+      "skills": "Technical Skills",
+      "projects": "Projects",
+      "education": "Education",
+      "certifications": "Certifications",
+      "languages": "Languages"
+    },
+    "labels": {
+      "stack": "Stack",
+      "page": "Page {current} of {total}"
+    }
+  },
   "palette": {
     "hint": "Press <kbd>Cmd</kbd> + <kbd>K</kbd> to open the command palette",
     "openLabel": "Open command palette",
@@ -157,7 +172,7 @@
       "social": "Social"
     },
     "commands": {
-      "print": "Print",
+      "downloadCv": "Download",
       "theme": "Toggle Dark Mode",
       "visit": "Visit {network}",
       "switchTo": "Switch to {language}"

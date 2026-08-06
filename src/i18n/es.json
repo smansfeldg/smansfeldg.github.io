@@ -152,6 +152,21 @@
       "fluency": "B2"
     }
   ],
+  "resume": {
+    "sections": {
+      "summary": "Perfil Profesional",
+      "experience": "Experiencia Profesional",
+      "skills": "Habilidades Técnicas",
+      "projects": "Proyectos",
+      "education": "Educación",
+      "certifications": "Certificaciones",
+      "languages": "Idiomas"
+    },
+    "labels": {
+      "stack": "Stack",
+      "page": "Página {current} de {total}"
+    }
+  },
   "palette": {
     "hint": "Pulsa <kbd>Cmd</kbd> + <kbd>K</kbd> para abrir la paleta de comandos",
     "openLabel": "Abrir la paleta de comandos",
@@ -163,7 +178,7 @@
       "social": "Social"
     },
     "commands": {
-      "print": "Imprimir",
+      "downloadCv": "Descargar",
       "theme": "Alternar modo oscuro",
       "visit": "Visitar {network}",
       "switchTo": "Cambiar a {language}"

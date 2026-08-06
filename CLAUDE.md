@@ -76,9 +76,23 @@ To add tracking to a new link/button, add `data-track="some_event"` — no JS wi
 
 ## Command palette
 
-`src/components/KeyboardManager.astro` builds a `hotkeypad` command palette (Cmd/Ctrl+K). Commands are assembled client-side: print, toggle theme, one command per available language, and one "open profile" command per entry in `content.profiles`. Both lists are derived from data, so adding a profile or a language file adds its command automatically.
+`src/components/KeyboardManager.astro` builds a `hotkeypad` command palette (Cmd/Ctrl+K). Commands are assembled client-side: download CV, toggle theme, one command per available language, and one "open profile" command per entry in `content.profiles`. Both lists are derived from data, so adding a profile or a language file adds its command automatically.
+
+The "Download CV" command (Ctrl+P) does **not** call `window.print()` — it downloads the generated PDF for the language currently on screen (see below). The `@media print` rules in `Layout.astro` still govern the browser's own print of the web page.
 
 The palette builds its DOM in JS from strings, so the i18n binder does not reach it: it subscribes to the language store and calls `setCommands()` again on every change. `hotkeypad` requires a valid unique hotkey per command, so language commands get `alt+<letter>` allocated from the first free letter.
+
+## CV / PDF (`src/cv/`)
+
+The downloadable CV is **generated from the same JSON as the page**, never maintained separately. Editing `content.json` or a language file changes the site and the PDF in the same commit.
+
+- `resume.ts` — builds a flat, style-free document model (`Resume`) from `content.json` + `getTranslations(lang)`. No dependencies, isomorphic. Also owns `resumeFileName()` and `resumeUrl()`, which the client imports — keep it free of `pdf.ts` so pdf-lib never reaches the browser bundle.
+- `pdf.ts` — renders that model with **pdf-lib**. `Writer` is a paginated cursor: everything reserves vertical space before drawing, so a block never gets orphaned across a page break.
+- `src/pages/cv-[lang].pdf.ts` — a static endpoint with `getStaticPaths` over the language catalog. The build emits `dist/cv-<lang>.pdf` for **every** language file, so a new `fr.json` gets `/cv-fr.pdf` for free, and every push to `main` regenerates them through the existing deploy workflow. No committed binary, no manual step.
+
+The layout is deliberately ATS-first: a single column and a single reading order, Helvetica (a standard-14 font, no embedded subset), section headings under the names screeners look for (`resume.sections.*` in the language files), contact details as body text on page one rather than in a header, and links as annotations layered over text that also reads as plain text. Standard fonts encode as WinAnsi, so `sanitize()` in `pdf.ts` degrades anything outside cp1252 instead of letting pdf-lib throw mid-build.
+
+`resumeUrl()` appends a trailing slash in dev only: `trailingSlash: "always"` also applies to endpoints in `astro dev`, while the build writes the literal filename that GitHub Pages serves.
 
 ## Path aliases (`tsconfig.json`)
 
