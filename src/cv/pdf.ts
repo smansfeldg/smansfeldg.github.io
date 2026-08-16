@@ -14,10 +14,8 @@
  *     ("Professional Experience", "Education"), no con los de la web.
  *   - Los datos de contacto van como texto del cuerpo en la primera página,
  *     nunca en un header/footer: muchos parsers descartan esas zonas.
- *   - Los enlaces son anotaciones sobre texto que también se lee plano, así
- *     que sirven al humano sin esconderle nada al robot.
  */
-import { PDFDocument, PDFName, PDFString, StandardFonts, rgb, type PDFFont, type PDFPage, type PDFRef } from "pdf-lib"
+import { PDFDocument, StandardFonts, rgb, type PDFFont, type PDFPage } from "pdf-lib"
 import { buildResume, type Resume, type ResumeEntry } from "./resume"
 
 const PAGE = { width: 612, height: 792 } // Letter, como el LaTeX original.
@@ -72,7 +70,6 @@ type Run = {
   font: PDFFont
   size: number
   color: ReturnType<typeof rgb>
-  href?: string
   /** Un separador no abre línea: si cae en el salto, se descarta. */
   separator?: boolean
 }
@@ -96,7 +93,6 @@ class Writer {
   private page: PDFPage
   private y: number
   readonly pages: PDFPage[] = []
-  private readonly annotations = new Map<PDFPage, PDFRef[]>()
 
   constructor(
     private readonly doc: PDFDocument,
@@ -288,11 +284,6 @@ class Writer {
           font: item.font,
           color: item.color,
         })
-        // Un fragmento partido en dos líneas necesita una anotación por línea.
-        if (item.href) {
-          const width = item.font.widthOfTextAtSize(pending, item.size)
-          this.link(item.href, pendingX, this.y - item.size * 0.25, width, item.size * 1.15)
-        }
         pending = ""
       }
 
@@ -327,30 +318,11 @@ class Writer {
     })
   }
 
-  link(href: string, x: number, y: number, width: number, height: number): void {
-    const ref = this.doc.context.register(
-      this.doc.context.obj({
-        Type: "Annot",
-        Subtype: "Link",
-        Rect: [x, y, x + width, y + height],
-        Border: [0, 0, 0],
-        F: 4,
-        A: this.doc.context.obj({ Type: "Action", S: "URI", URI: PDFString.of(href) }),
-      }),
-    )
-
-    this.annotations.set(this.page, [...(this.annotations.get(this.page) ?? []), ref])
-  }
-
   /**
-   * Vuelca anotaciones y numeración. Va al final porque el total de páginas no
+   * Vuelca numeración de páginas. Va al final porque el total de páginas no
    * se conoce hasta que se escribió la última línea.
    */
   finish(pageLabel: string): void {
-    for (const [page, refs] of this.annotations) {
-      page.node.set(PDFName.of("Annots"), this.doc.context.obj(refs))
-    }
-
     if (this.pages.length < 2) return
 
     this.pages.forEach((page, index) => {
@@ -378,19 +350,13 @@ const drawEntry = (writer: Writer, entry: ResumeEntry): void => {
   writer.ensure(TYPE.entryTitle.leading + TYPE.entrySub.leading + TYPE.body.leading)
   writer.row(entry.title, entry.meta, { color: INK })
 
-  if (entry.subtitle || entry.link) {
-    writer.runs(
-      [
-        ...(entry.subtitle
-          ? [{ text: entry.subtitle, font: writer.regular, size: TYPE.entrySub.size, color: INK_SOFT }]
-          : []),
-        ...(entry.subtitle && entry.link ? [separator(writer.regular, TYPE.entrySub.size)] : []),
-        ...(entry.link
-          ? [{ text: entry.link.text, font: writer.regular, size: TYPE.entrySub.size, color: ACCENT, href: entry.link.href }]
-          : []),
-      ],
-      TYPE.entrySub.leading,
-    )
+  if (entry.subtitle) {
+    writer.paragraph(entry.subtitle, {
+      font: writer.regular,
+      size: TYPE.entrySub.size,
+      leading: TYPE.entrySub.leading,
+      color: INK_SOFT,
+    })
   }
 
   if (entry.summary) {
@@ -441,7 +407,6 @@ export async function renderResumePdf(language: string): Promise<Uint8Array> {
         font: regular,
         size: TYPE.contact.size,
         color: INK_SOFT,
-        href: contact.href,
       },
     ]),
     TYPE.contact.leading,

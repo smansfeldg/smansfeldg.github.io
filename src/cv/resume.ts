@@ -16,10 +16,9 @@
 import content from "@/data/content.json"
 import { getTranslations } from "@/i18n"
 
-/** Un dato de contacto de la cabecera. `href` sólo si es accionable. */
+/** Un dato de contacto de la cabecera. */
 export type ResumeContact = {
   text: string
-  href?: string
 }
 
 /**
@@ -30,8 +29,6 @@ export type ResumeEntry = {
   title: string
   meta?: string
   subtitle?: string
-  /** Se dibuja a continuación del subtítulo, como enlace. */
-  link?: { text: string; href: string }
   summary?: string
   bullets?: string[]
 }
@@ -96,8 +93,6 @@ const skillNamesById = new Map(content.skills.map((skill) => [skill.id, skill.na
 const bareUrl = (url: string): string =>
   url.replace(/^https?:\/\//, "").replace(/^www\./, "").replace(/\/$/, "")
 
-const asLink = (url: string) => (url ? { text: bareUrl(url), href: url } : undefined)
-
 /** Agrupa por categoría preservando el orden de aparición, como Skills.astro. */
 const groupSkillsByCategory = (): Array<{ category: string; names: string[] }> =>
   content.skills.reduce<Array<{ category: string; names: string[] }>>((groups, skill) => {
@@ -153,13 +148,12 @@ export function buildResume(language: string): Resume {
       ? [
           {
             text: profile.phoneDisplay || profile.phone,
-            href: `tel:${profile.phone.replace(/[^+0-9]/g, "")}`,
           },
         ]
       : []),
-    { text: profile.email, href: `mailto:${profile.email}` },
-    { text: bareUrl(profile.url), href: profile.url },
-    ...profiles.map(({ network, url }) => ({ text: `${network}: ${bareUrl(url)}`, href: url })),
+    { text: profile.email },
+    { text: bareUrl(profile.url) },
+    ...profiles.map(({ network, url }) => ({ text: `${network}: ${bareUrl(url)}` })),
   ]
 
   const experience: ResumeEntry[] = [...work].sort(byStartDateDesc).map((job) => {
@@ -169,7 +163,6 @@ export function buildResume(language: string): Resume {
       title: job_?.position ?? job.id,
       subtitle: job_?.name,
       meta: period(job.startDate, job.endDate, text.experience.present, language),
-      link: asLink(job.url),
       summary: job_?.summary,
       bullets: job_?.highlights ? [...job_.highlights] : undefined,
     }
@@ -182,7 +175,6 @@ export function buildResume(language: string): Resume {
       title: school_?.area ?? school.id,
       subtitle: school_?.institution,
       meta: period(school.startDate, school.endDate, text.education.present, language),
-      link: asLink(school.url),
       summary: school_?.studyType,
     }
   })
@@ -195,7 +187,6 @@ export function buildResume(language: string): Resume {
 
     return {
       title: project_?.name ?? project.id,
-      link: asLink(project.url),
       summary: project_?.description,
       subtitle: stack ? `${text.resume.labels.stack}: ${stack}` : undefined,
     }
