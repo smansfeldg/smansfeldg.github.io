@@ -63,15 +63,14 @@ Debugging: in dev, `window.__i18n` exposes `bindings`, `keys()`, `missing(lang)`
 
 ## Glitch effect (`src/components/GlitchFX.astro`)
 
-Full-screen distortion bursts. The effect is **event-driven only** — there is no ambient loop and no recurring timer. It runs on exactly three occasions:
+Full-screen distortion bursts. The effect is **event-driven only** — there is no ambient loop, page-load burst, or automatic timer. It runs on exactly two occasions:
 
-1. Once, `firstDelay` (3s) after the `load` event. If the tab is hidden at that moment the burst is held and spent on the next `visibilitychange`, once.
-2. Every theme toggle.
-3. Every language change.
+1. Every theme toggle.
+2. Every language change.
 
-The last two reach it through `withGlitch()` (`src/lib/glitch.ts`) → `window.glitchFX.transition()`, which starts the burst and applies the mutation **mid-burst** (`transitionCut`) so the effect hides the change instead of decorating it. `transition()` returns `true` only if it took charge of the mutation; on `false` — reduced motion, hidden tab, burst already running — the caller applies it directly, so a theme or language change can never be lost to the effect being unavailable.
+Both reach it through `withGlitch()` (`src/lib/glitch.ts`) → `window.glitchFX.transition()`, which starts the burst and applies the mutation **mid-burst** (`transitionCut`) so the effect hides the change instead of decorating it. `transition()` returns `true` only if it took charge of the mutation; on `false` — reduced motion, hidden tab, burst already running — the caller applies it directly, so a theme or language change can never be lost to the effect being unavailable.
 
-`window.glitchFX` also exposes `trigger`/`stop`/`start`. `start()` re-enables event bursts but deliberately does not re-arm the intro: that one belongs to page load.
+`window.glitchFX` also exposes the manual `trigger`/`stop`/`start` API. `start()` re-enables event bursts without scheduling an effect. Returning to a visible tab does not trigger a burst.
 
 ## Analytics (`src/analytics/`)
 

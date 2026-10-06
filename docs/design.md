@@ -36,7 +36,7 @@ The current system vocabulary includes `$ whoami`, `SYSTEM.INFO`, `CAPABILITIES`
 | [LanguageSelector.astro](../src/components/LanguageSelector.astro) | Desktop language control and native select states |
 | [BackToTop.astro](../src/components/BackToTop.astro) | End-of-page visibility, floating action and motion |
 | [ScrollRuler.astro](../src/components/ScrollRuler.astro) | Desktop reading-progress scale (width ≥ 1200px) that replaces the native scrollbar: section marks, readout, pointer drag |
-| [GlitchFX.astro](../src/components/GlitchFX.astro), [glitch.ts](../src/lib/glitch.ts) | Intro/transition distortion and mutation fallback |
+| [GlitchFX.astro](../src/components/GlitchFX.astro), [glitch.ts](../src/lib/glitch.ts) | Theme/language transition distortion and mutation fallback |
 | [src/icons](../src/icons), [content.json](../src/data/content.json) | Custom interface SVGs and technology icon references |
 | [T.astro](../src/components/T.astro), [src/i18n](../src/i18n) | Translation-aware text, attributes, and language switching |
 
@@ -303,11 +303,11 @@ Ordinary feedback uses `--transition-fast: 150ms ease`; panel changes use `--tra
 
 ### Glitch signature
 
-Glitch is a short event effect over the real visible content, not ambient decoration. Preserve its three automatic triggers: one intro burst 3 seconds after `load`, each theme toggle, and each user language switch routed through `withGlitch`. Intro duration defaults to 260–500ms; transition duration is 560ms with the mutation at `0.45` (about 252ms).
+Glitch is a short event effect over the real visible content, not ambient decoration. It runs only on theme toggles and user language switches routed through `withGlitch`; there is no page-load burst, delayed intro, or automatic replay when returning to a tab. Transition duration is 560ms with the mutation at `0.45` (about 252ms).
 
 The effect uses short distortion phases separated by clean gaps, chromatic offsets, scan regions, blocks, noise and low-opacity flashes. Its saturated cyan/red/other tints belong to this temporary effect, not the resting interface palette. Overlays are fixed, ignore pointer events, and are hidden outside a burst. They remain direct body children so blend/backdrop behavior works. Only visible main children are distorted; quality adapts to rendering performance, and temporary transforms/filters are cleared afterward.
 
-Do not add recurring glitch timers, attach distortion to every hover, lengthen effects into transitions that interrupt reading, or reuse glitch colors as normal component colors. Theme/language mutations must always complete: `withGlitch` applies them immediately if the effect is unavailable, disabled, already active, or the tab is hidden. A hidden-tab intro is deferred once; active effects stop when the tab hides or printing begins.
+Do not add automatic or recurring glitch timers, attach distortion to every hover, lengthen effects into transitions that interrupt reading, or reuse glitch colors as normal component colors. Theme/language mutations must always complete: `withGlitch` applies them immediately if the effect is unavailable, disabled, already active, or the tab is hidden. Active effects stop when the tab hides or printing begins.
 
 ### Reduced motion: current boundary
 

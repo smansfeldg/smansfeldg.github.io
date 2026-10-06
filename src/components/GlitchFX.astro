@@ -10,20 +10,16 @@
  * solo mezcla dentro del contexto de apilamiento del padre, así que anidarlas
  * dentro de un wrapper con z-index las dejaría mezclando contra la nada.
  *
- * El efecto NO corre solo. Hay exactamente tres disparadores, todos ligados a
- * algo que pasó: la entrada a la página (`firstDelay` después de `load`), el
- * cambio de tema y el cambio de idioma. Los dos últimos entran por
+ * El efecto NO corre solo. Se ejecuta al cambiar el tema o el idioma, mediante
  * `window.glitchFX.transition` (ver `src/lib/glitch.ts`). Sin eventos, no hay
  * ráfagas: no queda ningún timer armado.
  */
 interface Props {
-  /** Duración de la ráfaga de entrada, en ms. */
+  /** Duración de una ráfaga manual, en ms. */
   minDuration?: number
   maxDuration?: number
   /** Escala global de amplitud (1 = tal cual está calibrado). */
   intensity?: number
-  /** Retraso de la ráfaga de entrada, contado desde `load`, en ms. */
-  firstDelay?: number
   /** Duración de la ráfaga que acompaña un cambio de tema o idioma, en ms. */
   transitionDuration?: number
   /** Punto de la ráfaga donde se aplica el cambio (0-1). 0.45 = casi al medio. */
@@ -34,9 +30,8 @@ const {
   minDuration = 260,
   maxDuration = 500,
   intensity = 1,
-  firstDelay = 3000,
-  // Más larga que una ráfaga espontánea: tiene que leerse en tres tiempos
-  // (arranca, tapa el cambio, se va), no como un parpadeo.
+  // La transición tiene que leerse en tres tiempos (arranca, tapa el cambio,
+  // se va), no como un parpadeo.
   transitionDuration = 560,
   transitionCut = 0.45,
 } = Astro.props
@@ -50,7 +45,6 @@ const settings = JSON.stringify({
   minDuration,
   maxDuration,
   intensity,
-  firstDelay,
   transitionDuration,
   transitionCut,
 })
@@ -69,7 +63,6 @@ const settings = JSON.stringify({
     minDuration: number
     maxDuration: number
     intensity: number
-    firstDelay: number
     transitionDuration: number
     transitionCut: number
   }
@@ -102,7 +95,6 @@ const settings = JSON.stringify({
       minDuration: 260,
       maxDuration: 500,
       intensity: 1,
-      firstDelay: 3000,
       transitionDuration: 560,
       transitionCut: 0.45,
       ...JSON.parse(stage.dataset.settings || "{}"),
@@ -145,10 +137,6 @@ const settings = JSON.stringify({
     const FLASH_TINTS = ["#ffffff", "#8b5cf6", "#22d3ee", "#ff2060"]
     const FLASH_BLENDS = ["screen", "overlay", "difference", "color-dodge"]
 
-    let introTimer = 0
-    // La ráfaga de entrada quedó pendiente porque la pestaña estaba oculta
-    // cuando le tocaba. Se cobra al volver, una sola vez.
-    let introPending = false
     let rafId = 0
     let active = false
     let stopped = false
@@ -418,60 +406,23 @@ const settings = JSON.stringify({
       return true
     }
 
-    /**
-     * La única ráfaga que no nace de un gesto del usuario. Se cuenta desde
-     * `load` y no desde que corre este módulo: a los 3 s de "terminar de
-     * cargar", con la página ya quieta, el efecto se lee como una presentación;
-     * durante la carga competiría con las fuentes y las imágenes entrando.
-     */
-    const scheduleIntro = () => {
-      if (stopped || reduceMotion.matches) return
-
-      introTimer = window.setTimeout(() => {
-        introTimer = 0
-        // En una pestaña de fondo la ráfaga se gastaría sin que nadie la vea:
-        // se guarda y se cobra en el `visibilitychange`.
-        if (document.hidden) introPending = true
-        else startBurst()
-      }, settings.firstDelay)
-    }
-
-    const cancelIntro = () => {
-      window.clearTimeout(introTimer)
-      introTimer = 0
-      introPending = false
-    }
-
     const stop = () => {
       stopped = true
-      cancelIntro()
       if (active) endBurst()
       else resetLayers()
     }
 
-    /**
-     * Vuelve a habilitar las ráfagas por evento. No re-arma la de entrada: esa
-     * pertenece a la carga de la página y ese momento ya pasó.
-     */
+    /** Vuelve a habilitar las ráfagas por evento. */
     const start = () => {
       stopped = false
     }
 
     document.addEventListener("visibilitychange", () => {
-      if (document.hidden) {
-        if (active) endBurst()
-        return
-      }
-
-      if (introPending && !stopped && !reduceMotion.matches) {
-        introPending = false
-        startBurst()
-      }
+      if (document.hidden && active) endBurst()
     })
 
     // Imprimir con el contenido desplazado y teñido arruinaría el PDF.
     window.addEventListener("beforeprint", () => {
-      cancelIntro()
       if (active) endBurst()
     })
 
@@ -508,11 +459,6 @@ const settings = JSON.stringify({
       },
     })
 
-    // `load` y no la ejecución del módulo: los <script> de Astro son módulos
-    // diferidos, así que corren antes de que terminen de bajar fuentes e
-    // imágenes. Si la página ya cargó, el contador arranca ahora.
-    if (document.readyState === "complete") scheduleIntro()
-    else window.addEventListener("load", scheduleIntro, { once: true })
   }
 </script>
 
