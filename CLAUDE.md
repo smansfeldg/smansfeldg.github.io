@@ -6,6 +6,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Personal portfolio / CV site for Santiago Ariel Mansfeld (DevOps engineer), built with **Astro 4** as a fully static site deployed to GitHub Pages at `https://smansfeldg.github.io`. Content is data-driven from JSON files; there is no CMS or backend.
 
+## UI and design
+
+Before any task involving UI, UX, styling, layout, responsive behavior, components, or animations, read and follow [docs/design.md](docs/design.md) first. It is the single source of truth for the existing visual language; preserve it unless the user explicitly requests a design change.
+
 ## Commands
 
 `pnpm` is the package manager (a `pnpm-lock.yaml` is committed and CI relies on it).
@@ -56,13 +60,6 @@ Drop `src/i18n/<code>.json` in. Nothing else — not routes, components, layouts
 Because the binder swaps text and never adds or removes nodes, **the DOM structure must be identical across languages** — same number of jobs, projects, highlights. `validate.ts` enforces it.
 
 Debugging: in dev, `window.__i18n` exposes `bindings`, `keys()`, `missing(lang)` and `apply(lang)`. Unresolved keys log a warning.
-
-## Theming
-
-- Light/dark theme via a `.dark` class on `<html>`. All colors are CSS custom properties defined in the global `<style>` block of `Layout.astro` (`:root`, `:root.dark`, `:root:not(.dark)`).
-- An inline pre-paint script in `Layout.astro` (`getThemePreference`/`applyTheme`) sets the theme from `localStorage.theme` or `prefers-color-scheme` before first render to avoid a flash.
-- The theme is toggled from the command palette, which writes `localStorage.theme` and calls the global `window.applyTheme`.
-- The visual language is a dark "terminal/dashboard" aesthetic (purple accent, mono fonts, clip-path corners). Component styles are scoped Astro `<style>` blocks that consume the CSS variables — reuse the variables rather than hardcoding colors. `.no-print` / `.print` classes and a `@media print` block control the print/PDF layout.
 
 ## Glitch effect (`src/components/GlitchFX.astro`)
 

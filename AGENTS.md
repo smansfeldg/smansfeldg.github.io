@@ -1,5 +1,9 @@
 # Repository Guidelines
 
+## UI and Design
+
+Before any task involving UI, UX, styling, layout, responsive behavior, components, or animations, read and follow [docs/design.md](docs/design.md) first. It is the single source of truth for the existing visual language; preserve it unless the user explicitly requests a design change.
+
 ## Project Structure & Module Organization
 
 This is an Astro 4 static portfolio/CV site. The single landing page lives in `src/pages/index.astro`; `src/pages/cv-[lang].pdf.ts` generates one downloadable PDF per language. Reusable UI is in `src/components/`, with CV sections in `src/components/sections/`, layouts in `src/layouts/`, and custom SVG icons in `src/icons/`.
