@@ -1,15 +1,17 @@
 ---
 /**
- * Regla de lectura: una escala fija en el margen izquierdo que mide cuánto del
- * documento se recorrió.
+ * Regla de lectura: reemplaza la barra de scroll nativa por una escala fija en
+ * el borde derecho que mide cuánto del documento se recorrió.
  *
  * Es un mapa a escala de la página. Cada marca de sección está en
  * `top / scrollHeight`, así que la distancia entre marcas es proporcional al
  * largo real de cada sección, y el cursor cruza una marca en el mismo momento
  * en que esa sección pasa a ser la activa.
  *
- * Es instrumento, no navegación: no recibe foco ni clics, y queda fuera del
- * árbol de accesibilidad porque repite lo que el navegador ya informa.
+ * Con mouse o lápiz se arrastra como una barra de scroll. En touch es solo un
+ * indicador, igual que el nativo del móvil. Queda fuera del árbol de
+ * accesibilidad y del orden de foco, como la barra que reemplaza: el teclado
+ * sigue desplazando la página por su cuenta.
  */
 ---
 
@@ -26,6 +28,8 @@
         <span class="ruler-section">whoami</span>
       </span>
     </div>
+
+    <div class="ruler-hit" data-track="scroll_ruler"></div>
   </div>
 </div>
 
@@ -40,14 +44,17 @@
   /** Mismo umbral que BackToTop: con menos recorrido no hay nada que medir. */
   const MIN_SCROLL = 100
   const SCROLL_IDLE_MS = 900
+  /** Distancia al cursor dentro de la cual un clic lo agarra en vez de saltar. */
+  const GRAB_TOLERANCE = 8
 
   const ruler = document.getElementById("scroll-ruler")
   const scale = ruler?.querySelector<HTMLElement>(".ruler-scale")
   const marks = ruler?.querySelector<HTMLElement>(".ruler-marks")
   const value = ruler?.querySelector<HTMLElement>(".ruler-value")
   const label = ruler?.querySelector<HTMLElement>(".ruler-section")
+  const hit = ruler?.querySelector<HTMLElement>(".ruler-hit")
 
-  if (ruler && scale && marks && value && label) {
+  if (ruler && scale && marks && value && label && hit) {
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)")
 
     // La primera sección no lleva marca: coincide con el 0 de la escala.
@@ -64,6 +71,7 @@
     let language = ""
     let length = 0
     let maxScroll = 0
+    let cursorY = 0
     let active = -1
     let percent = -1
     let frame = 0
@@ -71,6 +79,7 @@
 
     // Al píxel físico: una línea de 1px en media posición se pinta borrosa.
     const snap = (px: number) => Math.round(px * devicePixelRatio) / devicePixelRatio
+    const clamp = (n: number) => Math.min(Math.max(n, 0), 1)
 
     // offsetTop y no getBoundingClientRect: GlitchFX desplaza las secciones con
     // transforms durante la ráfaga, y una medición en ese momento quedaría corrida.
@@ -94,9 +103,9 @@
       frame = 0
       if (length <= 0) return
 
-      const progress = maxScroll > 0 ? Math.min(Math.max(window.scrollY / maxScroll, 0), 1) : 0
-      const y = snap(progress * length)
-      ruler.style.setProperty("--y", `${y}px`)
+      const progress = maxScroll > 0 ? clamp(window.scrollY / maxScroll) : 0
+      cursorY = snap(progress * length)
+      ruler.style.setProperty("--y", `${cursorY}px`)
 
       const nextPercent = Math.round(progress * 100)
       if (nextPercent !== percent) {
@@ -107,8 +116,8 @@
       // Activa es la última sección cuya marca ya alcanzó el cursor, comparando
       // los mismos píxeles redondeados: el texto cambia justo al cruzar la marca.
       let next = 0
-      sections.forEach(({ mark, y: markY }, index) => {
-        const passed = index > 0 && markY <= y
+      sections.forEach(({ mark, y }, index) => {
+        const passed = index > 0 && y <= cursorY
         if (passed) next = index
         mark?.classList.toggle("is-passed", passed)
       })
@@ -125,7 +134,6 @@
     }
 
     const measure = () => {
-      // Mientras la media query la oculta no hay escala que medir.
       length = scale.offsetHeight - 1
       if (length <= 0) return
 
@@ -171,9 +179,68 @@
       if (active >= 0) writeLabel(false)
     })
 
+    /*
+     * Arrastre, solo con mouse y lápiz. En touch la regla es un indicador, como
+     * el de scroll nativo del móvil: capturar el borde le robaría el gesto de
+     * desplazamiento al pulgar y chocaría con el de volver atrás del sistema.
+     */
+    let grabOffset = 0
+    let dragY = 0
+    let dragFrame = 0
+
+    const scrollToDrag = () => {
+      dragFrame = 0
+      const progress = clamp((dragY - grabOffset - scale.getBoundingClientRect().top) / length)
+      // "instant" y no "auto": `auto` hereda el `scroll-behavior: smooth` del
+      // html y la página quedaría persiguiendo al puntero.
+      window.scrollTo({ top: progress * maxScroll, behavior: "instant" })
+    }
+
+    const follow = (clientY: number) => {
+      dragY = clientY
+      if (!dragFrame) dragFrame = requestAnimationFrame(scrollToDrag)
+    }
+
+    hit.addEventListener("pointerdown", (event) => {
+      if (event.pointerType === "touch" || event.button !== 0 || length <= 0) return
+      event.preventDefault()
+
+      // Agarrar el cursor lo arrastra desde donde está; un clic en la escala lo
+      // lleva primero hasta el puntero, como la pista de una barra de scroll.
+      const offset = event.clientY - (scale.getBoundingClientRect().top + cursorY)
+      grabOffset = Math.abs(offset) <= GRAB_TOLERANCE ? offset : 0
+
+      hit.setPointerCapture(event.pointerId)
+      ruler.classList.add("is-dragging")
+      follow(event.clientY)
+    })
+
+    hit.addEventListener("pointermove", (event) => {
+      if (hit.hasPointerCapture(event.pointerId)) follow(event.clientY)
+    })
+
+    // pointerup y pointercancel sueltan la captura solos; esto cubre ambos.
+    hit.addEventListener("lostpointercapture", () => ruler.classList.remove("is-dragging"))
+
     measure()
   }
 </script>
+
+<style is:global>
+  /* La regla ocupa el lugar de la barra nativa. Se oculta solo con JS, que es
+     lo que hace funcionar la regla: sin scripts la barra se queda. Va en CSS y
+     no en el script para que no haya salto de layout al cargar. */
+  @media (scripting: enabled) {
+    html {
+      scrollbar-width: none;
+    }
+
+    html::-webkit-scrollbar,
+    body::-webkit-scrollbar {
+      display: none;
+    }
+  }
+</style>
 
 <style>
   #scroll-ruler {
@@ -181,12 +248,19 @@
        que todas las líneas de 1px caigan nítidas. */
     --step: 6px;
     --length: calc(var(--step) * 50);
+    /* Largo de las marcas, desde la línea base hacia el contenido. Pegada al
+       borde son cortas para no invadir el margen de 16px del móvil. */
+    --minor: 3px;
+    --medium: 5px;
+    --mark: 8px;
+    --pointer: 10px;
     --y: 0px;
 
-    display: none;
     position: fixed;
-    left: 16px;
+    right: 4px;
     top: calc(50% - var(--length) / 2);
+    /* Sobre el contenido (las esquinas del hero usan 2) y debajo de la paleta. */
+    z-index: 3;
     pointer-events: none;
 
     opacity: 0;
@@ -204,29 +278,30 @@
 
   .ruler-scale {
     position: relative;
-    width: 12px;
+    width: var(--mark);
     height: calc(var(--length) + 1px);
   }
 
-  /* Línea base, marcas cada 10 % (8px) y cada 2 % (4px). El cero y el cien
-     caen sobre marcas de 10 %. */
+  /* Línea base a la derecha, marcas cada 10 % y cada 2 % hacia la izquierda.
+     El cero y el cien caen sobre marcas de 10 %. Cada capa se recorta en el
+     cursor para que el tramo recorrido y el pendiente no se mezclen. */
   .ruler-ticks {
     --tick: var(--border-hover);
     position: absolute;
     inset: 0;
     background:
-      linear-gradient(var(--tick), var(--tick)) 0 0 / 1px 100% no-repeat,
+      linear-gradient(var(--tick), var(--tick)) 100% 0 / 1px 100% no-repeat,
       repeating-linear-gradient(
           to bottom,
           var(--tick) 0 1px,
           transparent 1px calc(var(--step) * 5)
         )
-        0 0 / 8px 100% no-repeat,
-      repeating-linear-gradient(to bottom, var(--tick) 0 1px, transparent 1px var(--step)) 0 0 /
-        4px 100% no-repeat;
+        100% 0 / var(--medium) 100% no-repeat,
+      repeating-linear-gradient(to bottom, var(--tick) 0 1px, transparent 1px var(--step)) 100% 0 /
+        var(--minor) 100% no-repeat;
+    clip-path: inset(var(--y) 0 0 0);
   }
 
-  /* El tramo recorrido es la misma escala en morado, recortada hasta el cursor. */
   .ruler-ticks--passed {
     --tick: var(--accent-purple);
     opacity: 0.5;
@@ -237,8 +312,8 @@
      compilador, hay que alcanzarlas con :global. */
   .ruler-marks :global(span) {
     position: absolute;
-    left: 0;
-    width: 12px;
+    right: 0;
+    width: var(--mark);
     height: 1px;
     background: var(--text-muted);
     transition: background-color var(--transition-fast);
@@ -251,7 +326,7 @@
   .ruler-cursor {
     position: absolute;
     top: 0;
-    left: 0;
+    right: 0;
     transform: translateY(var(--y));
     will-change: transform;
   }
@@ -259,8 +334,8 @@
   .ruler-pointer {
     position: absolute;
     top: 0;
-    left: 0;
-    width: 16px;
+    right: 0;
+    width: var(--pointer);
     height: 1px;
     background: var(--accent-purple);
   }
@@ -271,23 +346,40 @@
     content: "";
     position: absolute;
     top: -3px;
-    left: -3px;
+    right: -3px;
     width: 7px;
     height: 7px;
     background: var(--accent-purple);
     clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
   }
 
+  /* Pegada al borde no hay margen libre: la lectura es una etiqueta, como el
+     tooltip de Skills, que aparece solo mientras hay scroll o arrastre. */
   .ruler-readout {
-    display: none;
     position: absolute;
-    /* Centra la primera línea (10px) sobre el cursor. */
-    top: -5px;
-    left: 22px;
-    flex-direction: column;
-    gap: 4px;
+    /* 20px de alto: centrada sobre el cursor. */
+    top: -10px;
+    right: calc(var(--pointer) + 6px);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 8px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
     font-family: var(--font-mono);
     white-space: nowrap;
+    opacity: 0;
+    transform: translateX(2px);
+    transition:
+      opacity var(--transition-fast),
+      transform var(--transition-fast);
+  }
+
+  #scroll-ruler.is-scrolling .ruler-readout,
+  #scroll-ruler.is-dragging .ruler-readout,
+  #scroll-ruler:hover .ruler-readout {
+    opacity: 1;
+    transform: none;
   }
 
   .ruler-value {
@@ -311,34 +403,76 @@
     color: var(--text-muted);
   }
 
-  /* Mientras hay scroll la lectura toma el color del cursor; en reposo vuelve
-     a segundo plano. */
-  #scroll-ruler.is-scrolling .ruler-value {
+  /* Durante el scroll o el arrastre la lectura toma el color del cursor; en
+     reposo vuelve a segundo plano. */
+  #scroll-ruler.is-scrolling .ruler-value,
+  #scroll-ruler.is-dragging .ruler-value,
+  #scroll-ruler:hover .ruler-value {
     color: var(--accent-purple-text);
   }
 
-  /* Vive en el margen que deja el contenido (900px de ancho máximo), así que
-     solo aparece cuando ese margen existe. Debajo de 1200px se queda sin la
-     lectura de texto; debajo de 1000px, o con poco alto, desaparece. */
-  @media (width >= 1000px) and (height >= 480px) {
-    #scroll-ruler {
+  /* Zona de agarre más ancha que la escala. Solo existe con un puntero fino:
+     en touch el borde sigue siendo del gesto de scroll. */
+  .ruler-hit {
+    display: none;
+    position: absolute;
+    inset: -10px -8px;
+  }
+
+  @media (any-pointer: fine) {
+    .ruler-hit {
       display: block;
+      pointer-events: auto;
+      cursor: grab;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+
+    #scroll-ruler.is-dragging .ruler-hit {
+      cursor: grabbing;
     }
   }
 
+  /* Con margen de sobra la regla se separa del borde, alarga sus marcas y la
+     lectura queda fija junto al cursor, sin fondo. */
   @media (width >= 1200px) {
     #scroll-ruler {
-      left: 24px;
+      right: 24px;
+      --minor: 4px;
+      --medium: 8px;
+      --mark: 12px;
+      --pointer: 16px;
     }
 
     .ruler-readout {
-      display: flex;
+      /* Centra la primera línea (10px) sobre el cursor. */
+      top: -5px;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+      padding: 0;
+      background: none;
+      border: 0;
+      opacity: 1;
+      transform: none;
     }
   }
 
   @media (height < 720px) {
     #scroll-ruler {
       --step: 5px;
+    }
+  }
+
+  @media (height < 480px) {
+    #scroll-ruler {
+      --step: 4px;
+    }
+  }
+
+  @media (height < 360px) {
+    #scroll-ruler {
+      --step: 3px;
     }
   }
 
@@ -353,6 +487,14 @@
     .ruler-value,
     .ruler-marks :global(span) {
       transition: none;
+    }
+
+    .ruler-readout,
+    #scroll-ruler.is-scrolling .ruler-readout,
+    #scroll-ruler.is-dragging .ruler-readout,
+    #scroll-ruler:hover .ruler-readout {
+      transform: none;
+      transition: opacity 120ms linear;
     }
   }
 </style>

@@ -35,7 +35,7 @@ The current system vocabulary includes `$ whoami`, `SYSTEM.INFO`, `CAPABILITIES`
 | [KeyboardManager.astro](../src/components/KeyboardManager.astro) | Desktop command footer, mobile trigger, command palette and library theme overrides |
 | [LanguageSelector.astro](../src/components/LanguageSelector.astro) | Desktop language control and native select states |
 | [BackToTop.astro](../src/components/BackToTop.astro) | End-of-page visibility, floating action and motion |
-| [ScrollRuler.astro](../src/components/ScrollRuler.astro) | Fixed reading-progress scale, section marks and active-section readout |
+| [ScrollRuler.astro](../src/components/ScrollRuler.astro) | Reading-progress scale that replaces the native scrollbar: section marks, readout, pointer drag |
 | [GlitchFX.astro](../src/components/GlitchFX.astro), [glitch.ts](../src/lib/glitch.ts) | Intro/transition distortion and mutation fallback |
 | [src/icons](../src/icons), [content.json](../src/data/content.json) | Custom interface SVGs and technology icon references |
 | [T.astro](../src/components/T.astro), [src/i18n](../src/i18n) | Translation-aware text, attributes, and language switching |
@@ -108,7 +108,7 @@ Use uppercase and wide tracking for short markers, not for paragraphs or every t
 
 ## Page layout and spacing
 
-The single page reads in this order: **Hero → About → Experience → Education (including certifications) → Projects → Skills**. There is no top navigation bar, sidebar, tabbed content area, or separate section-navigation menu. The scroll ruler in the left gutter reports reading position; it is an instrument, not navigation.
+The single page reads in this order: **Hero → About → Experience → Education (including certifications) → Projects → Skills**. There is no top navigation bar, sidebar, tabbed content area, or separate section-navigation menu. The scroll ruler on the right edge replaces the scrollbar and reports reading position; it is a scrollbar, not section navigation.
 
 Use `Section.astro` for top-level content. Its centered `max-width: 900px` includes the horizontal padding because the global box model is `border-box`; at maximum desktop width the inner content is 852px. Do not add an independently wider section or duplicate its horizontal gutters inside a new wrapper.
 
@@ -230,6 +230,7 @@ Keep commands data-driven and translated. The dependency handles search, arrow-k
 | Desktop footer focus | Text/keycaps strengthen; 1px purple outline with -2px offset |
 | Back-to-top hover/focus | Purple tint/text, stronger border; focus outline at 2px offset |
 | Back-to-top press | `translateY(1px) scale(0.98)` unless reduced motion |
+| Scroll ruler hover / drag (fine pointer) | `grab`/`grabbing` cursor, purple percentage, narrow-mode tag shown |
 
 There is no site-wide focus, disabled, loading, selected-tab, form-error or validation-message styling system. Do not document nonexistent states as established patterns. For a newly requested control, derive its states from the closest control and explicitly support keyboard focus; the back-to-top and language selector are useful outline references.
 
@@ -248,25 +249,34 @@ The principal breakpoint is **width ≤ 768px**, with the command footer's deskt
 - Skills keep wrapping rows, with chip padding increased to `6px 10px`; the group container gets smaller padding. Do not shrink all controls proportionally just because prose gets smaller.
 - Main/section whitespace decreases while the same content order and hierarchy remain.
 - Desktop fixed command/language UI gives way to the bottom-left palette trigger and, when visible, a bottom-right back-to-top button. Both mobile controls retain a 44px height.
-- The scroll ruler lives in the gutter outside the 900px content column, so it depends on that gutter existing: full ruler with readout at width ≥ 1200px, scale only at 1000–1199px, hidden below 1000px wide or 480px tall. Phones and portrait tablets rely on the native scroll indicator.
+- The scroll ruler is present at every size, since it replaces the native scrollbar. From 1200px wide it sits 24px from the edge with long ticks and a permanent readout. Below that it hugs the edge (right 4px) with short ticks so it stays inside the 16px mobile gutter, and its readout becomes a tag shown only while scrolling, dragging or hovering. Touch devices get the indicator without drag.
 
 New UI must fit the shared gutters and allow longer translated labels and narrow viewports without horizontal overflow. Prefer wrapping or stacking over new breakpoints. Keep enough space below content for fixed controls; preserve the main bottom padding. The body's `overflow-x: hidden` is not permission to hide a broken layout.
 
 ## Scroll UI and stacking
 
-The root declares `scroll-behavior: smooth`. Sections are fully present in normal document flow: there are no scroll-triggered reveal animations, sticky section headers, parallax content, or scroll snapping. [scroll.ts](../src/analytics/scroll.ts) observes depth and section visibility for analytics; it does not style or reveal content. The only scroll-driven UI is the ruler below, which measures position without changing the content.
+The root declares `scroll-behavior: smooth`. Sections are fully present in normal document flow: there are no scroll-triggered reveal animations, sticky section headers, parallax content, or scroll snapping. [scroll.ts](../src/analytics/scroll.ts) observes depth and section visibility for analytics; it does not style or reveal content. The only scroll-driven UI is the ruler below, which measures position without changing the content. The native scrollbar is hidden in its favor.
 
 ### Scroll ruler
 
-`ScrollRuler.astro` is a vertical measuring scale fixed in the left gutter (left 24px; 16px in its compact range), vertically centered. It is a scaled map of the document: 50 intervals of 2%, a 1px baseline, 4px minor ticks and 8px ticks every 10%, so 0% and 100% fall on long ticks. The interval is a whole pixel (6px; 5px below 720px of viewport height, 8px from 1000px) to keep every 1px line crisp.
+`ScrollRuler.astro` replaces the native scrollbar with a vertical measuring scale fixed on the right edge, vertically centered. It is a scaled map of the document: 50 intervals of 2% along a 1px baseline on the outer side, with ticks pointing inward toward the content. Ticks every 10% are longer, so 0% and 100% fall on long ticks. The interval is a whole pixel (8px from 1000px of viewport height, 6px by default, then 5/4/3px below 720/480/360px) to keep every 1px line crisp.
 
-- Section marks are 12px ticks placed at each section's `top / scrollHeight`, so the gaps between them are proportional to the real length of each section. The first section has no mark: it coincides with the zero. Sections are discovered from `main section[id]`, and their names come from the `data-title-key` that `Section.astro` emits. The untitled hero is named `whoami` after its terminal prompt.
-- The cursor is the About diamond (7px, odd so it centers on 1px) plus a 16px `--accent-purple` line. Progress is `scrollY / (scrollHeight − innerHeight)`, snapped to device pixels.
+| Mode | Placement | Minor / 10% / section tick / cursor line | Readout |
+| --- | --- | --- | --- |
+| Width ≥ 1200px | right 24px | 4 / 8 / 12 / 16px | Permanent, two lines, no surface |
+| Narrower | right 4px | 3 / 5 / 8 / 10px | Tag shown while scrolling, dragging or hovering |
+
+The native scrollbar is hidden by a deliberate global rule in the component (`scrollbar-width: none` plus `::-webkit-scrollbar` on `html`/`body`). It is gated on `@media (scripting: enabled)`, so it applies before first paint, causes no layout shift, and leaves the native bar in place without JavaScript. Browsers without that media feature show both, which is acceptable degradation.
+
+- Section marks are the longest ticks, placed at each section's `top / scrollHeight`, so the gaps between them are proportional to the real length of each section. The first section has no mark: it coincides with the zero. Sections are discovered from `main section[id]`, and their names come from the `data-title-key` that `Section.astro` emits. The untitled hero is named `whoami` after its terminal prompt.
+- The cursor is the About diamond (7px, odd so it centers on 1px) on the baseline plus an `--accent-purple` line. Progress is `scrollY / (scrollHeight − innerHeight)`, snapped to device pixels.
 - The traversed part of the scale repeats the ticks in `--accent-purple` at opacity `0.5`, clipped to the cursor. Unvisited ticks use `--border-hover` and unvisited section marks use `--text-muted`; marks turn purple once passed. The active section is the last mark the cursor has reached, so the label changes on the same pixel where the cursor crosses the mark.
-- The readout sits 22px from the baseline: the percentage in mono 10px weight 500 with tabular figures, and below it the active section in mono 9px, uppercase, `0.15em` tracking, muted, truncated at 104px. The percentage is `--text-secondary` at rest and `--accent-purple-text` while the page is scrolling, settling 900ms after the last scroll event.
-- It is `aria-hidden`, ignores pointer input and never receives focus: it repeats what the browser already reports. It shares BackToTop's 100px scroll threshold and stays invisible below it. It is `.no-print`.
+- The readout sits 6px inside the cursor line, aligned to the right: the percentage in mono 10px weight 500 with tabular figures, and the active section in mono 9px, uppercase, `0.15em` tracking, muted, truncated at 104px. The percentage is `--text-secondary` at rest and `--accent-purple-text` while scrolling, dragging or hovering; scrolling settles 900ms after the last scroll event. The narrow-mode tag follows the Skills tooltip: secondary surface, 1px border, `4px 8px` padding, a single row with an 8px gap, and a 2px horizontal fade/translation.
+- With a fine pointer (`any-pointer: fine`, i.e. mouse, pen or trackpad) it behaves like a scrollbar. A hit zone 8px wider on each side and 10px past each end shows a `grab` cursor. Pressing within 8px of the cursor grabs it where it is; pressing elsewhere on the scale jumps there first, then drags. Scrolling uses `behavior: "instant"`, because `auto` would inherit the root's smooth scrolling and lag behind the pointer. Clicks emit `scroll_ruler` through `data-track`.
+- Touch input never drags. On touch-only devices the hit zone does not exist, and on hybrids touch pointers are ignored, so the edge keeps the native scroll gesture and the system back gesture. This matches the passive mobile scroll indicator it replaces.
+- It is `aria-hidden` and never receives focus, like the native scrollbar: keyboard scrolling is unchanged. It shares BackToTop's 100px scroll threshold and stays invisible below it. It is `.no-print`.
 
-Do not make the ruler clickable or turn it into section navigation, add more data to the readout, or add other gutter instruments beside it. Its marks come from the real section layout; never place them at decorative intervals.
+Do not turn the ruler into section navigation (no snapping to marks, no clickable labels), enable drag for touch, add more data to the readout, or add other instruments beside it. Its marks come from the real section layout; never place them at decorative intervals.
 
 `BackToTop.astro` observes a 1px sentinel at the document end using `IntersectionObserver` with a 48px bottom root margin. The button appears near the end only when document height exceeds the viewport by more than 100px. It is not shown after an arbitrary scroll-distance threshold. Without IntersectionObserver it is shown as a fallback.
 
@@ -274,7 +284,7 @@ At rest it uses panel fill, a 1px border, faint border glow, mono 10px weight-60
 
 Hidden state combines opacity zero, `visibility: hidden`, disabled pointer events, and a 10px downward / `0.96` scale offset; it stays out of focus and hit testing. `.is-visible` restores those states. Preserve this functional relationship if visibility is extended.
 
-Existing z-index values: background 0, app layout 1, hero corner marks 2 locally, scroll ruler auto (it only occupies the gutter and overlaps nothing), back-to-top 49, command footer/mobile trigger 50, language switch 51, glitch stage/noise/flash 9998/9999/10000. Local stacking contexts matter; these numbers are not a global overlay guarantee. Do not increase z-indices arbitrarily or place new fixed UI over existing bottom controls.
+Existing z-index values: background 0, app layout 1, hero corner marks 2 locally, scroll ruler 3 (above content and the hero corners so its narrow-mode tag can overlay the gutter edge, below the palette), back-to-top 49, command footer/mobile trigger 50, language switch 51, glitch stage/noise/flash 9998/9999/10000. Local stacking contexts matter; these numbers are not a global overlay guarantee. Do not increase z-indices arbitrarily or place new fixed UI over existing bottom controls.
 
 ## Motion and animation
 
@@ -288,7 +298,7 @@ Ordinary feedback uses `--transition-fast: 150ms ease`; panel changes use `--tra
 | Active project dot | 2s ease-in-out pulse, opacity 1 → 0.4 → 1 |
 | Back-to-top reveal | 420ms opacity/transform, `cubic-bezier(0.22, 1, 0.36, 1)`; delayed visibility removal when hiding |
 | Back-to-top arrow | 2.8s ease-in-out loop after 420ms, maximum upward travel 2px |
-| Scroll ruler | Cursor follows scroll directly, without easing; active-section label fades in over 250ms ease-out; readout color 250ms; passed-mark color 150ms; visibility 250ms opacity |
+| Scroll ruler | Cursor follows scroll and drag directly, without easing; active-section label fades in over 250ms ease-out; readout color 250ms; narrow-mode tag 150ms opacity plus 2px translation; passed-mark color 150ms; visibility 250ms opacity |
 | Skill tooltip / cert arrow | Small local translation paired with fast feedback |
 
 ### Glitch signature
@@ -301,7 +311,7 @@ Do not add recurring glitch timers, attach distortion to every hover, lengthen e
 
 ### Reduced motion: current boundary
 
-Glitch checks `prefers-reduced-motion` in JS and hides its layers in CSS. Back-to-top removes its transform/arrow animation and uses a 120ms linear fade; its click handler requests `auto` rather than `smooth` scrolling. The scroll ruler drops its label fade and color transitions; its cursor still tracks the scroll position, since that is direct feedback, not animation. There is no blanket reduced-motion override for background fog, cursor/status loops, the palette fade, other CSS transitions, or the global smooth-scroll declaration. Do not claim the whole site disables motion. New motion should provide its own reduced-motion alternative and must never be necessary for an action to work.
+Glitch checks `prefers-reduced-motion` in JS and hides its layers in CSS. Back-to-top removes its transform/arrow animation and uses a 120ms linear fade; its click handler requests `auto` rather than `smooth` scrolling. The scroll ruler drops its label fade, color transitions and tag translation (the tag keeps a 120ms linear fade); its cursor still tracks the scroll position, since that is direct feedback, not animation. There is no blanket reduced-motion override for background fog, cursor/status loops, the palette fade, other CSS transitions, or the global smooth-scroll declaration. Do not claim the whole site disables motion. New motion should provide its own reduced-motion alternative and must never be necessary for an action to work.
 
 ## Iconography and imagery
 
@@ -319,7 +329,7 @@ Avoid emoji as UI icons, oversized decorative icon medallions, mixed unrelated i
 
 Keep language-neutral facts and stable IDs in `src/data/content.json`; put user-facing copy in every `src/i18n/<lang>.json`. Use `<T>` for text and `tAttr` for translated attributes, importing the public `@/i18n` API. Keep matching structure across languages: switching patches the same DOM rather than loading another page. Do not hardcode uppercase through JS where CSS can apply it, or force English-sized widths onto translated text.
 
-Styles are scoped Astro component styles except for deliberate global rules in Layout, GlitchFX and the palette overrides. Use `@/` for project imports. Content inserted through `set:html` does not receive Astro's scoped attributes; the footer's `.footer-text :global(kbd)` is the reference for styling such descendants. Do not broaden component styles globally to solve a local problem.
+Styles are scoped Astro component styles except for deliberate global rules in Layout, GlitchFX, the palette overrides and the scrollbar rule in ScrollRuler. Use `@/` for project imports. Content inserted through `set:html` does not receive Astro's scoped attributes; the footer's `.footer-text :global(kbd)` is the reference for styling such descendants. Do not broaden component styles globally to solve a local problem.
 
 Browser printing hides `.no-print` UI and background effects, reveals `.print` content (including the hero contact text), and avoids breaks inside articles. Glitch stops before print. This is not a full separate monochrome print theme. The downloadable CV is rendered separately by [pdf.ts](../src/cv/pdf.ts) from the same data: an ATS-oriented single column with Helvetica, restrained purple accents, text contacts and simple rules. Do not transfer web panel/glitch geometry into that document or use its font as the website font.
 
@@ -335,7 +345,7 @@ Some definitions are inactive: Skills has `.skill-bar`/`.skill-fill` CSS without
 - Using green for arbitrary emphasis, decorative accent colors for essential text, or color alone to convey status.
 - Making hover the only path to an action, removing visible focus, or treating inert tags/cards as buttons.
 - Adding scroll reveals, sticky navigation, or new utility controls without an explicit feature need and checking existing fixed UI.
-- Generic full-width reading-progress bars, or a second scroll indicator alongside the ruler.
+- Generic full-width reading-progress bars, restoring the native scrollbar next to the ruler, or a second scroll indicator.
 
 ## Rules for extending the UI
 
