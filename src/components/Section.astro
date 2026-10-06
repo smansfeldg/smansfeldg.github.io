@@ -9,7 +9,9 @@ interface Props {
 const { titleKey, id } = Astro.props
 ---
 
-<section id={id} class="dashboard-section">
+{/* `data-title-key` lo lee ScrollRuler para nombrar la sección activa en
+    cualquier idioma sin mantener una lista paralela de secciones. */}
+<section id={id} class="dashboard-section" data-title-key={titleKey}>
   {
     titleKey && (
       <div class="section-header">

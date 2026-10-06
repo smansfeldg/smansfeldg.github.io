@@ -93,6 +93,10 @@ The "Download CV" command (Ctrl+J) does **not** call `window.print()` — it dow
 
 The palette builds its DOM in JS from strings, so the i18n binder does not reach it: it subscribes to the language store and calls `setCommands()` again on every change. `hotkeypad` requires a valid unique hotkey per command, so language commands get `alt+<letter>` allocated from the first free letter.
 
+## Scroll ruler (`src/components/ScrollRuler.astro`)
+
+A passive reading-progress scale in the left gutter (`aria-hidden`, no pointer input, `.no-print`). It discovers sections from `main section[id]` at runtime and places a mark at each section's `top / scrollHeight`, so a new `<Section>` gets its mark for free. Names come from the `data-title-key` attribute `Section.astro` emits, resolved with `t(key, undefined, language)` in a language subscriber rather than read from the DOM, so it never races the binder. Positions are re-measured on `resize` and through a `ResizeObserver` on `body` (fonts, language changes). It measures with `offsetTop` because GlitchFX transforms sections mid-burst.
+
 ## CV / PDF (`src/cv/`)
 
 The downloadable CV is **generated from the same JSON as the page**, never maintained separately. Editing `content.json` or a language file changes the site and the PDF in the same commit.

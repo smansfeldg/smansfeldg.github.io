@@ -1,0 +1,358 @@
+---
+/**
+ * Regla de lectura: una escala fija en el margen izquierdo que mide cuánto del
+ * documento se recorrió.
+ *
+ * Es un mapa a escala de la página. Cada marca de sección está en
+ * `top / scrollHeight`, así que la distancia entre marcas es proporcional al
+ * largo real de cada sección, y el cursor cruza una marca en el mismo momento
+ * en que esa sección pasa a ser la activa.
+ *
+ * Es instrumento, no navegación: no recibe foco ni clics, y queda fuera del
+ * árbol de accesibilidad porque repite lo que el navegador ya informa.
+ */
+---
+
+<div id="scroll-ruler" class="no-print" aria-hidden="true">
+  <div class="ruler-scale">
+    <div class="ruler-ticks"></div>
+    <div class="ruler-ticks ruler-ticks--passed"></div>
+    <div class="ruler-marks"></div>
+
+    <div class="ruler-cursor">
+      <span class="ruler-pointer"></span>
+      <span class="ruler-readout">
+        <span class="ruler-value">0%</span>
+        <span class="ruler-section">whoami</span>
+      </span>
+    </div>
+  </div>
+</div>
+
+<script>
+  import { subscribeLanguage, t } from "@/i18n"
+
+  /**
+   * El hero no lleva título de sección: se nombra con el comando de su barra
+   * de terminal (`$ whoami`), que tampoco se traduce.
+   */
+  const UNTITLED_LABEL = "whoami"
+  /** Mismo umbral que BackToTop: con menos recorrido no hay nada que medir. */
+  const MIN_SCROLL = 100
+  const SCROLL_IDLE_MS = 900
+
+  const ruler = document.getElementById("scroll-ruler")
+  const scale = ruler?.querySelector<HTMLElement>(".ruler-scale")
+  const marks = ruler?.querySelector<HTMLElement>(".ruler-marks")
+  const value = ruler?.querySelector<HTMLElement>(".ruler-value")
+  const label = ruler?.querySelector<HTMLElement>(".ruler-section")
+
+  if (ruler && scale && marks && value && label) {
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)")
+
+    // La primera sección no lleva marca: coincide con el 0 de la escala.
+    const sections = Array.from(
+      document.querySelectorAll<HTMLElement>("main section[id]"),
+      (element, index) => ({
+        element,
+        key: element.dataset.titleKey,
+        mark: index > 0 ? marks.appendChild(document.createElement("span")) : null,
+        y: 0,
+      }),
+    )
+
+    let language = ""
+    let length = 0
+    let maxScroll = 0
+    let active = -1
+    let percent = -1
+    let frame = 0
+    let idle = 0
+
+    // Al píxel físico: una línea de 1px en media posición se pinta borrosa.
+    const snap = (px: number) => Math.round(px * devicePixelRatio) / devicePixelRatio
+
+    // offsetTop y no getBoundingClientRect: GlitchFX desplaza las secciones con
+    // transforms durante la ráfaga, y una medición en ese momento quedaría corrida.
+    const documentTop = (element: HTMLElement) => {
+      let top = 0
+      for (let node: HTMLElement | null = element; node; node = node.offsetParent as HTMLElement | null) {
+        top += node.offsetTop
+      }
+      return top
+    }
+
+    const writeLabel = (animate: boolean) => {
+      const key = sections[active]?.key
+      label.textContent = key ? t(key, undefined, language) : UNTITLED_LABEL
+      if (animate && !reduceMotion.matches) {
+        label.animate?.([{ opacity: 0 }, { opacity: 1 }], { duration: 250, easing: "ease-out" })
+      }
+    }
+
+    const render = () => {
+      frame = 0
+      if (length <= 0) return
+
+      const progress = maxScroll > 0 ? Math.min(Math.max(window.scrollY / maxScroll, 0), 1) : 0
+      const y = snap(progress * length)
+      ruler.style.setProperty("--y", `${y}px`)
+
+      const nextPercent = Math.round(progress * 100)
+      if (nextPercent !== percent) {
+        percent = nextPercent
+        value.textContent = `${percent}%`
+      }
+
+      // Activa es la última sección cuya marca ya alcanzó el cursor, comparando
+      // los mismos píxeles redondeados: el texto cambia justo al cruzar la marca.
+      let next = 0
+      sections.forEach(({ mark, y: markY }, index) => {
+        const passed = index > 0 && markY <= y
+        if (passed) next = index
+        mark?.classList.toggle("is-passed", passed)
+      })
+
+      if (next !== active) {
+        const first = active < 0
+        active = next
+        writeLabel(!first)
+      }
+    }
+
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(render)
+    }
+
+    const measure = () => {
+      // Mientras la media query la oculta no hay escala que medir.
+      length = scale.offsetHeight - 1
+      if (length <= 0) return
+
+      const height = document.documentElement.scrollHeight
+      maxScroll = height - window.innerHeight
+
+      for (const section of sections) {
+        section.y = snap((documentTop(section.element) / height) * length)
+        section.mark?.style.setProperty("top", `${section.y}px`)
+      }
+
+      ruler.classList.toggle("is-active", maxScroll > MIN_SCROLL)
+      render()
+    }
+
+    let measureFrame = 0
+    const scheduleMeasure = () => {
+      cancelAnimationFrame(measureFrame)
+      measureFrame = requestAnimationFrame(measure)
+    }
+
+    window.addEventListener(
+      "scroll",
+      () => {
+        schedule()
+        ruler.classList.add("is-scrolling")
+        clearTimeout(idle)
+        idle = window.setTimeout(() => ruler.classList.remove("is-scrolling"), SCROLL_IDLE_MS)
+      },
+      { passive: true },
+    )
+
+    // `resize` cubre el alto de la ventana y el zoom (cambia devicePixelRatio);
+    // el ResizeObserver, todo lo que cambia el alto del documento: fuentes que
+    // terminan de cargar, textos de otro idioma.
+    window.addEventListener("resize", scheduleMeasure)
+    if ("ResizeObserver" in window) new ResizeObserver(scheduleMeasure).observe(document.body)
+
+    // `t` con idioma explícito y no el texto del encabezado: así no depende de
+    // que el binder haya corrido antes que este suscriptor.
+    subscribeLanguage((code) => {
+      language = code
+      if (active >= 0) writeLabel(false)
+    })
+
+    measure()
+  }
+</script>
+
+<style>
+  #scroll-ruler {
+    /* Paso entre marcas menores: 50 intervalos de 2 %. En píxeles enteros para
+       que todas las líneas de 1px caigan nítidas. */
+    --step: 6px;
+    --length: calc(var(--step) * 50);
+    --y: 0px;
+
+    display: none;
+    position: fixed;
+    left: 16px;
+    top: calc(50% - var(--length) / 2);
+    pointer-events: none;
+
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity var(--transition-normal),
+      visibility 0s linear 250ms;
+  }
+
+  #scroll-ruler.is-active {
+    opacity: 1;
+    visibility: visible;
+    transition-delay: 0s;
+  }
+
+  .ruler-scale {
+    position: relative;
+    width: 12px;
+    height: calc(var(--length) + 1px);
+  }
+
+  /* Línea base, marcas cada 10 % (8px) y cada 2 % (4px). El cero y el cien
+     caen sobre marcas de 10 %. */
+  .ruler-ticks {
+    --tick: var(--border-hover);
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(var(--tick), var(--tick)) 0 0 / 1px 100% no-repeat,
+      repeating-linear-gradient(
+          to bottom,
+          var(--tick) 0 1px,
+          transparent 1px calc(var(--step) * 5)
+        )
+        0 0 / 8px 100% no-repeat,
+      repeating-linear-gradient(to bottom, var(--tick) 0 1px, transparent 1px var(--step)) 0 0 /
+        4px 100% no-repeat;
+  }
+
+  /* El tramo recorrido es la misma escala en morado, recortada hasta el cursor. */
+  .ruler-ticks--passed {
+    --tick: var(--accent-purple);
+    opacity: 0.5;
+    clip-path: inset(0 0 calc(100% - var(--y) - 1px) 0);
+  }
+
+  /* Las marcas de sección se crean en JS: sin el atributo de scope del
+     compilador, hay que alcanzarlas con :global. */
+  .ruler-marks :global(span) {
+    position: absolute;
+    left: 0;
+    width: 12px;
+    height: 1px;
+    background: var(--text-muted);
+    transition: background-color var(--transition-fast);
+  }
+
+  .ruler-marks :global(span.is-passed) {
+    background: var(--accent-purple);
+  }
+
+  .ruler-cursor {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: translateY(var(--y));
+    will-change: transform;
+  }
+
+  .ruler-pointer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 16px;
+    height: 1px;
+    background: var(--accent-purple);
+  }
+
+  /* El mismo diamante que el indicador de About, impar para centrarse sobre
+     una línea de 1px. */
+  .ruler-pointer::before {
+    content: "";
+    position: absolute;
+    top: -3px;
+    left: -3px;
+    width: 7px;
+    height: 7px;
+    background: var(--accent-purple);
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+  }
+
+  .ruler-readout {
+    display: none;
+    position: absolute;
+    /* Centra la primera línea (10px) sobre el cursor. */
+    top: -5px;
+    left: 22px;
+    flex-direction: column;
+    gap: 4px;
+    font-family: var(--font-mono);
+    white-space: nowrap;
+  }
+
+  .ruler-value {
+    font-size: 10px;
+    font-weight: 500;
+    line-height: 10px;
+    letter-spacing: 0.03em;
+    font-variant-numeric: tabular-nums;
+    color: var(--text-secondary);
+    transition: color var(--transition-normal);
+  }
+
+  .ruler-section {
+    max-width: 104px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 9px;
+    line-height: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  /* Mientras hay scroll la lectura toma el color del cursor; en reposo vuelve
+     a segundo plano. */
+  #scroll-ruler.is-scrolling .ruler-value {
+    color: var(--accent-purple-text);
+  }
+
+  /* Vive en el margen que deja el contenido (900px de ancho máximo), así que
+     solo aparece cuando ese margen existe. Debajo de 1200px se queda sin la
+     lectura de texto; debajo de 1000px, o con poco alto, desaparece. */
+  @media (width >= 1000px) and (height >= 480px) {
+    #scroll-ruler {
+      display: block;
+    }
+  }
+
+  @media (width >= 1200px) {
+    #scroll-ruler {
+      left: 24px;
+    }
+
+    .ruler-readout {
+      display: flex;
+    }
+  }
+
+  @media (height < 720px) {
+    #scroll-ruler {
+      --step: 5px;
+    }
+  }
+
+  @media (height >= 1000px) {
+    #scroll-ruler {
+      --step: 8px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #scroll-ruler,
+    .ruler-value,
+    .ruler-marks :global(span) {
+      transition: none;
+    }
+  }
+</style>
