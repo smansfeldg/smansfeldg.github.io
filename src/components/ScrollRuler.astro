@@ -1,7 +1,7 @@
 ---
 /**
  * Regla de lectura: reemplaza la barra de scroll nativa por una escala fija en
- * el borde derecho que mide cuánto del documento se recorrió.
+ * el borde derecho en desktop (desde 1200px) que mide cuánto del documento se recorrió.
  *
  * Es un mapa a escala de la página. Cada marca de sección está en
  * `top / scrollHeight`, así que la distancia entre marcas es proporcional al
@@ -227,10 +227,10 @@
 </script>
 
 <style is:global>
-  /* La regla ocupa el lugar de la barra nativa. Se oculta solo con JS, que es
+  /* En desktop la regla ocupa el lugar de la barra nativa. Se oculta solo con JS, que es
      lo que hace funcionar la regla: sin scripts la barra se queda. Va en CSS y
      no en el script para que no haya salto de layout al cargar. */
-  @media (scripting: enabled) {
+  @media (scripting: enabled) and (width >= 1200px) {
     html {
       scrollbar-width: none;
     }
@@ -248,16 +248,15 @@
        que todas las líneas de 1px caigan nítidas. */
     --step: 6px;
     --length: calc(var(--step) * 50);
-    /* Largo de las marcas, desde la línea base hacia el contenido. Pegada al
-       borde son cortas para no invadir el margen de 16px del móvil. */
-    --minor: 3px;
-    --medium: 5px;
-    --mark: 8px;
-    --pointer: 10px;
+    /* Largo de las marcas, desde la línea base hacia el contenido. */
+    --minor: 4px;
+    --medium: 8px;
+    --mark: 12px;
+    --pointer: 16px;
     --y: 0px;
 
     position: fixed;
-    right: 4px;
+    right: 24px;
     top: calc(50% - var(--length) / 2);
     /* Sobre el contenido (las esquinas del hero usan 2) y debajo de la paleta. */
     z-index: 3;
@@ -353,33 +352,18 @@
     clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
   }
 
-  /* Pegada al borde no hay margen libre: la lectura es una etiqueta, como el
-     tooltip de Skills, que aparece solo mientras hay scroll o arrastre. */
+  /* La lectura queda fija junto al cursor, en el margen libre, sin fondo. */
   .ruler-readout {
     position: absolute;
-    /* 20px de alto: centrada sobre el cursor. */
-    top: -10px;
+    /* Centra la primera línea (10px) sobre el cursor. */
+    top: -5px;
     right: calc(var(--pointer) + 6px);
     display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 4px 8px;
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
     font-family: var(--font-mono);
     white-space: nowrap;
-    opacity: 0;
-    transform: translateX(2px);
-    transition:
-      opacity var(--transition-fast),
-      transform var(--transition-fast);
-  }
-
-  #scroll-ruler.is-scrolling .ruler-readout,
-  #scroll-ruler.is-dragging .ruler-readout,
-  #scroll-ruler:hover .ruler-readout {
-    opacity: 1;
-    transform: none;
   }
 
   .ruler-value {
@@ -433,28 +417,10 @@
     }
   }
 
-  /* Con margen de sobra la regla se separa del borde, alarga sus marcas y la
-     lectura queda fija junto al cursor, sin fondo. */
-  @media (width >= 1200px) {
+  /* En pantallas más estrechas se conserva el scrollbar nativo. */
+  @media (width < 1200px) {
     #scroll-ruler {
-      right: 24px;
-      --minor: 4px;
-      --medium: 8px;
-      --mark: 12px;
-      --pointer: 16px;
-    }
-
-    .ruler-readout {
-      /* Centra la primera línea (10px) sobre el cursor. */
-      top: -5px;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 4px;
-      padding: 0;
-      background: none;
-      border: 0;
-      opacity: 1;
-      transform: none;
+      display: none;
     }
   }
 
@@ -487,14 +453,6 @@
     .ruler-value,
     .ruler-marks :global(span) {
       transition: none;
-    }
-
-    .ruler-readout,
-    #scroll-ruler.is-scrolling .ruler-readout,
-    #scroll-ruler.is-dragging .ruler-readout,
-    #scroll-ruler:hover .ruler-readout {
-      transform: none;
-      transition: opacity 120ms linear;
     }
   }
 </style>
