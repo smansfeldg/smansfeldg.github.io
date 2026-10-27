@@ -1,0 +1,491 @@
+---
+/**
+ * Lluvia de caracteres japoneses escondida debajo del fondo de la página.
+ *
+ * El canvas vive dentro de `.bg-effects`, debajo de la grilla y la niebla, y
+ * por defecto es transparente: sin interacción la página se ve exactamente
+ * igual que sin él. Al mover el mouse, un mapa de intensidad acumula el
+ * recorrido, se difumina y se disipa con el tiempo; la lluvia solo se pinta
+ * donde ese mapa tiene intensidad (`destination-in` con la máscara escalada).
+ * Los paneles son opacos y están en `.app-layout`, por encima: el efecto nunca
+ * los atraviesa.
+ *
+ * La lluvia es una función del tiempo, no un estado acumulado: la posición de
+ * cada gota y cada glifo se deriva de `performance.now()` con hashes fijos. Por
+ * eso sigue "cayendo" mientras está tapada sin gastar un solo fotograma, y lo
+ * que se revela es el estado actual. El loop de rAF corre solo mientras queda
+ * algo de máscara; en reposo no hay ningún timer.
+ *
+ * Se apaga con `prefers-reduced-motion` y en dispositivos sin cursor (touch).
+ */
+---
+
+<canvas id="matrix-reveal" class="no-print" aria-hidden="true"></canvas>
+
+<script>
+  /** Parámetros centralizados del efecto. Distancias en px CSS, tiempos en s. */
+  const CONFIG = {
+    /** Lado de una celda del mapa de intensidad. Más chico = bordes más finos y más costo. */
+    cell: 8,
+    /** Radio del pincel que deja el cursor. */
+    radius: 78,
+    /** Intensidad que suma cada sello del pincel. */
+    strength: 0.5,
+    /** Separación entre sellos a lo largo del recorrido, en fracciones del radio. */
+    spacing: 0.3,
+    /**
+     * Tope de intensidad. Lo que excede 1 se ve igual de revelado, así que es
+     * la persistencia: el tiempo que la zona queda abierta antes de cerrarse.
+     */
+    cap: 1.5,
+    /** Intensidad que se pierde por segundo: la velocidad con que vuelve la niebla. */
+    decay: 0.6,
+    /** Velocidad de difusión espacial (1/s): cuánto se esparce y suaviza la estela. */
+    diffusion: 3,
+    /** Umbrales de la transición de transparencia sobre la intensidad. */
+    revealFrom: 0.12,
+    revealTo: 0.8,
+    /** Amplitud del ruido que deforma el borde. */
+    edgeNoise: 0.6,
+    /** Frecuencia del ruido del borde, por celda. */
+    noiseScale: 0.17,
+    /** Desplazamiento del ruido, en unidades de ruido por segundo. */
+    noiseDrift: 0.25,
+    /** Límite de densidad de píxeles del canvas en pantallas HiDPI. */
+    maxDpr: 1.5,
+    /** Opacidad global de la lluvia por tema: reconocible sin dominar. */
+    opacity: { dark: 0.8, light: 0.65 },
+  }
+
+  interface Layer {
+    size: number
+    /** px/s */
+    speed: [number, number]
+    /** Largo de la estela, en caracteres. */
+    trail: [number, number]
+    alpha: number
+    /** Fracción de columnas con lluvia. */
+    density: number
+    /** Gotas por columna, repartidas a lo largo del período. */
+    drops: number
+  }
+
+  /** De fondo a frente: más chicas, lentas y tenues atrás, para dar profundidad. */
+  const LAYERS: Layer[] = [
+    { size: 11, speed: [26, 55], trail: [14, 30], alpha: 0.45, density: 0.8, drops: 3 },
+    { size: 14, speed: [50, 105], trail: [12, 26], alpha: 0.75, density: 0.7, drops: 2 },
+    { size: 19, speed: [90, 160], trail: [8, 18], alpha: 1, density: 0.35, drops: 2 },
+  ]
+
+  const FONT = `"Hiragino Sans", "Yu Gothic UI", "Meiryo", "Noto Sans CJK JP", "Noto Sans JP", "MS Gothic", monospace`
+
+  const range = (from: number, to: number) =>
+    Array.from({ length: to - from + 1 }, (_, i) => String.fromCharCode(from + i))
+
+  // Katakana de ancho medio (los de la película), katakana e hiragana completos,
+  // algunos kanji y dígitos.
+  const GLYPHS = [
+    ...range(0xff66, 0xff9d),
+    ...range(0x30a2, 0x30f3),
+    ...range(0x3042, 0x3093),
+    ..."日月火水木金土山川田人口目耳手力中大小上下本文字道雨電気光空",
+    ...range(0x30, 0x39),
+  ]
+
+  const canvas = document.getElementById("matrix-reveal") as HTMLCanvasElement | null
+  const ctx = canvas?.getContext("2d")
+  const mask = document.createElement("canvas")
+  const maskCtx = mask.getContext("2d")
+
+  if (canvas && ctx && maskCtx) {
+    const root = document.documentElement
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)")
+    const finePointer = window.matchMedia("(any-hover: hover) and (any-pointer: fine)")
+
+    // Equipos modestos: sin la capa de fondo (la más poblada) y a 30 fps.
+    const nav = navigator as Navigator & { deviceMemory?: number }
+    const lowPower = (nav.hardwareConcurrency ?? 8) <= 4 || (nav.deviceMemory ?? 8) <= 4
+    const layers = lowPower ? LAYERS.slice(1) : LAYERS
+    const frameInterval = lowPower ? 1000 / 30 : 0
+
+    /** Hash entero → [0, 1). Fija velocidad, fase, largo y glifo sin guardar estado. */
+    const hash = (a: number, b: number, c: number, d = 0) => {
+      let h = Math.imul(a ^ 0x9e3779b9, 0x85ebca6b) ^ Math.imul(b + 0x632be59b, 0xc2b2ae35)
+      h = Math.imul(h ^ (h >>> 15) ^ c, 0x27d4eb2f)
+      h = Math.imul(h ^ (h >>> 13) ^ Math.imul(d, 0x165667b1), 0x85ebca6b)
+      return ((h ^ (h >>> 16)) >>> 0) / 4294967296
+    }
+    const lerp = ([a, b]: [number, number], f: number) => a + (b - a) * f
+
+    // Ruido de valor sobre una tabla periódica de 64×64: deforma el borde de la
+    // máscara para que no se lea como un círculo.
+    const NOISE = 64
+    const noiseTable = Float32Array.from({ length: NOISE * NOISE }, () => Math.random())
+    const valueNoise = (x: number, y: number) => {
+      const xi = Math.floor(x)
+      const yi = Math.floor(y)
+      let fx = x - xi
+      let fy = y - yi
+      fx = fx * fx * (3 - 2 * fx)
+      fy = fy * fy * (3 - 2 * fy)
+      const x0 = xi & (NOISE - 1)
+      const x1 = (xi + 1) & (NOISE - 1)
+      const y0 = (yi & (NOISE - 1)) * NOISE
+      const y1 = ((yi + 1) & (NOISE - 1)) * NOISE
+      const top = noiseTable[y0 + x0] + (noiseTable[y0 + x1] - noiseTable[y0 + x0]) * fx
+      const bottom = noiseTable[y1 + x0] + (noiseTable[y1 + x1] - noiseTable[y1 + x0]) * fx
+      return top + (bottom - top) * fy
+    }
+
+    let width = 0
+    let height = 0
+    let dpr = 1
+    let gw = 0
+    let gh = 0
+    let field = new Float32Array(0)
+    let scratch = new Float32Array(0)
+    let maskData = maskCtx.createImageData(1, 1)
+    // Caja de celdas con intensidad, [x0, x1) × [y0, y1); vacía si x0 >= x1.
+    let bx0 = 0, bx1 = 0, by0 = 0, by1 = 0
+    // Caja de la máscara escrita en el fotograma anterior, para limpiarla.
+    let wx0 = 0, wx1 = 0, wy0 = 0, wy1 = 0
+
+    let enabled = false
+    let raf = 0
+    let lastTime = 0
+    let pointer: { x: number; y: number } | null = null
+    let trailColor = ""
+    let headColor = ""
+    let opacity = CONFIG.opacity.dark
+
+    const readTheme = () => {
+      const styles = getComputedStyle(root)
+      trailColor = styles.getPropertyValue("--accent-purple-text").trim() || "#A78BFA"
+      headColor = styles.getPropertyValue("--text-primary").trim() || "#E8E6F0"
+      opacity = root.classList.contains("dark") ? CONFIG.opacity.dark : CONFIG.opacity.light
+    }
+
+    const resetMask = () => {
+      field.fill(0)
+      maskData.data.fill(0)
+      bx0 = bx1 = by0 = by1 = 0
+      wx0 = wx1 = wy0 = wy1 = 0
+      pointer = null
+      ctx.setTransform(1, 0, 0, 1, 0, 0)
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+    }
+
+    const resize = () => {
+      width = canvas.clientWidth
+      height = canvas.clientHeight
+      dpr = Math.min(window.devicePixelRatio || 1, CONFIG.maxDpr)
+      canvas.width = Math.round(width * dpr)
+      canvas.height = Math.round(height * dpr)
+      gw = Math.ceil(width / CONFIG.cell)
+      gh = Math.ceil(height / CONFIG.cell)
+      field = new Float32Array(gw * gh)
+      scratch = new Float32Array(gw * gh)
+      mask.width = gw
+      mask.height = gh
+      maskData = maskCtx.createImageData(gw, gh)
+      resetMask()
+    }
+
+    const stamp = (x: number, y: number) => {
+      const cx = x / CONFIG.cell
+      const cy = y / CONFIG.cell
+      const r = CONFIG.radius / CONFIG.cell
+      const invR2 = 1 / (r * r)
+      const x0 = Math.max(0, Math.floor(cx - r))
+      const x1 = Math.min(gw, Math.ceil(cx + r) + 1)
+      const y0 = Math.max(0, Math.floor(cy - r))
+      const y1 = Math.min(gh, Math.ceil(cy + r) + 1)
+      if (x0 >= x1 || y0 >= y1) return
+
+      for (let gy = y0; gy < y1; gy++) {
+        const dy = gy + 0.5 - cy
+        for (let gx = x0; gx < x1; gx++) {
+          const dx = gx + 0.5 - cx
+          const d2 = (dx * dx + dy * dy) * invR2
+          if (d2 >= 1) continue
+          const w = 1 - d2
+          const i = gy * gw + gx
+          field[i] = Math.min(CONFIG.cap, field[i] + CONFIG.strength * w * w)
+        }
+      }
+
+      if (bx0 >= bx1) {
+        bx0 = x0; bx1 = x1; by0 = y0; by1 = y1
+      } else {
+        bx0 = Math.min(bx0, x0); bx1 = Math.max(bx1, x1)
+        by0 = Math.min(by0, y0); by1 = Math.max(by1, y1)
+      }
+    }
+
+    /** Sella a intervalos regulares entre dos posiciones: la estela no tiene huecos aunque el mouse vaya rápido. */
+    const stampPath = (x: number, y: number) => {
+      if (!pointer) {
+        stamp(x, y)
+        return
+      }
+      const dx = x - pointer.x
+      const dy = y - pointer.y
+      const steps = Math.ceil(Math.hypot(dx, dy) / (CONFIG.radius * CONFIG.spacing))
+      for (let s = 1; s <= steps; s++) {
+        stamp(pointer.x + (dx * s) / steps, pointer.y + (dy * s) / steps)
+      }
+    }
+
+    /** Difunde y disipa el mapa. Devuelve `false` cuando ya no queda nada revelado. */
+    const update = (dt: number) => {
+      if (bx0 >= bx1) return false
+
+      // La difusión avanza una celda por fotograma: se procesa la caja + 1.
+      // Fuera de esa caja el mapa vale 0, así que los vecinos ausentes cuentan 0.
+      const x0 = Math.max(0, bx0 - 1)
+      const x1 = Math.min(gw, bx1 + 1)
+      const y0 = Math.max(0, by0 - 1)
+      const y1 = Math.min(gh, by1 + 1)
+      const k = Math.min(1, CONFIG.diffusion * dt)
+      const decay = CONFIG.decay * dt
+
+      for (let y = y0; y < y1; y++) {
+        for (let x = x0; x < x1; x++) {
+          const i = y * gw + x
+          const left = x > x0 ? field[i - 1] : 0
+          const right = x < x1 - 1 ? field[i + 1] : 0
+          scratch[i] = (left + 2 * field[i] + right) * 0.25
+        }
+      }
+
+      let nx0 = gw, nx1 = 0, ny0 = gh, ny1 = 0
+      for (let y = y0; y < y1; y++) {
+        for (let x = x0; x < x1; x++) {
+          const i = y * gw + x
+          const up = y > y0 ? scratch[i - gw] : 0
+          const down = y < y1 - 1 ? scratch[i + gw] : 0
+          const blurred = (up + 2 * scratch[i] + down) * 0.25
+          let v = field[i] + (blurred - field[i]) * k - decay
+          if (v < 0.004) v = 0
+          field[i] = v
+          if (v > 0) {
+            if (x < nx0) nx0 = x
+            if (x >= nx1) nx1 = x + 1
+            if (y < ny0) ny0 = y
+            if (y >= ny1) ny1 = y + 1
+          }
+        }
+      }
+
+      if (nx0 >= nx1) {
+        bx0 = bx1 = by0 = by1 = 0
+        return false
+      }
+      bx0 = nx0; bx1 = nx1; by0 = ny0; by1 = ny1
+      return true
+    }
+
+    /** Traduce la intensidad a alfa con un borde ruidoso y suave, y la sube al canvas de máscara. */
+    const writeMask = (t: number) => {
+      // Unión con lo escrito antes: lo que salió de la caja tiene que volver a 0.
+      const hasB = bx0 < bx1
+      const hasW = wx0 < wx1
+      if (!hasB && !hasW) return
+      const x0 = hasB && hasW ? Math.min(bx0, wx0) : hasB ? bx0 : wx0
+      const x1 = hasB && hasW ? Math.max(bx1, wx1) : hasB ? bx1 : wx1
+      const y0 = hasB && hasW ? Math.min(by0, wy0) : hasB ? by0 : wy0
+      const y1 = hasB && hasW ? Math.max(by1, wy1) : hasB ? by1 : wy1
+
+      const data = maskData.data
+      const s = CONFIG.noiseScale
+      const drift = t * CONFIG.noiseDrift
+      const span = CONFIG.revealTo - CONFIG.revealFrom
+      for (let y = y0; y < y1; y++) {
+        for (let x = x0; x < x1; x++) {
+          const i = y * gw + x
+          const f = field[i]
+          let a = 0
+          if (f > 0) {
+            const n =
+              0.65 * valueNoise(x * s + drift, y * s - drift * 0.6) +
+              0.35 * valueNoise(x * s * 2.3 + 13.7 - drift, y * s * 2.3 + 7.1 + drift * 0.8)
+            const v = (f - (n - 0.5) * CONFIG.edgeNoise - CONFIG.revealFrom) / span
+            a = v <= 0 ? 0 : v >= 1 ? 255 : v * v * (3 - 2 * v) * 255
+          }
+          data[i * 4 + 3] = a
+        }
+      }
+      maskCtx.putImageData(maskData, 0, 0, x0, y0, x1 - x0, y1 - y0)
+
+      wx0 = bx0; wx1 = bx1; wy0 = by0; wy1 = by1
+    }
+
+    const glyph = (layer: number, col: number, row: number, t: number, head: boolean) => {
+      const g = hash(layer, col, row, 7)
+      const rate = head ? 14 : 0.4 + g * 2.6
+      const epoch = Math.floor(t * rate + g * 97)
+      return GLYPHS[Math.floor(hash(col, row, epoch, layer + 11) * GLYPHS.length)]
+    }
+
+    /** Dibuja solo los caracteres que caen dentro del rectángulo revelado. */
+    const drawRain = (t: number, x0: number, y0: number, x1: number, y1: number) => {
+      ctx.textBaseline = "top"
+      for (let l = 0; l < layers.length; l++) {
+        const layer = layers[l]
+        const size = layer.size
+        const alpha = opacity * layer.alpha
+        ctx.font = `${size}px ${FONT}`
+        let style = ""
+
+        const c0 = Math.max(0, Math.floor(x0 / size) - 1)
+        const c1 = Math.min(Math.ceil(width / size), Math.ceil(x1 / size) + 1)
+        const r0 = Math.floor(y0 / size)
+        const r1 = Math.ceil(y1 / size)
+
+        for (let c = c0; c < c1; c++) {
+          if (hash(l, c, 1) > layer.density) continue
+          const speed = lerp(layer.speed, hash(l, c, 2))
+          // El período deja salir la estela completa antes de volver a entrar,
+          // más un hueco variable: la gota no reaparece arriba de golpe.
+          const period = height + layer.trail[1] * size + hash(l, c, 3) * height * 0.4
+          const x = c * size + (hash(l, c, 6) - 0.5) * size * 0.4
+
+          // Las gotas de una columna comparten velocidad y se reparten el
+          // período con un desfase fijo, así que nunca se pisan.
+          for (let d = 0; d < layer.drops; d++) {
+            const pos = (hash(l, c, 4) + d / layer.drops) * period + speed * t
+            const cycle = Math.floor(pos / period)
+            const trail = Math.round(lerp(layer.trail, hash(l, c, 5 + d * 8, cycle)))
+            const headRow = Math.floor((pos - cycle * period) / size)
+
+            const kMin = Math.max(0, headRow - r1)
+            const kMax = Math.min(trail, headRow - r0)
+            for (let k = kMax; k >= kMin; k--) {
+              const row = headRow - k
+              const head = k === 0
+              const next = head ? headColor : trailColor
+              if (next !== style) {
+                ctx.fillStyle = next
+                style = next
+              }
+              ctx.globalAlpha = head ? alpha : alpha * (1 - k / (trail + 1)) ** 1.2
+              ctx.fillText(glyph(l, c, row, t, head), x, row * size)
+            }
+          }
+        }
+      }
+      ctx.globalAlpha = 1
+    }
+
+    const render = (t: number) => {
+      writeMask(t)
+      ctx.setTransform(1, 0, 0, 1, 0, 0)
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      if (bx0 >= bx1) return
+
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+      const cell = CONFIG.cell
+      drawRain(t, bx0 * cell, by0 * cell, bx1 * cell, by1 * cell)
+      // La máscara es de baja resolución: el escalado bilineal suaviza el borde.
+      ctx.globalCompositeOperation = "destination-in"
+      ctx.imageSmoothingEnabled = true
+      ctx.drawImage(mask, 0, 0, gw * cell, gh * cell)
+      ctx.globalCompositeOperation = "source-over"
+    }
+
+    const frame = (now: number) => {
+      raf = 0
+      if (!enabled) return
+      if (frameInterval && now - lastTime < frameInterval) {
+        raf = requestAnimationFrame(frame)
+        return
+      }
+      const dt = Math.min(0.1, (now - lastTime) / 1000)
+      lastTime = now
+      const active = update(dt)
+      render(now / 1000)
+      if (active) raf = requestAnimationFrame(frame)
+    }
+
+    const ensureLoop = () => {
+      if (raf) return
+      lastTime = performance.now()
+      raf = requestAnimationFrame(frame)
+    }
+
+    const stop = () => {
+      if (raf) cancelAnimationFrame(raf)
+      raf = 0
+      resetMask()
+    }
+
+    const sync = () => {
+      const next = finePointer.matches && !reduceMotion.matches
+      if (next === enabled) return
+      enabled = next
+      if (enabled) {
+        readTheme()
+        resize()
+      } else {
+        stop()
+      }
+    }
+
+    // Listeners pasivos sobre window: escuchan el movimiento sin interceptar
+    // clics, selección ni scroll. El canvas no recibe eventos.
+    window.addEventListener(
+      "pointermove",
+      (event) => {
+        if (!enabled || event.pointerType === "touch") return
+        stampPath(event.clientX, event.clientY)
+        pointer = { x: event.clientX, y: event.clientY }
+        ensureLoop()
+      },
+      { passive: true },
+    )
+
+    // Al salir y volver a entrar, no se une el último punto con el nuevo.
+    document.documentElement.addEventListener("pointerleave", () => {
+      pointer = null
+    })
+    window.addEventListener("blur", () => {
+      pointer = null
+    })
+
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden && enabled) stop()
+    })
+
+    let resizeQueued = false
+    window.addEventListener("resize", () => {
+      if (!enabled || resizeQueued) return
+      resizeQueued = true
+      requestAnimationFrame(() => {
+        resizeQueued = false
+        if (!enabled) return
+        if (raf) cancelAnimationFrame(raf)
+        raf = 0
+        resize()
+      })
+    })
+
+    // El tema lo aplica `window.applyTheme` alternando `.dark` en <html>: se
+    // relee la paleta en el acto, sin un mecanismo paralelo.
+    new MutationObserver(readTheme).observe(root, { attributes: true, attributeFilter: ["class"] })
+
+    reduceMotion.addEventListener("change", sync)
+    finePointer.addEventListener("change", sync)
+    sync()
+  }
+</script>
+
+<style>
+  #matrix-reveal {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+</style>

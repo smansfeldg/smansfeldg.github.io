@@ -36,6 +36,7 @@ The current system vocabulary includes `$ whoami`, `SYSTEM.INFO`, `CAPABILITIES`
 | [LanguageSelector.astro](../src/components/LanguageSelector.astro) | Desktop language control and native select states |
 | [BackToTop.astro](../src/components/BackToTop.astro) | End-of-page visibility, floating action and motion |
 | [ScrollRuler.astro](../src/components/ScrollRuler.astro) | Desktop reading-progress scale (width ≥ 1200px) that replaces the native scrollbar: section marks, readout, pointer drag |
+| [MatrixReveal.astro](../src/components/MatrixReveal.astro) | Hidden katakana rain under the page canvas, revealed only along the mouse trail |
 | [GlitchFX.astro](../src/components/GlitchFX.astro), [glitch.ts](../src/lib/glitch.ts) | Theme/language transition distortion and mutation fallback |
 | [src/icons](../src/icons), [content.json](../src/data/content.json) | Custom interface SVGs and technology icon references |
 | [T.astro](../src/components/T.astro), [src/i18n](../src/i18n) | Translation-aware text, attributes, and language switching |
@@ -151,14 +152,26 @@ Do not apply clipped corners to every card or add elaborate circuit borders. Con
 
 `--glow-border` is `0 0 8px rgba(139, 92, 246, 0.08)` in dark mode and alpha `0.03` in light mode. Projects use it on hover; back-to-top uses it at rest. `--glow-purple` defines a 20px glow at alpha `0.1` / `0.05`, but current component styles do not consume it. Status dots use `0 0 6px var(--accent-green)`. These faint glows are not a general card-elevation system.
 
-The fixed background stack in Layout sits at `z-index: 0`, ignores pointer input, and contains:
+The fixed background stack in Layout sits at `z-index: 0`, ignores pointer input, and contains, bottom to top:
 
+- The Matrix reveal canvas (see below), transparent at rest.
 - A 60px grid of 1px token-colored lines at opacity `0.4`.
 - Very low-alpha purple (`0.04`) and cyan (`0.03`) radial fog.
 - An upper-right purple radial light at alpha `0.06`, blurred by 40px.
 - A repeating 256px noise texture at opacity `0.015`.
 
 Content sits in `.app-layout` at `z-index: 1`. Keep the texture behind content; avoid adding noise, blur, glass, or bright gradients to every panel. The existing opaque panels provide stable text surfaces.
+
+### Matrix reveal
+
+`MatrixReveal.astro` hides a rain of Japanese characters (half-width and full-width katakana, hiragana, a few kanji, digits) beneath the page canvas. At rest its canvas is fully transparent, so the page is pixel-identical to the design without it. Moving a mouse or pen accumulates a low-resolution intensity map along the path; it diffuses, holds briefly and decays, and the rain is drawn only where the map has intensity (`destination-in` with the bilinearly upscaled map, plus value noise on the threshold for an irregular, soft edge). Because the canvas is the bottom layer of `.bg-effects`, the grid, fog and noise stay on top, and the opaque panels in `.app-layout` are never pierced: the rain shows only in the page gutters and gaps between panels.
+
+- Colors come from the theme tokens: trails in `--accent-purple-text`, the leading character in `--text-primary`, at a global opacity of 0.8 (dark) / 0.65 (light). A `MutationObserver` on `<html class>` re-reads them on every theme toggle. Do not switch it to classic neon green.
+- Three depth layers (11/14/19px) differ in speed, trail length, density and opacity. Drop positions and glyphs are pure functions of time and fixed hashes, so the rain keeps falling while hidden without drawing anything; the rAF loop runs only while some of the trail is still visible.
+- Radius, strength, persistence (`cap`), decay, diffusion, edge noise and DPR cap are centralized in its `CONFIG`.
+- Disabled under `prefers-reduced-motion` and without a hovering fine pointer (touch devices see the original background). Machines with ≤ 4 cores or ≤ 4 GB report drop the back layer and run at 30 fps. Hidden tabs clear the trail.
+
+Do not raise this canvas above the background stack, make panels translucent to show more of it, or add an automatic/ambient reveal.
 
 ## Component patterns
 
@@ -284,7 +297,7 @@ At rest it uses panel fill, a 1px border, faint border glow, mono 10px weight-60
 
 Hidden state combines opacity zero, `visibility: hidden`, disabled pointer events, and a 10px downward / `0.96` scale offset; it stays out of focus and hit testing. `.is-visible` restores those states. Preserve this functional relationship if visibility is extended.
 
-Existing z-index values: background 0, app layout 1, hero corner marks 2 locally, scroll ruler 3 (above content and the hero corners, below the palette), back-to-top 49, command footer/mobile trigger 50, language switch 51, glitch stage/noise/flash 9998/9999/10000. Local stacking contexts matter; these numbers are not a global overlay guarantee. Do not increase z-indices arbitrarily or place new fixed UI over existing bottom controls.
+Existing z-index values: background 0, app layout 1, hero corner marks 2 locally, scroll ruler 3 (above content and the hero corners, below the palette); the Matrix canvas has no z-index of its own and is the first child of the background stack, back-to-top 49, command footer/mobile trigger 50, language switch 51, glitch stage/noise/flash 9998/9999/10000. Local stacking contexts matter; these numbers are not a global overlay guarantee. Do not increase z-indices arbitrarily or place new fixed UI over existing bottom controls.
 
 ## Motion and animation
 
@@ -300,6 +313,7 @@ Ordinary feedback uses `--transition-fast: 150ms ease`; panel changes use `--tra
 | Back-to-top arrow | 2.8s ease-in-out loop after 420ms, maximum upward travel 2px |
 | Scroll ruler | Cursor follows scroll and drag directly, without easing; active-section label fades in over 250ms ease-out; readout color 250ms; passed-mark color 150ms; visibility 250ms opacity |
 | Skill tooltip / cert arrow | Small local translation paired with fast feedback |
+| Matrix reveal | Pointer-driven only: the trail stays open for under a second after the pointer passes, then closes over about another second; nothing is drawn at rest |
 
 ### Glitch signature
 
@@ -311,7 +325,7 @@ Do not add automatic or recurring glitch timers, attach distortion to every hove
 
 ### Reduced motion: current boundary
 
-Glitch checks `prefers-reduced-motion` in JS and hides its layers in CSS. Back-to-top removes its transform/arrow animation and uses a 120ms linear fade; its click handler requests `auto` rather than `smooth` scrolling. The scroll ruler drops its label fade, color transitions and visibility transition; its cursor still tracks the scroll position, since that is direct feedback, not animation. There is no blanket reduced-motion override for background fog, cursor/status loops, the palette fade, other CSS transitions, or the global smooth-scroll declaration. Do not claim the whole site disables motion. New motion should provide its own reduced-motion alternative and must never be necessary for an action to work.
+Glitch checks `prefers-reduced-motion` in JS and hides its layers in CSS. Back-to-top removes its transform/arrow animation and uses a 120ms linear fade; its click handler requests `auto` rather than `smooth` scrolling. The Matrix reveal is disabled entirely (its canvas is never sized or drawn). The scroll ruler drops its label fade, color transitions and visibility transition; its cursor still tracks the scroll position, since that is direct feedback, not animation. There is no blanket reduced-motion override for background fog, cursor/status loops, the palette fade, other CSS transitions, or the global smooth-scroll declaration. Do not claim the whole site disables motion. New motion should provide its own reduced-motion alternative and must never be necessary for an action to work.
 
 ## Iconography and imagery
 

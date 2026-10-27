@@ -72,6 +72,16 @@ Both reach it through `withGlitch()` (`src/lib/glitch.ts`) → `window.glitchFX.
 
 `window.glitchFX` also exposes the manual `trigger`/`stop`/`start` API. `start()` re-enables event bursts without scheduling an effect. Returning to a visible tab does not trigger a burst.
 
+## Matrix reveal (`src/components/MatrixReveal.astro`)
+
+A hidden Japanese-character rain under the page background, revealed only along the mouse trail (Warp-style). It is the first child of `.bg-effects` in `Layout.astro`, so the grid/fog stay above it and the opaque panels in `.app-layout` are never pierced. At rest the canvas is transparent — the page is pixel-identical without it.
+
+- Rain is stateless: drop positions and glyphs are functions of `performance.now()` plus fixed hashes, so it "keeps falling" while hidden at zero cost. The rAF loop runs only while the trail is non-empty.
+- The trail is a `Float32Array` intensity map (8px cells): stamps along the interpolated pointer path, separable blur for diffusion, linear decay; values above 1 (`cap`) are the hold time. It is turned into a noisy-threshold alpha mask and applied with `destination-in`. All tunables live in `CONFIG`.
+- Colors are read from `--accent-purple-text` / `--text-primary`; a `MutationObserver` on `<html class>` follows theme toggles.
+- Off under `prefers-reduced-motion` and without `(any-hover: hover) and (any-pointer: fine)`. Low-end devices (≤ 4 cores / ≤ 4 GB) drop the back layer and cap at 30 fps.
+- `cmatrix` (MIT) and the blob/trail reveal references were evaluated and not used: `cmatrix` draws trails by accumulating a translucent background fill (needs an opaque canvas redrawn every frame, can't be masked over the light theme), has a single speed/size, and binds `q`/`Esc` to exit; the reveal projects are single cursor-following blobs or reveal a static image.
+
 ## Analytics (`src/analytics/`)
 
 A small modular tracking system, wired in via `import "@/analytics/tracking"` in `Layout.astro`'s head.

@@ -5,6 +5,7 @@ import AIContext from "@/components/AIContext.astro"
 import Clarity from "@/components/Clarity.astro"
 import GlitchFX from "@/components/GlitchFX.astro"
 import LanguageSelector from "@/components/LanguageSelector.astro"
+import MatrixReveal from "@/components/MatrixReveal.astro"
 import { DEFAULT_LANGUAGE, t } from "@/i18n"
 import content from "@/data/content.json"
 
@@ -131,6 +132,7 @@ const safeJsonLd = JSON.stringify(jsonLd).replace(/</g, "\\u003c")
   <body>
     <AIContext />
     <div class="bg-effects">
+      <MatrixReveal />
       <div class="bg-grid"></div>
       <div class="bg-gradient-fog"></div>
       <div class="bg-radial-light"></div>
