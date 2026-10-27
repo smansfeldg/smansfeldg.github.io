@@ -79,7 +79,8 @@ A hidden Japanese-character rain under the page background, revealed only along 
 - Rain is stateless: drop positions and glyphs are functions of `performance.now()` plus fixed hashes, so it "keeps falling" while hidden at zero cost. The rAF loop runs only while the trail is non-empty.
 - The trail is a `Float32Array` intensity map (8px cells): stamps along the interpolated pointer path, separable blur for diffusion, linear decay; values above 1 (`cap`) are the hold time. It is turned into a noisy-threshold alpha mask and applied with `destination-in`. All tunables live in `CONFIG`.
 - Colors are read from `--accent-purple-text` / `--text-primary`; a `MutationObserver` on `<html class>` follows theme toggles.
-- Off under `prefers-reduced-motion` and without `(any-hover: hover) and (any-pointer: fine)`. Low-end devices (≤ 4 cores / ≤ 4 GB) drop the back layer and cap at 30 fps.
+- Touch: passive `touchstart`/`touchmove` on `window` drive the trail like the cursor (pointer events get cancelled when the gesture becomes a scroll); never call `preventDefault` there. Resizes copy the visible part of the trail instead of resetting it, because the mobile address bar resizes the viewport mid-swipe.
+- Off under `prefers-reduced-motion`. Low-end devices (≤ 4 cores / ≤ 4 GB) drop the back layer and cap at 30 fps.
 - `cmatrix` (MIT) and the blob/trail reveal references were evaluated and not used: `cmatrix` draws trails by accumulating a translucent background fill (needs an opaque canvas redrawn every frame, can't be masked over the light theme), has a single speed/size, and binds `q`/`Esc` to exit; the reveal projects are single cursor-following blobs or reveal a static image.
 
 ## Analytics (`src/analytics/`)

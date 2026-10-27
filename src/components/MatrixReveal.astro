@@ -16,7 +16,8 @@
  * que se revela es el estado actual. El loop de rAF corre solo mientras queda
  * algo de máscara; en reposo no hay ningún timer.
  *
- * Se apaga con `prefers-reduced-motion` y en dispositivos sin cursor (touch).
+ * En touch, deslizar el dedo hace lo mismo que el cursor. Se apaga con
+ * `prefers-reduced-motion`.
  */
 ---
 
@@ -55,6 +56,11 @@
     maxDpr: 1.5,
     /** Opacidad global de la lluvia por tema: reconocible sin dominar. */
     opacity: { dark: 0.8, light: 0.65 },
+  }
+
+  interface Point {
+    x: number
+    y: number
   }
 
   interface Layer {
@@ -100,7 +106,6 @@
   if (canvas && ctx && maskCtx) {
     const root = document.documentElement
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)")
-    const finePointer = window.matchMedia("(any-hover: hover) and (any-pointer: fine)")
 
     // Equipos modestos: sin la capa de fondo (la más poblada) y a 30 fps.
     const nav = navigator as Navigator & { deviceMemory?: number }
@@ -153,7 +158,9 @@
     let enabled = false
     let raf = 0
     let lastTime = 0
-    let pointer: { x: number; y: number } | null = null
+    let pointer: Point | null = null
+    /** Último punto de cada dedo, por `Touch.identifier`. */
+    const touches = new Map<number, Point>()
     let trailColor = ""
     let headColor = ""
     let opacity = CONFIG.opacity.dark
@@ -171,11 +178,20 @@
       bx0 = bx1 = by0 = by1 = 0
       wx0 = wx1 = wy0 = wy1 = 0
       pointer = null
+      touches.clear()
       ctx.setTransform(1, 0, 0, 1, 0, 0)
       ctx.clearRect(0, 0, canvas.width, canvas.height)
     }
 
+    /**
+     * Redimensiona conservando la estela en la zona que sigue visible: en
+     * móvil la barra de direcciones cambia el alto del viewport en medio de un
+     * deslizamiento, y reiniciar el mapa cortaría el rastro bajo el dedo.
+     */
     const resize = () => {
+      const oldField = field
+      const oldGw = gw
+      const oldGh = gh
       width = canvas.clientWidth
       height = canvas.clientHeight
       dpr = Math.min(window.devicePixelRatio || 1, CONFIG.maxDpr)
@@ -188,7 +204,18 @@
       mask.width = gw
       mask.height = gh
       maskData = maskCtx.createImageData(gw, gh)
-      resetMask()
+      wx0 = wx1 = wy0 = wy1 = 0
+
+      bx0 = Math.min(bx0, gw); bx1 = Math.min(bx1, gw)
+      by0 = Math.min(by0, gh); by1 = Math.min(by1, gh)
+      if (bx0 >= bx1 || by0 >= by1) {
+        bx0 = bx1 = by0 = by1 = 0
+        return
+      }
+      for (let y = by0; y < Math.min(by1, oldGh); y++) {
+        const row = oldField.subarray(y * oldGw + bx0, y * oldGw + Math.min(bx1, oldGw))
+        field.set(row, y * gw + bx0)
+      }
     }
 
     const stamp = (x: number, y: number) => {
@@ -222,17 +249,17 @@
       }
     }
 
-    /** Sella a intervalos regulares entre dos posiciones: la estela no tiene huecos aunque el mouse vaya rápido. */
-    const stampPath = (x: number, y: number) => {
-      if (!pointer) {
+    /** Sella a intervalos regulares entre dos posiciones: la estela no tiene huecos aunque el mouse o el dedo vayan rápido. */
+    const stampPath = (from: Point | null | undefined, x: number, y: number) => {
+      if (!from) {
         stamp(x, y)
         return
       }
-      const dx = x - pointer.x
-      const dy = y - pointer.y
+      const dx = x - from.x
+      const dy = y - from.y
       const steps = Math.ceil(Math.hypot(dx, dy) / (CONFIG.radius * CONFIG.spacing))
       for (let s = 1; s <= steps; s++) {
-        stamp(pointer.x + (dx * s) / steps, pointer.y + (dy * s) / steps)
+        stamp(from.x + (dx * s) / steps, from.y + (dy * s) / steps)
       }
     }
 
@@ -420,7 +447,7 @@
     }
 
     const sync = () => {
-      const next = finePointer.matches && !reduceMotion.matches
+      const next = !reduceMotion.matches
       if (next === enabled) return
       enabled = next
       if (enabled) {
@@ -436,13 +463,35 @@
     window.addEventListener(
       "pointermove",
       (event) => {
+        // El touch va por sus propios eventos: los de puntero se cancelan en
+        // cuanto el navegador toma el gesto para desplazar la página.
         if (!enabled || event.pointerType === "touch") return
-        stampPath(event.clientX, event.clientY)
+        stampPath(pointer, event.clientX, event.clientY)
         pointer = { x: event.clientX, y: event.clientY }
         ensureLoop()
       },
       { passive: true },
     )
+
+    // Deslizar el dedo equivale a pasar el cursor. `touchmove` sigue llegando
+    // mientras la página se desplaza, y al ser pasivo nunca frena el scroll.
+    // El fondo es fijo, así que la estela se dibuja donde está el dedo en
+    // pantalla, no donde estaba el contenido.
+    const onTouch = (event: TouchEvent) => {
+      if (!enabled) return
+      for (const touch of Array.from(event.changedTouches)) {
+        stampPath(touches.get(touch.identifier), touch.clientX, touch.clientY)
+        touches.set(touch.identifier, { x: touch.clientX, y: touch.clientY })
+      }
+      ensureLoop()
+    }
+    const onTouchEnd = (event: TouchEvent) => {
+      for (const touch of Array.from(event.changedTouches)) touches.delete(touch.identifier)
+    }
+    window.addEventListener("touchstart", onTouch, { passive: true })
+    window.addEventListener("touchmove", onTouch, { passive: true })
+    window.addEventListener("touchend", onTouchEnd, { passive: true })
+    window.addEventListener("touchcancel", onTouchEnd, { passive: true })
 
     // Al salir y volver a entrar, no se une el último punto con el nuevo.
     document.documentElement.addEventListener("pointerleave", () => {
@@ -466,6 +515,8 @@
         if (raf) cancelAnimationFrame(raf)
         raf = 0
         resize()
+        // Cambiar el tamaño del canvas lo borra: si quedaba estela, se redibuja.
+        if (bx0 < bx1) ensureLoop()
       })
     })
 
@@ -474,7 +525,6 @@
     new MutationObserver(readTheme).observe(root, { attributes: true, attributeFilter: ["class"] })
 
     reduceMotion.addEventListener("change", sync)
-    finePointer.addEventListener("change", sync)
     sync()
   }
 </script>

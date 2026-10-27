@@ -169,7 +169,8 @@ Content sits in `.app-layout` at `z-index: 1`. Keep the texture behind content; 
 - Colors come from the theme tokens: trails in `--accent-purple-text`, the leading character in `--text-primary`, at a global opacity of 0.8 (dark) / 0.65 (light). A `MutationObserver` on `<html class>` re-reads them on every theme toggle. Do not switch it to classic neon green.
 - Three depth layers (11/14/19px) differ in speed, trail length, density and opacity. Drop positions and glyphs are pure functions of time and fixed hashes, so the rain keeps falling while hidden without drawing anything; the rAF loop runs only while some of the trail is still visible.
 - Radius, strength, persistence (`cap`), decay, diffusion, edge noise and DPR cap are centralized in its `CONFIG`.
-- Disabled under `prefers-reduced-motion` and without a hovering fine pointer (touch devices see the original background). Machines with ≤ 4 cores or ≤ 4 GB report drop the back layer and run at 30 fps. Hidden tabs clear the trail.
+- On touch devices, sliding a finger acts like the cursor: passive `touchstart`/`touchmove` listeners (pointer events are cancelled once the browser takes the gesture to scroll) stamp the trail at the finger's screen position, one path per touch identifier, without ever blocking scrolling. On phones the panels span almost the full width, so the rain shows only in the 16px gutters and the gaps between sections. Viewport resizes (such as the mobile address bar) keep the visible part of the trail.
+- Disabled under `prefers-reduced-motion`. Machines with ≤ 4 cores or ≤ 4 GB report drop the back layer and run at 30 fps. Hidden tabs clear the trail.
 
 Do not raise this canvas above the background stack, make panels translucent to show more of it, or add an automatic/ambient reveal.
 
@@ -313,7 +314,7 @@ Ordinary feedback uses `--transition-fast: 150ms ease`; panel changes use `--tra
 | Back-to-top arrow | 2.8s ease-in-out loop after 420ms, maximum upward travel 2px |
 | Scroll ruler | Cursor follows scroll and drag directly, without easing; active-section label fades in over 250ms ease-out; readout color 250ms; passed-mark color 150ms; visibility 250ms opacity |
 | Skill tooltip / cert arrow | Small local translation paired with fast feedback |
-| Matrix reveal | Pointer-driven only: the trail stays open for under a second after the pointer passes, then closes over about another second; nothing is drawn at rest |
+| Matrix reveal | Driven only by the mouse, pen or a sliding finger: the trail stays open for under a second after it passes, then closes over about another second; nothing is drawn at rest |
 
 ### Glitch signature
 
